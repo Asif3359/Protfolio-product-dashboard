@@ -37,6 +37,7 @@ interface Contact {
 }
 
 interface ProfileData {
+  name: string;
   heroTitle: string;
   heroDescription: string;
   bestThreeWords: string;
@@ -92,6 +93,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [form, setForm] = useState<ProfileData>({
+    name: "",
     heroTitle: "",
     heroDescription: "",
     bestThreeWords: "",
@@ -141,6 +143,7 @@ export default function ProfilePage() {
         setProfile(res.data);
         if (res.data) {
           setForm({
+            name: res.data.name || "",
             heroTitle: res.data.heroTitle || "",
             heroDescription: res.data.heroDescription || "",
             bestThreeWords: res.data.bestThreeWords || "",
@@ -236,6 +239,7 @@ export default function ProfilePage() {
       const formData = new FormData();
       
       // Append all fields
+      formData.append("name", form.name);
       formData.append("heroTitle", form.heroTitle);
       formData.append("heroDescription", form.heroDescription);
       const bestThreeWordsValue = Array.isArray(form.bestThreeWords)
@@ -387,6 +391,17 @@ export default function ProfilePage() {
           <Grid container spacing={3}>
             <Grid container spacing={2}>
               <TextField
+                label="Full Name"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                fullWidth
+                required
+                margin="normal"
+                variant="outlined"
+                size="small"
+              />
+              <TextField
                 label="Current Job Title"
                 name="currentJobTitle"
                 value={form.currentJobTitle}
@@ -441,7 +456,7 @@ export default function ProfilePage() {
                 </Stack>
               </FormControl>
             </Grid>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} sx={{ width: '100%' }}>
               <TextField
                 label="About Me"
                 name="aboutMe"
@@ -449,10 +464,23 @@ export default function ProfilePage() {
                 onChange={handleChange}
                 fullWidth
                 multiline
-                minRows={4}
+                minRows={6}
+                maxRows={12}
                 margin="normal"
                 variant="outlined"
                 size="small"
+                sx={{
+                  width: '100%',
+                  '& .MuiInputBase-root': {
+                    overflow: 'auto',
+                    maxHeight: '300px',
+                    minWidth: '100%',
+                  },
+                  '& .MuiInputBase-input': {
+                    overflow: 'auto',
+                    minWidth: '100%',
+                  },
+                }}
               />
             </Grid>
           </Grid>

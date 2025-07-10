@@ -1,9 +1,12 @@
-import Link from "next/link";
+import HomePage from "./Home/page";
+import HomeLayout from "./Home/layout";
+
 export default function Home() {
   return (
-    <div>
-      <h1>Welcome to the Portfolio </h1>
-      <Link href="/dashboard">Dashboard</Link>
-    </div>
+    <>
+      <HomeLayout>
+        <HomePage />
+      </HomeLayout>
+    </>
   );
 }

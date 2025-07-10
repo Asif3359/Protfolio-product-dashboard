@@ -36,6 +36,7 @@ import {
 } from "@mui/icons-material";
 import Link from "next/link";
 import { useTheme } from "@mui/material/styles";
+import GetProfileName from "../components/GetProfileName";
 
 const navItems = [
   { text: "Profile", icon: <AccountCircle />, href: "/dashboard/profile" },
@@ -66,10 +67,8 @@ export default function DashboardLayout({
 
   const drawerContent = (
     <>
-      <Toolbar sx={{ bgcolor: theme.palette.primary.main }}>
-        <Typography variant="h6" noWrap color="white">
-          Portfolio Admin
-        </Typography>
+      <Toolbar sx={{ bgcolor: theme.palette.background.default }}>
+        <GetProfileName></GetProfileName>
       </Toolbar>
       <Divider />
       <List sx={{ py: 0, height: '100%', display: 'flex', flexDirection: 'column' }}>
