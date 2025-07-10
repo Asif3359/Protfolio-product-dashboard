@@ -63,7 +63,7 @@ export default function LoginPage() {
         localStorage.setItem("ownerEmail", res.data.email);
       }
 
-      router.push("/");
+      router.push("/dashboard");
     } catch (err: unknown) {
       const axiosError = err as { response?: { data?: { message?: string } }; message?: string };
       const msg =
@@ -161,7 +161,7 @@ export default function LoginPage() {
           </Box>
         </form>
 
-        <Box mt={3} textAlign="center">
+        {/* <Box mt={3} textAlign="center">
           <Typography variant="body2" color="text.secondary">
             Forgot your password?{' '}
             <Typography 
@@ -172,7 +172,7 @@ export default function LoginPage() {
               Reset it
             </Typography>
           </Typography>
-        </Box>
+        </Box> */}
       </StyledPaper>
     </GradientBox>
   );
