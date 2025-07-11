@@ -31,7 +31,7 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 
-const API_URL = "http://localhost:3000/api/skill";
+const API_URL = "https://protfolio-product-backend.vercel.app/api/skill";
 
 interface Skill {
   _id?: string;
