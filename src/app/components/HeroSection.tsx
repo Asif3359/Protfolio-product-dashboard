@@ -75,7 +75,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
   }
 
   const {
-    profilePicture,
+    // profilePicture,
     heroTitle,
     heroDescription,
     bestThreeWords,
@@ -86,7 +86,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
   } = profileData;
 
   const heroPic = heroPicture;
-  const profilePic = profilePicture;
+  // const profilePic = profilePicture;
 
   // Set image dimensions based on device
 
@@ -306,7 +306,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
             </Box>
 
             {/* Profile Image - now on the right side */}
-            <Box
+            {/* <Box
               sx={{
                 display: "flex",
                 justifyContent: "center",
@@ -332,7 +332,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
                   }}
                 />
               </motion.div>
-            </Box>
+            </Box> */}
           </Box>
         </Container>
       </Box>
