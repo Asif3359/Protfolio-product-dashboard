@@ -1,7 +1,7 @@
 export async function getData(dataType: string) {
   try {
     const baseUrl = 'https://protfolio-product-backend.vercel.app/api';
-    const response = await fetch(`${baseUrl}/${dataType}`);
+    const response = await fetch(`${baseUrl}/${dataType}`, { cache: "no-store" });
     
     if (!response.ok) {
       throw new Error(`Failed to fetch ${dataType} data`);
