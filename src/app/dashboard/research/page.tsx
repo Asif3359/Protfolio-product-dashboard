@@ -40,7 +40,7 @@ function ResearchForm({ initialData, onSuccess, onCancel, token }: {
     doi: "",
     link: "",
     status: "In Progress",
-    ownerEmail: ""
+    ownerEmail: localStorage.getItem("ownerEmail") || ""
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -54,20 +54,14 @@ function ResearchForm({ initialData, onSuccess, onCancel, token }: {
         publicationDate: initialData.publicationDate ? new Date(initialData.publicationDate) : null,
         authors: initialData.authors && initialData.authors.length > 0 ? initialData.authors : [""],
       });
-    } else if (token) {
-      (async () => {
-        try {
-          const res = await fetch("https://protfolio-product-backend.vercel.app/api/admin/profile", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (res.ok) {
-            const data = await res.json();
-            setFormData((prev) => ({ ...prev, ownerEmail: data.email || "" }));
-          }
-        } catch { }
-      })();
+    } else {
+      // Get ownerEmail from localStorage
+      const ownerEmail = localStorage.getItem("ownerEmail");
+      if (ownerEmail) {
+        setFormData((prev) => ({ ...prev, ownerEmail }));
+      }
     }
-  }, [initialData, token]);
+  }, [initialData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -103,8 +97,8 @@ function ResearchForm({ initialData, onSuccess, onCancel, token }: {
     setError("");
     try {
       const url = initialData
-        ? `https://protfolio-product-backend.vercel.app/api/research/${initialData._id}`
-        : "https://protfolio-product-backend.vercel.app/api/research";
+        ? `http://localhost:3000/api/research/${initialData._id}`
+        : "http://localhost:3000/api/research";
       const method = initialData ? "PUT" : "POST";
       const body = { ...formData, ownerEmail: formData.ownerEmail };
       const response = await fetch(url, {
@@ -275,7 +269,7 @@ export default function ResearchPage() {
   const fetchResearches = async () => {
     setLoading(true);
     try {
-      const res = await fetch("https://protfolio-product-backend.vercel.app/api/research");
+      const res = await fetch("http://localhost:3000/api/research");
       if (!res.ok) throw new Error("Failed to fetch research");
       const data = await res.json();
       setResearches(data);
@@ -289,7 +283,7 @@ export default function ResearchPage() {
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this research?")) return;
     try {
-      const res = await fetch(`https://protfolio-product-backend.vercel.app/api/research/${id}`, {
+      const res = await fetch(`http://localhost:3000/api/research/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });

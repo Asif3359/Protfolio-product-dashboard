@@ -36,7 +36,7 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 
-const API_URL = 'https://protfolio-product-backend.vercel.app/api/experience';
+const API_URL = 'http://localhost:3000/api/experience';
 
 interface Experience {
   _id?: string;
@@ -60,7 +60,7 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
     initialData || {
       title: '', company: '', location: '', startDate: '', endDate: '',
       isCurrent: false, description: '', responsibilities: [''],
-      achievements: [''], technologies: [''], ownerEmail: ''
+      achievements: [''], technologies: [''], ownerEmail: localStorage.getItem("ownerEmail") || ''
     }
   );
   const [loading, setLoading] = useState(false);
@@ -69,24 +69,17 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   React.useEffect(() => {
-    const fetchOwnerEmail = async () => {
-      try {
-        const res = await fetch('https://protfolio-product-backend.vercel.app/api/admin/profile', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setForm((prev) => ({
-            ...prev,
-            ownerEmail: data.email || '',
-          }));
-        }
-      } catch {
-        // fallback or error handling
+    if (!initialData) {
+      // Get ownerEmail from localStorage
+      const ownerEmail = localStorage.getItem("ownerEmail");
+      if (ownerEmail) {
+        setForm((prev) => ({
+          ...prev,
+          ownerEmail,
+        }));
       }
-    };
-    if (token && !initialData) fetchOwnerEmail();
-  }, [token, initialData]);
+    }
+  }, [initialData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -432,7 +425,7 @@ export default function ExperiencePage() {
   const fetchExperiences = async () => {
     setLoading(true);
     try {
-      const res = await fetch('https://protfolio-product-backend.vercel.app/api/experience');
+      const res = await fetch('http://localhost:3000/api/experience');
       if (!res.ok) throw new Error('Failed to fetch experiences');
       const data: Experience[] = await res.json();
       setExperiences(data);

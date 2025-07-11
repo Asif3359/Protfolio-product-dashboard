@@ -52,15 +52,16 @@ export default function LoginPage() {
     setError("");
     
     try {
-      const res = await axios.post("https://protfolio-product-backend.vercel.app/api/admin/login", {
+      const res = await axios.post("http://localhost:3000/api/admin/login", {
         username,
         password,
       });
       login(res.data.token);
 
       // Save ownerEmail to localStorage
-      if (res.data.email) {
-        localStorage.setItem("ownerEmail", res.data.email);
+      console.log(res.data);
+      if (res.data.admin.email) {
+        localStorage.setItem("ownerEmail", res.data.admin.email);
       }
 
       router.push("/dashboard");
@@ -177,3 +178,6 @@ export default function LoginPage() {
     </GradientBox>
   );
 }
+
+// http://localhost:3000/api/admin/login
+// http://localhost:3000/api/admin/login

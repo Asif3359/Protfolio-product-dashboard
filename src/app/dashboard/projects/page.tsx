@@ -37,7 +37,7 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { styled, useTheme } from "@mui/material/styles";
 
-const API_URL = "https://protfolio-product-backend.vercel.app/api/project";
+const API_URL = "http://localhost:3000/api/project";
 
 interface Project {
   _id?: string;
@@ -79,7 +79,7 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
       githubLink: "",
       features: [""],
       status: "In Progress",
-      ownerEmail: "",
+      ownerEmail: localStorage.getItem("ownerEmail") || "",
     }
   );
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -91,24 +91,19 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
 
   useEffect(() => {
     if (initialData && initialData.image) {
-      setImagePreview(`https://protfolio-product-backend.vercel.app${initialData.image}`);
+      setImagePreview(`http://localhost:3000${initialData.image}`);
     }
   }, [initialData]);
 
   useEffect(() => {
-    const fetchOwnerEmail = async () => {
-      try {
-        const res = await fetch("https://protfolio-product-backend.vercel.app/api/admin/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setForm((prev) => ({ ...prev, ownerEmail: data.email || "" }));
-        }
-      } catch {}
-    };
-    if (token && !initialData) fetchOwnerEmail();
-  }, [token, initialData]);
+    if (!initialData) {
+      // Get ownerEmail from localStorage
+      const ownerEmail = localStorage.getItem("ownerEmail");
+      if (ownerEmail) {
+        setForm((prev) => ({ ...prev, ownerEmail }));
+      }
+    }
+  }, [initialData]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -447,7 +442,7 @@ function ProjectCard({ project, onEdit }: { project: Project; onEdit: (p: Projec
         {project.image && (
           <Box sx={{ mt: 2 }}>
             <img
-              src={`https://protfolio-product-backend.vercel.app${project.image}`}
+              src={`http://localhost:3000${project.image}`}
               alt={project.title}
               style={{ width: "100%", maxHeight: 180, objectFit: "cover", borderRadius: 8 }}
             />

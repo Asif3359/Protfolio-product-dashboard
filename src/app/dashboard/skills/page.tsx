@@ -31,7 +31,7 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 
-const API_URL = "https://protfolio-product-backend.vercel.app/api/skill";
+const API_URL = "http://localhost:3000/api/skill";
 
 interface Skill {
   _id?: string;
@@ -61,7 +61,7 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
       category: "Programming",
       proficiency: 50,
       description: "",
-      ownerEmail: "", // leave blank, will be set by useEffect
+      ownerEmail: localStorage.getItem("ownerEmail") || "",
     }
   );
   const [loading, setLoading] = useState(false);
@@ -75,23 +75,14 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
 
   useEffect(() => {
     // Only fetch if adding a new skill (not editing)
-    if (!initialData && token) {
-      const fetchOwnerEmail = async () => {
-        try {
-          const res = await fetch("https://protfolio-product-backend.vercel.app/api/admin/profile", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (res.ok) {
-            const data = await res.json();
-            setForm((prev) => ({ ...prev, ownerEmail: data.email || "" }));
-          }
-        } catch {
-          setForm((prev) => ({ ...prev, ownerEmail: "" }));
-        }
-      };
-      fetchOwnerEmail();
+    if (!initialData) {
+      // Get ownerEmail from localStorage
+      const ownerEmail = localStorage.getItem("ownerEmail");
+      if (ownerEmail) {
+        setForm((prev) => ({ ...prev, ownerEmail }));
+      }
     }
-  }, [initialData, token]);
+  }, [initialData]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

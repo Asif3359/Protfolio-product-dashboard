@@ -1,6 +1,6 @@
 export async function getData(dataType: string) {
   try {
-    const baseUrl = 'https://protfolio-product-backend.vercel.app/api';
+    const baseUrl = 'http://localhost:3000/api';
     const response = await fetch(`${baseUrl}/${dataType}`);
     
     if (!response.ok) {
@@ -14,11 +14,11 @@ export async function getData(dataType: string) {
   }
 } 
 
-// https://protfolio-product-backend.vercel.app/api/profile
-// https://protfolio-product-backend.vercel.app/api/academic
-// https://protfolio-product-backend.vercel.app/api/experience
-// https://protfolio-product-backend.vercel.app/api/project
-// https://protfolio-product-backend.vercel.app/api/skill
-// https://protfolio-product-backend.vercel.app/api/award
-// https://protfolio-product-backend.vercel.app/api/certification
-// https://protfolio-product-backend.vercel.app/api/research
+// http://localhost:3000/api/profile
+// http://localhost:3000/api/academic
+// http://localhost:3000/api/experience
+// http://localhost:3000/api/project
+// http://localhost:3000/api/skill
+// http://localhost:3000/api/award
+// http://localhost:3000/api/certification
+// http://localhost:3000/api/research

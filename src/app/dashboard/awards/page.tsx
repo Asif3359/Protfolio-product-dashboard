@@ -34,7 +34,7 @@ function AwardForm({ initialData, onSuccess, onCancel, token }: {
     description: "",
     category: "Academic",
     link: "",
-    ownerEmail: ""
+    ownerEmail: localStorage.getItem("ownerEmail") || ""
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -47,20 +47,14 @@ function AwardForm({ initialData, onSuccess, onCancel, token }: {
         ...initialData,
         date: new Date(initialData.date),
       });
-    } else if (token) {
-      (async () => {
-        try {
-          const res = await fetch("https://protfolio-product-backend.vercel.app/api/admin/profile", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (res.ok) {
-            const data = await res.json();
-            setFormData((prev) => ({ ...prev, ownerEmail: data.email || "" }));
-          }
-        } catch { }
-      })();
+    } else {
+      // Get ownerEmail from localStorage
+      const ownerEmail = localStorage.getItem("ownerEmail");
+      if (ownerEmail) {
+        setFormData((prev) => ({ ...prev, ownerEmail }));
+      }
     }
-  }, [initialData, token]);
+  }, [initialData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -73,8 +67,8 @@ function AwardForm({ initialData, onSuccess, onCancel, token }: {
     setError("");
     try {
       const url = initialData
-        ? `https://protfolio-product-backend.vercel.app/api/award/${initialData._id}`
-        : "https://protfolio-product-backend.vercel.app/api/award";
+        ? `http://localhost:3000/api/award/${initialData._id}`
+        : "http://localhost:3000/api/award";
       const method = initialData ? "PUT" : "POST";
       const body = { ...formData, ownerEmail: formData.ownerEmail };
       const response = await fetch(url, {
@@ -202,7 +196,7 @@ export default function AwardsPage() {
   const fetchAwards = async () => {
     setLoading(true);
     try {
-      const res = await fetch("https://protfolio-product-backend.vercel.app/api/award");
+      const res = await fetch("http://localhost:3000/api/award");
       if (!res.ok) throw new Error("Failed to fetch awards");
       const data = await res.json();
       setAwards(data);
@@ -216,7 +210,7 @@ export default function AwardsPage() {
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this award?")) return;
     try {
-      const res = await fetch(`https://protfolio-product-backend.vercel.app/api/award/${id}`, {
+      const res = await fetch(`http://localhost:3000/api/award/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });

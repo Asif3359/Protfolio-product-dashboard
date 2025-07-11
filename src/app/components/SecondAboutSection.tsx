@@ -49,7 +49,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
 
   const { name, aboutMe, profilePicture, heroTitle, contact, socialMedia } =
     profileData;
-  const profilePic = `https://protfolio-product-backend.vercel.app${profilePicture}`;
+  const profilePic = `http://localhost:3000${profilePicture}`;
 
   return (
     <Box  >
