@@ -148,26 +148,28 @@ function AwardCard({ award, onEdit, onDelete }: {
   onEdit: (a: Award) => void,
   onDelete: (id: string) => void
 }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
-    <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
+    <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2, width: "100%" }}>
       <CardContent>
-        <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1 }}>
+        <Typography variant={isMobile ? "h6" : "h5"} component="div" sx={{ fontWeight: "bold", mb: 1, fontSize: isMobile ? "1.2rem" : "1.5rem" }}>
           {award.title}
         </Typography>
-        <Typography color="primary" gutterBottom sx={{ fontWeight: "medium", mb: 2 }}>
+        <Typography color="primary" gutterBottom sx={{ fontWeight: "medium", mb: 2, fontSize: isMobile ? "1rem" : "1.2rem" }}>
           {award.issuer}
         </Typography>
-        <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
+        <Typography variant="body2" sx={{ mb: 2, color: "text.secondary", fontSize: isMobile ? "0.9rem" : "1rem" }}>
           {new Date(award.date).toLocaleDateString("en-US", { year: "numeric", month: "short" })} • {award.category}
         </Typography>
         {award.description && (
-          <Typography variant="body2" paragraph sx={{ mb: 2 }}>
+          <Typography variant="body2" paragraph sx={{ mb: 2, fontSize: isMobile ? "0.9rem" : "1rem" }}>
             {award.description}
           </Typography>
         )}
         {award.link && (
-          <Typography variant="body2" sx={{ mb: 1 }}>
-            Link: <a href={award.link} target="_blank" rel="noopener noreferrer">{award.link}</a>
+          <Typography variant="body2" sx={{ mb: 1, fontSize: isMobile ? "0.9rem" : "1rem"  }}>
+            Link: <a href={award.link} target="_blank" style={{ wordWrap: "break-word", wordBreak: "break-all", overflowWrap: "break-word" }} rel="noopener noreferrer">{award.link}</a>
           </Typography>
         )}
       </CardContent>

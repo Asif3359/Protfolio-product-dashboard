@@ -516,9 +516,25 @@ export default function ProjectsPage() {
   }, []);
 
   return (
-    <Container maxWidth="md" sx={{ py: 0 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4, flexDirection: { xs: "column", sm: "row" } }}>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: "bold", color: "primary.main", textAlign: { xs: "center", sm: "left" } }}>
+    <Container maxWidth="md" sx={{ py: { xs: 1, sm: 1.5, md: 2 } }}>
+      <Box sx={{ 
+        display: "flex", 
+        justifyContent: "space-between", 
+        alignItems: "center", 
+        mb: { xs: 3, sm: 3.5, md: 4 }, 
+        flexDirection: { xs: "column", sm: "row" },
+        gap: { xs: 2, sm: 0 }
+      }}>
+        <Typography 
+          variant="h4" 
+          component="h1" 
+          sx={{ 
+            fontWeight: "bold", 
+            color: "primary.main", 
+            textAlign: { xs: "center", sm: "left" },
+            fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' }
+          }}
+        >
           Projects
         </Typography>
         <Button
@@ -528,7 +544,11 @@ export default function ProjectsPage() {
             setSelected(null);
             setOpenDialog(true);
           }}
-          sx={{ borderRadius: 2 }}
+          sx={{ 
+            borderRadius: 2,
+            width: { xs: '100%', sm: 'auto' },
+            minWidth: { xs: 'auto', sm: 140, md: 160 }
+          }}
         >
           Add New Project
         </Button>

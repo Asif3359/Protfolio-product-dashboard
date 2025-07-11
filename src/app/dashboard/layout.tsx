@@ -21,6 +21,7 @@ import {
   Divider,
   useMediaQuery,
   CssBaseline,
+  ListItemButton,
 } from "@mui/material";
 import {
   AccountCircle,
@@ -37,21 +38,18 @@ import {
 import Link from "next/link";
 import { useTheme } from "@mui/material/styles";
 import GetProfileName from "../components/GetProfileName";
+import { usePathname } from "next/navigation";
 
 const navItems = [
-  { text: "Profile", icon: <AccountCircle />, href: "/dashboard/profile" },
-  { text: "Experience", icon: <Work />, href: "/dashboard/experience" },
-  { text: "Projects", icon: <Folder />, href: "/dashboard/projects" },
-  { text: "Skills", icon: <Star />, href: "/dashboard/skills" },
-  { text: "Academics", icon: <School />, href: "/dashboard/academics" },
-  {
-    text: "Certifications",
-    icon: <EmojiEvents />,
-    href: "/dashboard/certifications",
-  },
-  { text: "Awards", icon: <EmojiEvents />, href: "/dashboard/awards" },
-  { text: "Research", icon: <Science />, href: "/dashboard/research" },
-  { text: "Home", icon: <Home />, href: "/" },
+  { text: "Profile", icon: <AccountCircle />, href: "/dashboard/profile", color: "#1996b2" },
+  { text: "Experience", icon: <Work />, href: "/dashboard/experience", color: "#388e3c" },
+  { text: "Projects", icon: <Folder />, href: "/dashboard/projects", color: "#7b1fa2" },
+  { text: "Skills", icon: <Star />, href: "/dashboard/skills", color: "#fbc02d" },
+  { text: "Academics", icon: <School />, href: "/dashboard/academics", color: "#0288d1" },
+  { text: "Certifications", icon: <EmojiEvents />, href: "/dashboard/certifications", color: "#ff7043" },
+  { text: "Awards", icon: <EmojiEvents />, href: "/dashboard/awards", color: "#8d6e63" },
+  { text: "Research", icon: <Science />, href: "/dashboard/research", color: "#43a047" },
+  { text: "Home", icon: <Home />, href: "/", color: "#616161" },
 ];
 
 export default function DashboardLayout({
@@ -64,7 +62,8 @@ export default function DashboardLayout({
   const [logoutOpen, setLogoutOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
+  const pathname = usePathname();
   const drawerContent = (
     <>
       <Toolbar sx={{ bgcolor: theme.palette.background.default ,width: '100%' }}>
@@ -73,28 +72,30 @@ export default function DashboardLayout({
       <Divider />
       <List sx={{ py: 0, height: '100%', display: 'flex', flexDirection: 'column' }}>
         {navItems.map((item) => (
-          <ListItem
-            key={item.text}
-            component={Link}
-            href={item.href}
-            onClick={isMobile ? () => setDrawerOpen(false) : undefined}
-            sx={{
-              color: theme.palette.text.secondary,
-              "&:hover": {
-                bgcolor: theme.palette.action.hover,
-                color: theme.palette.primary.main,
-              },
-              "&.Mui-selected": {
-                bgcolor: theme.palette.action.selected,
-                color: theme.palette.primary.main,
-              },
-            }}
-          >
-            <ListItemIcon sx={{ color: "inherit" }}>{item.icon}</ListItemIcon>
-            <ListItemText 
-              primary={item.text} 
-              primaryTypographyProps={{ fontWeight: 500 }} 
-            />
+          <ListItem key={item.text} disablePadding>
+            <ListItemButton
+              component={Link}
+              href={item.href}
+              selected={pathname === item.href}
+              onClick={isMobile ? () => setDrawerOpen(false) : undefined}
+              sx={{
+                color: theme.palette.text.secondary,
+                "&:hover": {
+                  bgcolor: theme.palette.action.hover,
+                  color: theme.palette.primary.main,
+                },
+                "&.Mui-selected": {
+                  bgcolor: theme.palette.action.selected,
+                  color: theme.palette.primary.main,
+                },
+              }}
+            >
+              <ListItemIcon sx={{ color: item.color }}>{item.icon}</ListItemIcon>
+              <ListItemText
+                primary={item.text}
+                primaryTypographyProps={{ fontWeight: 500 }}
+              />
+            </ListItemButton>
           </ListItem>
         ))}
         <Box sx={{ flexGrow: 1 }} />
@@ -145,7 +146,7 @@ export default function DashboardLayout({
           sx={{
             display: { xs: "none", sm: "block" },
             "& .MuiDrawer-paper": {
-              width: 300,
+              width: isTablet ? 280 : 300,
               boxSizing: "border-box",
               borderRight: "none",
               boxShadow: theme.shadows[2],
@@ -190,7 +191,9 @@ export default function DashboardLayout({
                 </IconButton>
               )}
               <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 600 }}>
-                Dashboard
+                {
+                  isMobile ? 'Dashboard' : 'Dashboard'
+                } 
               </Typography>
             </Toolbar>
           </AppBar>

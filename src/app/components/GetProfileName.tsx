@@ -28,7 +28,16 @@ function GetProfileName() {
     <Typography
       variant="h6"
       component="div"
-      sx={{ flexGrow: 1, fontWeight: "bold", color: "primary.main" ,width: '100%' }}
+      sx={{
+        flexGrow: 1,
+        fontWeight: "bold",
+        width: '100%',
+        background: "linear-gradient(90deg,rgb(22, 112, 196) 0%,rgb(102, 25, 153) 100%)",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        backgroundClip: "text",
+        textFillColor: "transparent",
+      }}
     >
       {profile?.name}
     </Typography>

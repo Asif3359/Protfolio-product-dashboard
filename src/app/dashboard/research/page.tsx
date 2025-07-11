@@ -208,39 +208,41 @@ function ResearchCard({ research, onEdit, onDelete }: {
   onEdit: (r: Research) => void,
   onDelete: (id: string) => void
 }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
       <CardContent>
-        <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1 }}>
+        <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1, fontSize: isMobile ? "1.2rem" : "1.5rem" }}>
           {research.title}
         </Typography>
-        <Typography color="primary" gutterBottom sx={{ fontWeight: "medium", mb: 2 }}>
+        <Typography color="primary" gutterBottom sx={{ fontWeight: "medium", mb: 2, fontSize: isMobile ? "1rem" : "1.2rem" }}>
           {research.type}
         </Typography>
-        <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
+        <Typography variant="body2" sx={{ mb: 2, color: "text.secondary", fontSize: isMobile ? "0.9rem" : "1rem" }}>
           {research.publicationDate && new Date(research.publicationDate).toLocaleDateString("en-US", { year: "numeric", month: "short" })} • {research.status}
         </Typography>
-        <Typography variant="body2" sx={{ mb: 2 }}>
+        <Typography variant="body2" sx={{ mb: 2, fontSize: isMobile ? "0.9rem" : "1rem" }}>
           Authors: {(research.authors || []).join(", ")}
         </Typography>
         {research.description && (
-          <Typography variant="body2" paragraph sx={{ mb: 2 }}>
+          <Typography variant="body2" paragraph sx={{ mb: 2, fontSize: isMobile ? "0.9rem" : "1rem" }}>
             {research.description}
           </Typography>
         )}
         {research.journal && (
-          <Typography variant="body2" sx={{ mb: 1 }}>
+          <Typography variant="body2" sx={{ mb: 1, fontSize: isMobile ? "0.9rem" : "1rem" }}>
             Journal: {research.journal}
           </Typography>
         )}
         {research.doi && (
-          <Typography variant="body2" sx={{ mb: 1 }}>
+          <Typography variant="body2" sx={{ mb: 1, fontSize: isMobile ? "0.9rem" : "1rem" }}>
             DOI: {research.doi}
           </Typography>
         )}
         {research.link && (
-          <Typography variant="body2" sx={{ mb: 1 }}>
-            Link: <a href={research.link} target="_blank" rel="noopener noreferrer">{research.link}</a>
+          <Typography variant="body2" sx={{ mb: 1, fontSize: isMobile ? "0.9rem" : "1rem" }}>
+            Link: <a href={research.link} target="_blank" style={{ wordWrap: "break-word", wordBreak: "break-all", overflowWrap: "break-word" }} rel="noopener noreferrer">{research.link}</a>
           </Typography>
         )}
       </CardContent>

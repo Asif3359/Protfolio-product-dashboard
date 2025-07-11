@@ -156,16 +156,10 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}>
         {/* Header */}
         <AppBar position="sticky" elevation={0}>
-          <Toolbar>
-            {/* <Typography
-              variant="h6"
-              component="div"
-              sx={{ flexGrow: 1, fontWeight: 'bold', color: 'primary.main' }}
-            >
-              Portfolio
-            </Typography> */}
+          <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0' }}>
             <GetProfileName></GetProfileName>
-            
+           </Box>
             {/* Desktop Navigation */}
             {!isMobile && (
               <Box sx={{ display: 'flex', gap: 1 }}>

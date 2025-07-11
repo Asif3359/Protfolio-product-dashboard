@@ -1,11 +1,31 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import {
-  Container, Box, Typography, Button, Dialog, DialogTitle, DialogContent,
-  CircularProgress, Alert, AlertTitle, Paper, TextField, Grid,
-  Card, CardContent, CardActions
+  Container,
+  Box,
+  Typography,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  CircularProgress,
+  Alert,
+  AlertTitle,
+  Paper,
+  TextField,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Link,
 } from "@mui/material";
-import { Add as AddIcon, Delete as DeleteIcon, Cancel as CancelIcon, Save as SaveIcon, Edit as EditIcon } from "@mui/icons-material";
+import {
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  Cancel as CancelIcon,
+  Save as SaveIcon,
+  Edit as EditIcon,
+} from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
@@ -22,11 +42,16 @@ type Certification = {
   ownerEmail?: string;
 };
 
-function CertificationForm({ initialData, onSuccess, onCancel, token }: {
-  initialData: Certification | null,
-  onSuccess: () => void,
-  onCancel: () => void,
-  token: string
+function CertificationForm({
+  initialData,
+  onSuccess,
+  onCancel,
+  token,
+}: {
+  initialData: Certification | null;
+  onSuccess: () => void;
+  onCancel: () => void;
+  token: string;
 }) {
   const [formData, setFormData] = useState<Partial<Certification>>({
     title: "",
@@ -36,7 +61,7 @@ function CertificationForm({ initialData, onSuccess, onCancel, token }: {
     credentialId: "",
     credentialUrl: "",
     description: "",
-    ownerEmail: localStorage.getItem("ownerEmail") || ""
+    ownerEmail: localStorage.getItem("ownerEmail") || "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -48,7 +73,9 @@ function CertificationForm({ initialData, onSuccess, onCancel, token }: {
       setFormData({
         ...initialData,
         date: new Date(initialData.date),
-        expiryDate: initialData.expiryDate ? new Date(initialData.expiryDate) : null,
+        expiryDate: initialData.expiryDate
+          ? new Date(initialData.expiryDate)
+          : null,
       });
     } else {
       // Get ownerEmail from localStorage
@@ -83,7 +110,11 @@ function CertificationForm({ initialData, onSuccess, onCancel, token }: {
         body: JSON.stringify(body),
       });
       if (!response.ok) {
-        throw new Error(initialData ? "Failed to update certification" : "Failed to create certification");
+        throw new Error(
+          initialData
+            ? "Failed to update certification"
+            : "Failed to create certification"
+        );
       }
       onSuccess();
     } catch (err) {
@@ -105,37 +136,141 @@ function CertificationForm({ initialData, onSuccess, onCancel, token }: {
         </Alert>
       )}
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={4} style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)", gap: "16px" }}>
+        <Grid
+          container
+          spacing={4}
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)",
+            gap: "16px",
+          }}
+        >
           <Grid container spacing={2}>
-            <TextField fullWidth label="Title" name="title" value={formData.title} onChange={handleChange} required size="small" />
+            <TextField
+              fullWidth
+              label="Title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+              size="small"
+            />
           </Grid>
           <Grid container spacing={2}>
-            <TextField fullWidth label="Issuer" name="issuer" value={formData.issuer} onChange={handleChange} required size="small" />
+            <TextField
+              fullWidth
+              label="Issuer"
+              name="issuer"
+              value={formData.issuer}
+              onChange={handleChange}
+              required
+              size="small"
+            />
           </Grid>
           <Grid container spacing={2}>
-            <TextField fullWidth label="Date" name="date" type="date" value={formData.date ? new Date(formData.date).toISOString().slice(0, 10) : ""} onChange={handleChange} required size="small" InputLabelProps={{ shrink: true }} />
+            <TextField
+              fullWidth
+              label="Date"
+              name="date"
+              type="date"
+              value={
+                formData.date
+                  ? new Date(formData.date).toISOString().slice(0, 10)
+                  : ""
+              }
+              onChange={handleChange}
+              required
+              size="small"
+              InputLabelProps={{ shrink: true }}
+            />
           </Grid>
           <Grid container spacing={2}>
-            <TextField fullWidth label="Expiry Date" name="expiryDate" type="date" value={formData.expiryDate ? new Date(formData.expiryDate).toISOString().slice(0, 10) : ""} onChange={handleChange} size="small" InputLabelProps={{ shrink: true }} />
+            <TextField
+              fullWidth
+              label="Expiry Date"
+              name="expiryDate"
+              type="date"
+              value={
+                formData.expiryDate
+                  ? new Date(formData.expiryDate).toISOString().slice(0, 10)
+                  : ""
+              }
+              onChange={handleChange}
+              size="small"
+              InputLabelProps={{ shrink: true }}
+            />
           </Grid>
           <Grid container spacing={2}>
-            <TextField fullWidth label="Credential ID" name="credentialId" value={formData.credentialId} onChange={handleChange} size="small" />
+            <TextField
+              fullWidth
+              label="Credential ID"
+              name="credentialId"
+              value={formData.credentialId}
+              onChange={handleChange}
+              size="small"
+            />
           </Grid>
           <Grid container spacing={2}>
-            <TextField fullWidth label="Credential URL" name="credentialUrl" value={formData.credentialUrl} onChange={handleChange} size="small" />
+            <TextField
+              fullWidth
+              label="Credential URL"
+              name="credentialUrl"
+              value={formData.credentialUrl}
+              onChange={handleChange}
+              size="small"
+            />
           </Grid>
           <Grid container spacing={2}>
-            <TextField fullWidth label="Description" name="description" value={formData.description} onChange={handleChange} multiline rows={3} size="small" />
+            <TextField
+              fullWidth
+              label="Description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              multiline
+              rows={3}
+              size="small"
+            />
           </Grid>
           <Grid container spacing={2}>
-            <TextField name="ownerEmail" label="Owner Email" value={formData.ownerEmail} onChange={handleChange} fullWidth size="small" disabled />
+            <TextField
+              name="ownerEmail"
+              label="Owner Email"
+              value={formData.ownerEmail}
+              onChange={handleChange}
+              fullWidth
+              size="small"
+              disabled
+            />
           </Grid>
         </Grid>
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4, gap: 2, flexDirection: isMobile ? "column" : "row" }}>
-          <Button onClick={onCancel} variant="outlined" color="secondary" startIcon={<CancelIcon />} disabled={loading} sx={{ px: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            mt: 4,
+            gap: 2,
+            flexDirection: isMobile ? "column" : "row",
+          }}
+        >
+          <Button
+            onClick={onCancel}
+            variant="outlined"
+            color="secondary"
+            startIcon={<CancelIcon />}
+            disabled={loading}
+            sx={{ px: 3 }}
+          >
             Cancel
           </Button>
-          <Button type="submit" variant="contained" color="primary" startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />} disabled={loading} sx={{ px: 3 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />}
+            disabled={loading}
+            sx={{ px: 3 }}
+          >
             {initialData ? "Update" : "Create"} Certification
           </Button>
         </Box>
@@ -143,46 +278,151 @@ function CertificationForm({ initialData, onSuccess, onCancel, token }: {
     </Paper>
   );
 }
-
-function CertificationCard({ certification, onEdit, onDelete }: {
-  certification: Certification,
-  onEdit: (c: Certification) => void,
-  onDelete: (id: string) => void
+function CertificationCard({
+  certification,
+  onEdit,
+  onDelete,
+}: {
+  certification: Certification;
+  onEdit: (c: Certification) => void;
+  onDelete: (id: string) => void;
 }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
-    <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
+    <Card
+      sx={{
+        mb: 3,
+        borderRadius: 2,
+        boxShadow: 2,
+        width: "100%",
+      }}
+    >
       <CardContent>
-        <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1 }}>
-          {certification.title}
-        </Typography>
-        <Typography color="primary" gutterBottom sx={{ fontWeight: "medium", mb: 2 }}>
+        <Box>
+          <Typography
+            variant={isMobile ? "subtitle1" : "h6"}
+            component="div"
+            sx={{
+              fontWeight: "bold",
+              mb: 1,
+              wordBreak: "break-word",
+            }}
+          >
+            {certification.title}
+          </Typography>
+        </Box>
+        <Typography
+          color="primary"
+          gutterBottom
+          sx={{
+            fontWeight: "medium",
+            mb: 2,
+            fontSize: isMobile ? "0.875rem" : "1rem",
+          }}
+        >
           {certification.issuer}
         </Typography>
-        <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
-          {new Date(certification.date).toLocaleDateString("en-US", { year: "numeric", month: "short" })}
-          {certification.expiryDate && ` - Expires: ${new Date(certification.expiryDate).toLocaleDateString("en-US", { year: "numeric", month: "short" })}`}
+        <Typography
+          variant="body2"
+          sx={{
+            mb: 2,
+            color: "text.secondary",
+            fontSize: isMobile ? "0.75rem" : "0.875rem",
+          }}
+        >
+          {new Date(certification.date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+          })}
+          {certification.expiryDate &&
+            ` - Expires: ${new Date(
+              certification.expiryDate
+            ).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+            })}`}
         </Typography>
         {certification.description && (
-          <Typography variant="body2" paragraph sx={{ mb: 2 }}>
+          <Typography
+            variant="body2"
+            paragraph
+            sx={{
+              mb: 2,
+              fontSize: isMobile ? "0.75rem" : "0.875rem",
+              wordBreak: "break-word",
+            }}
+          >
             {certification.description}
           </Typography>
         )}
         {certification.credentialId && (
-          <Typography variant="body2" sx={{ mb: 1 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              mb: 1,
+              fontSize: isMobile ? "0.75rem" : "0.875rem",
+              wordBreak: "break-word",
+            }}
+          >
             Credential ID: {certification.credentialId}
           </Typography>
         )}
         {certification.credentialUrl && (
-          <Typography variant="body2" sx={{ mb: 1 }}>
-            Credential URL: <a href={certification.credentialUrl} target="_blank" rel="noopener noreferrer">{certification.credentialUrl}</a>
+          <Typography
+            variant="body2"
+            sx={{
+              mb: 1,
+              fontSize: isMobile ? "0.75rem" : "0.875rem",
+              wordBreak: "break-word",
+            }}
+          >
+            Credential URL:{" "}
+            <Link
+              href={certification.credentialUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                wordBreak: "break-all",
+                display: "inline-block",
+                maxWidth: isMobile ? "200px" : "none",
+                color: "primary.main",
+              }}
+            >
+              {certification.credentialUrl}
+            </Link>
           </Typography>
         )}
       </CardContent>
-      <CardActions sx={{ justifyContent: "flex-end", p: 2 }}>
-        <Button size="small" startIcon={<EditIcon />} onClick={() => onEdit(certification)} sx={{ color: "primary.main" }}>
+      <CardActions
+        sx={{
+          justifyContent: "flex-end",
+          p: 2,
+          flexDirection: "row",
+          gap: isMobile ? 1 : 2,
+        }}
+      >
+        <Button
+          size={isMobile ? "small" : "medium"}
+          startIcon={<EditIcon fontSize={isMobile ? "small" : "medium"} />}
+          onClick={() => onEdit(certification)}
+          sx={{
+            color: "primary.main",
+            width: isMobile ? "100%" : "auto",
+          }}
+        >
           Edit
         </Button>
-        <Button onClick={() => onDelete(certification._id || "")} size="small" color="error" startIcon={<DeleteIcon />}>
+        <Button
+          onClick={() => onDelete(certification._id || "")}
+          size={isMobile ? "small" : "medium"}
+          color="error"
+          startIcon={<DeleteIcon fontSize={isMobile ? "small" : "medium"} />}
+          sx={{
+            width: isMobile ? "100%" : "auto",
+          }}
+        >
           Delete
         </Button>
       </CardActions>
@@ -203,7 +443,9 @@ export default function CertificationsPage() {
   const fetchCertifications = async () => {
     setLoading(true);
     try {
-      const res = await fetch("https://protfolio-product-backend.vercel.app/api/certification");
+      const res = await fetch(
+        "https://protfolio-product-backend.vercel.app/api/certification"
+      );
       if (!res.ok) throw new Error("Failed to fetch certifications");
       const data = await res.json();
       setCertifications(data);
@@ -215,12 +457,16 @@ export default function CertificationsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this certification?")) return;
+    if (!window.confirm("Are you sure you want to delete this certification?"))
+      return;
     try {
-      const res = await fetch(`https://protfolio-product-backend.vercel.app/api/certification/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await fetch(
+        `https://protfolio-product-backend.vercel.app/api/certification/${id}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (!res.ok) throw new Error("Failed to delete certification");
       fetchCertifications();
     } catch (err) {
@@ -228,16 +474,53 @@ export default function CertificationsPage() {
     }
   };
 
-  useEffect(() => { fetchCertifications(); }, []);
+  useEffect(() => {
+    fetchCertifications();
+  }, []);
 
   return (
-    <Container maxWidth="md" sx={{ py: 0 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4, flexDirection: isMobile ? "column" : "row" }}>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: "bold", color: "primary.main", textAlign: isMobile ? "center" : "left" }}>
+    <Container
+      maxWidth="md"
+      sx={{
+        py: isMobile ? 2 : 4,
+        px: isMobile ? 2 : 3,
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: isMobile ? 3 : 4,
+          flexDirection: isMobile ? "column" : "row",
+          gap: isMobile ? 2 : 0,
+        }}
+      >
+        <Typography
+          variant={isMobile ? "h5" : "h4"}
+          component="h1"
+          sx={{
+            fontWeight: "bold",
+            color: "primary.main",
+            textAlign: isMobile ? "center" : "left",
+            mb: isMobile ? 1 : 0,
+          }}
+        >
           Certifications
         </Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setSelected(null); setOpenDialog(true); }} sx={{ borderRadius: 2 }}>
-          Add New Certification
+        <Button
+          variant="contained"
+          startIcon={<AddIcon fontSize={isMobile ? "small" : "medium"} />}
+          onClick={() => {
+            setSelected(null);
+            setOpenDialog(true);
+          }}
+          sx={{
+            borderRadius: 2,
+            width: isMobile ? "100%" : "auto",
+          }}
+        >
+          Add New
         </Button>
       </Box>
       {error && (
@@ -246,14 +529,32 @@ export default function CertificationsPage() {
           {error}
         </Alert>
       )}
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="md" PaperProps={{ sx: { borderRadius: 2 } }}>
-        <DialogTitle sx={{ fontWeight: "bold", borderBottom: "1px solid", borderColor: "divider", py: 2 }}>
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        fullWidth
+        maxWidth="md"
+        fullScreen={isMobile}
+        PaperProps={{ sx: { borderRadius: isMobile ? 0 : 2 } }}
+      >
+        <DialogTitle
+          sx={{
+            fontWeight: "bold",
+            borderBottom: "1px solid",
+            borderColor: "divider",
+            py: 2,
+            fontSize: isMobile ? "1.25rem" : "1.5rem",
+          }}
+        >
           {selected ? "Edit Certification" : "Add New Certification"}
         </DialogTitle>
-        <DialogContent sx={{ py: 0 }}>
+        <DialogContent sx={{ py: isMobile ? 1 : 3 }}>
           <CertificationForm
             initialData={selected}
-            onSuccess={() => { fetchCertifications(); setOpenDialog(false); }}
+            onSuccess={() => {
+              fetchCertifications();
+              setOpenDialog(false);
+            }}
             onCancel={() => setOpenDialog(false)}
             token={token || ""}
           />
@@ -264,22 +565,58 @@ export default function CertificationsPage() {
           <CircularProgress />
         </Box>
       ) : certifications.length === 0 ? (
-        <Paper elevation={0} sx={{ p: 4, textAlign: "center", borderRadius: 2 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>No certifications found</Typography>
-          <Typography variant="body1" color="text.secondary">
+        <Paper
+          elevation={0}
+          sx={{
+            p: isMobile ? 2 : 4,
+            textAlign: "center",
+            borderRadius: 2,
+            mt: isMobile ? 2 : 4,
+          }}
+        >
+          <Typography variant={isMobile ? "subtitle1" : "h6"} sx={{ mb: 2 }}>
+            No certifications found
+          </Typography>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{
+              fontSize: isMobile ? "0.875rem" : "1rem",
+              mb: isMobile ? 1 : 2,
+            }}
+          >
             Add your first certification to get started!
           </Typography>
-          <Button variant="outlined" startIcon={<AddIcon />} onClick={() => { setSelected(null); setOpenDialog(true); }} sx={{ mt: 3 }}>
+          <Button
+            variant="outlined"
+            startIcon={<AddIcon fontSize={isMobile ? "small" : "medium"} />}
+            onClick={() => {
+              setSelected(null);
+              setOpenDialog(true);
+            }}
+            sx={{
+              mt: 3,
+              width: isMobile ? "100%" : "auto",
+            }}
+          >
             Add Certification
           </Button>
         </Paper>
       ) : (
-        <Box sx={{ "& > *": { mb: 3 } }}>
+        <Box
+          sx={{
+            "& > *": { mb: 3 },
+            mt: isMobile ? 2 : 0,
+          }}
+        >
           {certifications.map((certification) => (
             <CertificationCard
               key={certification._id}
               certification={certification}
-              onEdit={(certification) => { setSelected(certification); setOpenDialog(true); }}
+              onEdit={(certification) => {
+                setSelected(certification);
+                setOpenDialog(true);
+              }}
               onDelete={handleDelete}
             />
           ))}
