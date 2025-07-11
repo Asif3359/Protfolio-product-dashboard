@@ -52,7 +52,7 @@ export default function LoginPage() {
     setError("");
     
     try {
-      const res = await axios.post("http://localhost:3000/api/admin/login", {
+      const res = await axios.post("https://protfolio-product-backend.vercel.app/api/admin/login", {
         username,
         password,
       });
@@ -179,5 +179,5 @@ export default function LoginPage() {
   );
 }
 
-// http://localhost:3000/api/admin/login
-// http://localhost:3000/api/admin/login
+// https://protfolio-product-backend.vercel.app/api/admin/login
+// https://protfolio-product-backend.vercel.app/api/admin/login
