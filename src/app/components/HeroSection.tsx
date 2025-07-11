@@ -85,8 +85,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
     heroPicture,
   } = profileData;
 
-  const heroPic = `https://protfolio-product-backend.vercel.app${heroPicture}`;
-  const profilePic = `https://protfolio-product-backend.vercel.app${profilePicture}`;
+  const heroPic = heroPicture;
+  const profilePic = profilePicture;
 
   // Set image dimensions based on device
 

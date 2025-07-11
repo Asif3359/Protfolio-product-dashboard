@@ -36,7 +36,7 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 
-const API_URL = 'https://protfolio-product-backend.vercel.app/api/experience';
+const API_URL = 'http://localhost:3000/api/experience';
 
 interface Experience {
   _id?: string;
@@ -425,7 +425,7 @@ export default function ExperiencePage() {
   const fetchExperiences = async () => {
     setLoading(true);
     try {
-      const res = await fetch('https://protfolio-product-backend.vercel.app/api/experience');
+      const res = await fetch('http://localhost:3000/api/experience');
       if (!res.ok) throw new Error('Failed to fetch experiences');
       const data: Experience[] = await res.json();
       setExperiences(data);

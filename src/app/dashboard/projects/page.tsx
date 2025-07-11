@@ -37,7 +37,7 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { styled, useTheme } from "@mui/material/styles";
 
-const API_URL = "https://protfolio-product-backend.vercel.app/api/project";
+const API_URL = "http://localhost:3000/api/project";
 
 interface Project {
   _id?: string;
@@ -91,7 +91,7 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
 
   useEffect(() => {
     if (initialData && initialData.image) {
-      setImagePreview(`https://protfolio-product-backend.vercel.app${initialData.image}`);
+      setImagePreview(initialData.image);
     }
   }, [initialData]);
 
@@ -442,7 +442,7 @@ function ProjectCard({ project, onEdit }: { project: Project; onEdit: (p: Projec
         {project.image && (
           <Box sx={{ mt: 2 }}>
             <img
-              src={`https://protfolio-product-backend.vercel.app${project.image}`}
+              src={project.image}
               alt={project.title}
               style={{ width: "100%", maxHeight: 180, objectFit: "cover", borderRadius: 8 }}
             />

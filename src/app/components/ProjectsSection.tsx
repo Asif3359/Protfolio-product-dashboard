@@ -191,7 +191,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         }}
                       >
                         <Image
-                          src={`https://protfolio-product-backend.vercel.app${project.image}`}
+                          src={project.image}
                           alt={project.title}
                           fill
                           style={{ objectFit: "cover" }}

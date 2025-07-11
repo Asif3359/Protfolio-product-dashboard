@@ -120,7 +120,7 @@ export default function ProfilePage() {
   // useEffect(() => {
   //   const fetchOwnerEmail = async () => {
   //     try {
-  //       const res = await axios.get("https://protfolio-product-backend.vercel.app/api/admin/profile", {
+  //       const res = await axios.get("http://localhost:3000/api/admin/profile", {
   //         headers: { Authorization: `Bearer ${token}` }
   //       });
   //       setForm((prev) => ({
@@ -139,7 +139,7 @@ export default function ProfilePage() {
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("https://protfolio-product-backend.vercel.app/api/profile");
+        const res = await axios.get("http://localhost:3000/api/profile");
         setProfile(res.data);
         if (res.data) {
           setForm({
@@ -159,14 +159,14 @@ export default function ProfilePage() {
           if (res.data.profilePicture) {
             setPreview((prev) => ({
               ...prev,
-              profile: `https://protfolio-product-backend.vercel.app${res.data.profilePicture}`,
+              profile: res.data.profilePicture,
             }));
           }
 
           if (res.data.heroPicture) {
             setPreview((prev) => ({
               ...prev,
-              hero: `https://protfolio-product-backend.vercel.app${res.data.heroPicture}`,
+              hero: res.data.heroPicture,
             }));
           }
         }
@@ -263,7 +263,7 @@ export default function ProfilePage() {
       console.log("Submitting profile:", form);
       const res = await axios({
         method,
-        url: "https://protfolio-product-backend.vercel.app/api/profile",
+        url: "http://localhost:3000/api/profile",
         data: formData,
         headers: {
           Authorization: `Bearer ${token}`,
@@ -368,7 +368,7 @@ export default function ProfilePage() {
                       <CardMedia
                         component="img"
                         height="180"
-                        image={preview.hero || `https://protfolio-product-backend.vercel.app${profile?.heroPicture}`}
+                        image={preview.hero || profile?.heroPicture}
                         alt="Hero preview"
                         sx={{ objectFit: 'cover' }}
                       />
@@ -444,7 +444,7 @@ export default function ProfilePage() {
                   </Button>
                   {(preview.profile || profile?.profilePicture) && (
                     <Avatar
-                      src={preview.profile || `https://protfolio-product-backend.vercel.app${profile?.profilePicture}`}
+                      src={preview.profile || profile?.profilePicture}
                       sx={{ 
                         width: 120, 
                         height: 120,

@@ -104,8 +104,8 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
 
     try {
       const url = initialData 
-        ? `https://protfolio-product-backend.vercel.app/api/academic/${initialData._id}` 
-        : 'https://protfolio-product-backend.vercel.app/api/academic';
+        ? `http://localhost:3000/api/academic/${initialData._id}` 
+        : 'http://localhost:3000/api/academic';
       const method = initialData ? 'PUT' : 'POST';
       // Always include ownerEmail
       const body = { ...formData, ownerEmail: formData.ownerEmail };
@@ -382,7 +382,7 @@ export default function AcademicsPage() {
   const fetchAcademics = async () => {
     setLoading(true);
     try {
-      const res = await fetch('https://protfolio-product-backend.vercel.app/api/academic');
+      const res = await fetch('http://localhost:3000/api/academic');
       if (!res.ok) throw new Error('Failed to fetch academics');
       const data = await res.json();
       setAcademics(data);
@@ -397,7 +397,7 @@ export default function AcademicsPage() {
     if (!window.confirm('Are you sure you want to delete this academic record?')) return;
     
     try {
-      const res = await fetch(`https://protfolio-product-backend.vercel.app/api/academic/${id}`, {
+      const res = await fetch(`http://localhost:3000/api/academic/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
