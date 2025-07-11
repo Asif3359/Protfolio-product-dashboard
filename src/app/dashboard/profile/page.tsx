@@ -34,6 +34,7 @@ interface SocialMedia {
 interface Contact {
   email: string;
   mobile: string;
+  cvLink: string;
 }
 
 interface ProfileData {
@@ -100,7 +101,7 @@ export default function ProfilePage() {
     aboutMe: "",
     currentJobTitle: "",
     socialMedia: { facebook: "", twitter: "", linkedin: "", youtube: "" },
-    contact: { email: "", mobile: "" },
+    contact: { email: "", mobile: "", cvLink: "" },
     ownerEmail: localStorage.getItem("ownerEmail") || "",
     heroPicture: "",
     profilePicture: "",
@@ -150,7 +151,11 @@ export default function ProfilePage() {
             aboutMe: res.data.aboutMe || "",
             currentJobTitle: res.data.currentJobTitle || "",
             socialMedia: res.data.socialMedia || { facebook: "", twitter: "", linkedin: "", youtube: "" },
-            contact: res.data.contact || { email: "", mobile: "" },
+            contact: {
+              email: res.data.contact?.email || "",
+              mobile: res.data.contact?.mobile || "",
+              cvLink: res.data.contact?.cvLink || "",
+            },
             ownerEmail: localStorage.getItem("ownerEmail") || "",
             heroPicture: res.data.heroPicture || "",
             profilePicture: res.data.profilePicture || "",
@@ -249,6 +254,7 @@ export default function ProfilePage() {
       formData.append("aboutMe", form.aboutMe);
       formData.append("currentJobTitle", form.currentJobTitle);
       formData.append("ownerEmail", form.ownerEmail);
+      formData.append("cvLink", form.contact.cvLink);
 
       // Append contact and socialMedia as JSON strings
       formData.append("contact", JSON.stringify(form.contact));
@@ -318,7 +324,7 @@ export default function ProfilePage() {
         {/* Hero Section */}
         <SectionPaper elevation={0}>
           <SectionTitle variant="h6">Hero Section</SectionTitle>
-          <Grid container spacing={3}>
+          <Grid container spacing={3} sx={{ width: '100%' ,flexDirection: 'column' }}>
             <Grid container spacing={2}>
               <TextField
                 label="Hero Title"
@@ -388,7 +394,7 @@ export default function ProfilePage() {
         {/* Personal Information */}
         <SectionPaper elevation={0}>
           <SectionTitle variant="h6">Personal Information</SectionTitle>
-          <Grid container spacing={3}>
+          <Grid container spacing={3} sx={{ width: '100%' ,flexDirection: 'column' }}>
             <Grid container spacing={2}>
               <TextField
                 label="Full Name"
@@ -489,7 +495,7 @@ export default function ProfilePage() {
         {/* Contact Information */}
         <SectionPaper elevation={0}>
           <SectionTitle variant="h6">Contact Information</SectionTitle>
-          <Grid container spacing={3}>
+          <Grid container spacing={3} sx={{ width: '100%' ,flexDirection: 'column' }}>
             <Grid container spacing={2}>
               <TextField
                 label="Email"
@@ -515,6 +521,20 @@ export default function ProfilePage() {
                 required
                 variant="outlined"
                 size="small"
+              />
+            </Grid>
+            <Grid container spacing={2}>
+              <TextField
+                label="CV Link"
+                name="contact.cvLink"
+                value={form.contact.cvLink}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                required
+                variant="outlined"
+                size="small"
+                placeholder="https://your-cv-link.com"
               />
             </Grid>
               <Grid container spacing={2}>

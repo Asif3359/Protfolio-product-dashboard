@@ -139,9 +139,10 @@ function FooterSection() {
         <Divider sx={{mt:3}}>
 
         </Divider>
-        <Typography variant="body2" color="text.secondary" align="center" sx={{mt:3}}>
-          © {new Date().getFullYear()} Professional Portfolio. Built with
-          Next.js and Material-UI.
+        <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 3 }}>
+          © {new Date().getFullYear()} Md. Mehedi Hasan Sagar &mdash; Mechanical Engineer.<br />
+          This professional portfolio was crafted with passion using Next.js and Material-UI.<br />
+          All rights reserved.
         </Typography>
       </Container>
     </Box>

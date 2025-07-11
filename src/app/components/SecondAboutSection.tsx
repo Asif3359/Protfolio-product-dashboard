@@ -16,7 +16,9 @@ import {
   Phone,
   LinkedIn,
   Twitter,
-  GitHub,
+  FilePresent,
+  YouTube,
+  Facebook,
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -29,11 +31,13 @@ interface ProfileData {
   contact?: {
     email?: string;
     mobile?: string;
+    cvLink?: string;
   };
   socialMedia?: {
     linkedin?: string;
     twitter?: string;
-    github?: string;
+    facebook?: string;
+    youtube?: string;
   };
 }
 
@@ -75,201 +79,304 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
           >
             {/* Profile Info - Left Side */}
             <Box
-              sx={{
-                width: { xs: "100%", md: 280 },
-                position: { md: "sticky" },
-                top: { md: 120 },
-                flexShrink: 0,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
+            sx={{
+              width: { xs: "100%", md: 280 },
+              position: { md: "sticky" },
+              top: { md: 120 },
+              flexShrink: 0,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true, margin: "-100px" }}
             >
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true, margin: "-100px" }}
+              {/* Profile Image */}
+              <Box
+                sx={{
+                  position: "relative",
+                  width: { xs: 120, sm: 140, md: 160 },
+                  height: { xs: 120, sm: 140, md: 160 },
+                  mx: "auto",
+                  mb: 3,
+                  borderRadius: "50%",
+                  overflow: "hidden",
+                  border: `3px solid ${theme.palette.primary.main}`,
+                  boxShadow: theme.shadows[4],
+                }}
               >
-                {/* Profile Image */}
-                <Box
-                  sx={{
-                    position: "relative",
-                    width: { xs: 120, sm: 140, md: 160 },
-                    height: { xs: 120, sm: 140, md: 160 },
-                    mx: "auto",
-                    mb: 3,
-                    borderRadius: "50%",
-                    overflow: "hidden",
-                    border: `3px solid ${theme.palette.primary.main}`,
-                    boxShadow: theme.shadows[4],
+                <Image
+                  src={profilePic}
+                  alt="Profile"
+                  fill
+                  sizes="(max-width: 600px) 120px, (max-width: 900px) 140px, 160px"
+                  style={{
+                    objectFit: "cover",
+                    objectPosition: "center",
                   }}
-                >
-                  <Image
-                    src={profilePic}
-                    alt="Profile"
-                    fill
-                    sizes="(max-width: 600px) 120px, (max-width: 900px) 140px, 160px"
-                    style={{
-                      objectFit: "cover",
-                      objectPosition: "center",
-                    }}
-                    priority
-                  />
-                </Box>
-
-                {/* Name */}
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontWeight: 700,
-                    mb: 2,
-                    color: theme.palette.primary.contrastText,
-                    fontSize: { xs: "1.25rem", sm: "1.5rem" },
-                    textAlign: "center",
-                    lineHeight: 1.2,
-                  }}
-                >
-                  {name}
-                </Typography>
-                {/* Name */}
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontWeight: 700,
-                    mb: 2,
-                    color: theme.palette.primary.contrastText,
-                    fontSize: { xs: "0.8rem", sm: "1rem" },
-                    textAlign: "center",
-                    lineHeight: 1.2,
-                  }}
-                >
-                  {heroTitle}
-                </Typography>
-
-                <Divider
-                  sx={{
-                    width: "80%",
-                    my: 2,
-                    borderColor: theme.palette.primary.light,
-                    opacity: 0.5,
-                  }}
+                  priority
                 />
+              </Box>
 
-                {/* Contact Info */}
-                <Stack spacing={1.5} sx={{ width: "100%", mb: 3 }}>
-                  {contact?.email && (
-                    <Chip
-                      icon={<Email fontSize="small" />}
-                      label={contact.email}
-                      sx={{
-                        justifyContent: "flex-start",
-                        borderRadius: 2,
-                        bgcolor: "rgba(255,255,255,0.08)",
-                        color: theme.palette.primary.contrastText,
-                        height: 40,
-                        maxWidth: "100%",
+              {/* Name */}
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 700,
+                  mb: 2,
+                  color: theme.palette.primary.contrastText,
+                  fontSize: { xs: "1.25rem", sm: "1.5rem" },
+                  textAlign: "center",
+                  lineHeight: 1.2,
+                }}
+              >
+                {name}
+              </Typography>
+              {/* Name */}
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 700,
+                  mb: 2,
+                  color: theme.palette.primary.contrastText,
+                  fontSize: { xs: "0.8rem", sm: "1rem" },
+                  textAlign: "center",
+                  lineHeight: 1.2,
+                }}
+              >
+                {heroTitle}
+              </Typography>
+
+              <Divider
+                sx={{
+                  width: "100%",
+                  my: 2,
+                  borderColor: theme.palette.primary.light,
+                  opacity: 0.5,
+                }}
+              />
+
+              {/* Contact Info */}
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "grid",
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    sm: "1fr",
+                    md: "1fr",
+                  },
+                  gap: 1,
+                  justifyItems: "center",
+                  alignItems: "center",
+                  mt: 1,
+                }}
+              >
+                {contact?.email && (
+                  <Chip
+                    icon={<Email fontSize="small" />}
+                    label={contact.email}
+                    sx={{
+                      justifyContent: "flex-start",
+                      borderRadius: 2,
+                      bgcolor: "rgba(255,255,255,0.08)",
+                      color: theme.palette.primary.contrastText,
+                      height: 40,
+                      width: "100%",
+                      maxWidth: "100%",
+                      overflow: "hidden",
+                      "& .MuiChip-label": {
                         overflow: "hidden",
-                        "& .MuiChip-label": {
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        },
-                      }}
-                    />
-                  )}
-                  {contact?.mobile && (
-                    <Chip
-                      icon={<Phone fontSize="small" />}
-                      label={contact.mobile}
-                      sx={{
-                        justifyContent: "flex-start",
-                        borderRadius: 2,
-                        bgcolor: "rgba(255,255,255,0.08)",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      },
+                      "& .MuiChip-icon": {
                         color: theme.palette.primary.contrastText,
-                        height: 40,
-                        maxWidth: "100%",
-                      }}
-                    />
-                  )}
-                </Stack>
-
-                {/* Social Links */}
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  justifyContent="center"
-                  sx={{
-                    width: "100%",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  {socialMedia?.linkedin && (
-                    <IconButton
-                      href={socialMedia.linkedin}
-                      target="_blank"
-                      size="medium"
-                      sx={{
-                        bgcolor: "rgba(255,255,255,0.08)",
+                      },
+                    }}
+                  />
+                )}
+                {contact?.mobile && (
+                  <Chip
+                    icon={<Phone fontSize="small" />}
+                    label={contact.mobile}
+                    sx={{
+                      justifyContent: "flex-start",
+                      borderRadius: 2,
+                      bgcolor: "rgba(255,255,255,0.08)",
+                      color: theme.palette.primary.contrastText,
+                      height: 40,
+                      width: "100%",
+                      maxWidth: "100%",
+                      "& .MuiChip-icon": {
                         color: theme.palette.primary.contrastText,
-                        "&:hover": {
-                          bgcolor: theme.palette.primary.light,
-                          color: theme.palette.primary.dark,
-                        },
-                        transition: theme.transitions.create([
-                          "background-color",
-                          "color",
-                        ]),
-                      }}
-                    >
-                      <LinkedIn fontSize="small" />
-                    </IconButton>
-                  )}
-                  {socialMedia?.twitter && (
-                    <IconButton
-                      href={socialMedia.twitter}
-                      target="_blank"
-                      size="medium"
-                      sx={{
-                        bgcolor: "rgba(255,255,255,0.08)",
+                      },
+                    }}
+                  />
+                )}
+                {contact?.cvLink && (
+                  <Chip
+                    component="a"
+                    href={contact.cvLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ cursor: "pointer" }}
+                    icon={<FilePresent fontSize="small" />}
+                    label={
+                      contact.cvLink.length > 50
+                        ? contact.cvLink.slice(0, 40) + "..."
+                        : contact.cvLink
+                    }
+                    sx={{
+                      justifyContent: "flex-start",
+                      borderRadius: 2,
+                      bgcolor: "rgba(255,255,255,0.08)",
+                      color: theme.palette.primary.contrastText,
+                      height: 40,
+                      width: "100%",
+                      maxWidth: "100%",
+                      "& .MuiChip-icon": {
                         color: theme.palette.primary.contrastText,
-                        "&:hover": {
-                          bgcolor: theme.palette.primary.light,
-                          color: theme.palette.primary.dark,
-                        },
-                        transition: theme.transitions.create([
-                          "background-color",
-                          "color",
-                        ]),
-                      }}
-                    >
-                      <Twitter fontSize="small" />
-                    </IconButton>
-                  )}
-                  {socialMedia?.github && (
-                    <IconButton
-                      href={socialMedia.github}
-                      target="_blank"
-                      size="medium"
-                      sx={{
-                        bgcolor: "rgba(255,255,255,0.08)",
+                      },
+                    }}
+                  />
+                )}
+              </Box>
+              <Divider
+                sx={{
+                  width: "100%",
+                  my: 2,
+                  borderColor: theme.palette.primary.light,
+                  opacity: 0.5,
+                }}
+              />
+              {/* Social Links */}
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "grid",
+                  gridTemplateColumns: {
+                    xs: "1fr 1fr 1fr 1fr",
+                    sm: "1fr 1fr 1fr 1fr",
+                    md: "1fr 1fr 1fr 1fr",
+                  },
+                  gap: 1,
+                  justifyItems: "center",
+                  alignItems: "center",
+                  mt: 1,
+                }}
+              >
+                {socialMedia?.linkedin && (
+                  <IconButton
+                    component="a"
+                    href={socialMedia.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ cursor: "pointer" }}
+                    sx={{
+                      bgcolor: "rgba(255,255,255,0.08)",
+                      color: theme.palette.primary.contrastText,
+                      "&:hover": {
+                        bgcolor: theme.palette.primary.light,
+                        color: theme.palette.primary.dark,
+                      },
+                      transition: theme.transitions.create([
+                        "background-color",
+                        "color",
+                      ]),
+                      "& .MuiChip-icon": {
                         color: theme.palette.primary.contrastText,
-                        "&:hover": {
-                          bgcolor: theme.palette.primary.light,
-                          color: theme.palette.primary.dark,
-                        },
-                        transition: theme.transitions.create([
-                          "background-color",
-                          "color",
-                        ]),
-                      }}
-                    >
-                      <GitHub fontSize="small" />
-                    </IconButton>
-                  )}
-                </Stack>
-              </motion.div>
-            </Box>
+                      },
+                    }}
+                  >
+                    <LinkedIn fontSize="small" />
+                  </IconButton>
+                )}
+                {socialMedia?.facebook && (
+                  <IconButton
+                    component="a"
+                    href={socialMedia.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ cursor: "pointer" }}
+                    sx={{
+                      bgcolor: "rgba(255,255,255,0.08)",
+                      color: theme.palette.primary.contrastText,
+                      "&:hover": {
+                        bgcolor: theme.palette.primary.light,
+                        color: theme.palette.primary.dark,
+                      },
+                      transition: theme.transitions.create([
+                        "background-color",
+                        "color",
+                      ]),
+                      "& .MuiChip-icon": {
+                        color: theme.palette.primary.contrastText,
+                      },
+                    }}
+                  >
+                    <Facebook fontSize="small" />
+                  </IconButton>
+                )}
+                {socialMedia?.twitter && (
+                  <IconButton
+                    component="a"
+                    href={socialMedia.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ cursor: "pointer" }}
+                    sx={{
+                      bgcolor: "rgba(255,255,255,0.08)",
+                      color: theme.palette.primary.contrastText,
+                      "&:hover": {
+                        bgcolor: theme.palette.primary.light,
+                        color: theme.palette.primary.dark,
+                      },
+                      transition: theme.transitions.create([
+                        "background-color",
+                        "color",
+                      ]),
+                      "& .MuiChip-icon": {
+                        color: theme.palette.primary.contrastText,
+                      },
+                    }}
+                  >
+                    <Twitter fontSize="small" />
+                  </IconButton>
+                )}
+                {socialMedia?.youtube && (
+                  <IconButton
+                    component="a"
+                    href={socialMedia.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ cursor: "pointer" }}
+                    sx={{
+                      bgcolor: "rgba(255,255,255,0.08)",
+                      color: theme.palette.primary.contrastText,
+                      "&:hover": {
+                        bgcolor: theme.palette.primary.light,
+                        color: theme.palette.primary.dark,
+                      },
+                      transition: theme.transitions.create([
+                        "background-color",
+                        "color",
+                      ]),
+                      "& .MuiChip-icon": {
+                        color: theme.palette.primary.contrastText,
+                      },
+                    }}
+                  >
+                    <YouTube fontSize="small" />
+                  </IconButton>
+                )}
+              </Box>
+            </motion.div>
+          </Box>
             {/* Vertical Divider for desktop */}
             <Divider
               orientation="vertical"

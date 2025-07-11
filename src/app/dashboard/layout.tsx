@@ -67,7 +67,7 @@ export default function DashboardLayout({
 
   const drawerContent = (
     <>
-      <Toolbar sx={{ bgcolor: theme.palette.background.default }}>
+      <Toolbar sx={{ bgcolor: theme.palette.background.default ,width: '100%' }}>
         <GetProfileName></GetProfileName>
       </Toolbar>
       <Divider />
@@ -145,7 +145,7 @@ export default function DashboardLayout({
           sx={{
             display: { xs: "none", sm: "block" },
             "& .MuiDrawer-paper": {
-              width: 240,
+              width: 300,
               boxSizing: "border-box",
               borderRight: "none",
               boxShadow: theme.shadows[2],
@@ -163,8 +163,8 @@ export default function DashboardLayout({
             flexGrow: 1,
             bgcolor: theme.palette.grey[50],
             minHeight: "100vh",
-            ml: { sm: "240px" },
-            width: { sm: "calc(100% - 240px)" },
+            ml: { sm: "300px" },
+            width: { sm: "calc(100% - 300px)" },
           }}
         >
           {/* AppBar */}

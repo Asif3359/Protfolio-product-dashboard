@@ -28,7 +28,7 @@ function GetProfileName() {
     <Typography
       variant="h6"
       component="div"
-      sx={{ flexGrow: 1, fontWeight: "bold", color: "primary.main" }}
+      sx={{ flexGrow: 1, fontWeight: "bold", color: "primary.main" ,width: '100%' }}
     >
       {profile?.name}
     </Typography>

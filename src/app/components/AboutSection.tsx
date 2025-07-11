@@ -6,22 +6,25 @@ import {
   Divider,
   Stack,
   Chip,
-  IconButton,
   useTheme,
   Container,
   Button,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import {
   Email,
   Phone,
   LinkedIn,
   Twitter,
-  GitHub,
   ExpandMore,
+  Facebook,
+  YouTube,
+  InsertDriveFile,
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 interface ProfileData {
   name: string;
@@ -31,11 +34,13 @@ interface ProfileData {
   contact?: {
     email?: string;
     mobile?: string;
+    cvLink?: string;
   };
   socialMedia?: {
     linkedin?: string;
     twitter?: string;
-    github?: string;
+    facebook?: string;
+    youtube?: string;
   };
 }
 
@@ -147,7 +152,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
 
               <Divider
                 sx={{
-                  width: "80%",
+                  width: "100%",
                   my: 2,
                   borderColor: theme.palette.primary.light,
                   opacity: 0.5,
@@ -155,7 +160,21 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
               />
 
               {/* Contact Info */}
-              <Stack spacing={1.5} sx={{ width: "100%", mb: 3 }}>
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "grid",
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    sm: "1fr",
+                    md: "1fr",
+                  },
+                  gap: 1,
+                  justifyItems: "center",
+                  alignItems: "center",
+                  mt: 1,
+                }}
+              >
                 {contact?.email && (
                   <Chip
                     icon={<Email fontSize="small" />}
@@ -166,12 +185,16 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                       bgcolor: "rgba(255,255,255,0.08)",
                       color: theme.palette.primary.contrastText,
                       height: 40,
+                      width: "100%",
                       maxWidth: "100%",
                       overflow: "hidden",
                       "& .MuiChip-label": {
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
+                      },
+                      "& .MuiChip-icon": {
+                        color: theme.palette.primary.contrastText,
                       },
                     }}
                   />
@@ -186,27 +209,72 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                       bgcolor: "rgba(255,255,255,0.08)",
                       color: theme.palette.primary.contrastText,
                       height: 40,
+                      width: "100%",
                       maxWidth: "100%",
+                      "& .MuiChip-icon": {
+                        color: theme.palette.primary.contrastText,
+                      },
                     }}
                   />
                 )}
-              </Stack>
-
-              {/* Social Links */}
-              <Stack
-                direction="row"
-                spacing={1}
-                justifyContent="center"
+                {contact?.cvLink && (
+                  <Tooltip title="CV" arrow>
+                    <Chip
+                      component="a"
+                      href={contact.cvLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ cursor: "pointer" }}
+                      icon={<InsertDriveFile fontSize="small" />}
+                      label={`CV - ${contact.cvLink.slice(0, 30)}...`
+                      }
+                      sx={{
+                        justifyContent: "flex-start",
+                        borderRadius: 2,
+                        bgcolor: "rgba(255,255,255,0.08)",
+                        color: theme.palette.primary.contrastText,
+                        height: 40,
+                        width: "100%",
+                        maxWidth: "100%",
+                        "& .MuiChip-icon": {
+                          color: theme.palette.primary.contrastText,
+                        },
+                      }}
+                    />
+                  </Tooltip>
+                )}
+              </Box>
+              <Divider
                 sx={{
                   width: "100%",
-                  flexWrap: "wrap",
+                  my: 2,
+                  borderColor: theme.palette.primary.light,
+                  opacity: 0.5,
+                }}
+              />
+              {/* Social Links */}
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "grid",
+                  gridTemplateColumns: {
+                    xs: "1fr 1fr 1fr 1fr",
+                    sm: "1fr 1fr 1fr 1fr",
+                    md: "1fr 1fr 1fr 1fr",
+                  },
+                  gap: 1,
+                  justifyItems: "center",
+                  alignItems: "center",
+                  mt: 1,
                 }}
               >
                 {socialMedia?.linkedin && (
                   <IconButton
+                    component="a"
                     href={socialMedia.linkedin}
                     target="_blank"
-                    size="medium"
+                    rel="noopener noreferrer"
+                    style={{ cursor: "pointer" }}
                     sx={{
                       bgcolor: "rgba(255,255,255,0.08)",
                       color: theme.palette.primary.contrastText,
@@ -218,16 +286,21 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                         "background-color",
                         "color",
                       ]),
+                      "& .MuiChip-icon": {
+                        color: theme.palette.primary.contrastText,
+                      },
                     }}
                   >
                     <LinkedIn fontSize="small" />
                   </IconButton>
                 )}
-                {socialMedia?.twitter && (
+                {socialMedia?.facebook && (
                   <IconButton
-                    href={socialMedia.twitter}
+                    component="a"
+                    href={socialMedia.facebook}
                     target="_blank"
-                    size="medium"
+                    rel="noopener noreferrer"
+                    style={{ cursor: "pointer" }}
                     sx={{
                       bgcolor: "rgba(255,255,255,0.08)",
                       color: theme.palette.primary.contrastText,
@@ -239,16 +312,47 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                         "background-color",
                         "color",
                       ]),
+                      "& .MuiChip-icon": {
+                        color: theme.palette.primary.contrastText,
+                      },
+                    }}
+                  >
+                    <Facebook fontSize="small" />
+                  </IconButton>
+                )}
+                {socialMedia?.twitter && (
+                  <IconButton
+                    component="a"
+                    href={socialMedia.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ cursor: "pointer" }}
+                    sx={{
+                      bgcolor: "rgba(255,255,255,0.08)",
+                      color: theme.palette.primary.contrastText,
+                      "&:hover": {
+                        bgcolor: theme.palette.primary.light,
+                        color: theme.palette.primary.dark,
+                      },
+                      transition: theme.transitions.create([
+                        "background-color",
+                        "color",
+                      ]),
+                      "& .MuiChip-icon": {
+                        color: theme.palette.primary.contrastText,
+                      },
                     }}
                   >
                     <Twitter fontSize="small" />
                   </IconButton>
                 )}
-                {socialMedia?.github && (
+                {socialMedia?.youtube && (
                   <IconButton
-                    href={socialMedia.github}
+                    component="a"
+                    href={socialMedia.youtube}
                     target="_blank"
-                    size="medium"
+                    rel="noopener noreferrer"
+                    style={{ cursor: "pointer" }}
                     sx={{
                       bgcolor: "rgba(255,255,255,0.08)",
                       color: theme.palette.primary.contrastText,
@@ -260,12 +364,15 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                         "background-color",
                         "color",
                       ]),
+                      "& .MuiChip-icon": {
+                        color: theme.palette.primary.contrastText,
+                      },
                     }}
                   >
-                    <GitHub fontSize="small" />
+                    <YouTube fontSize="small" />
                   </IconButton>
                 )}
-              </Stack>
+              </Box>
             </motion.div>
           </Box>
           {/* Vertical Divider for desktop */}
@@ -363,7 +470,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                         color: theme.palette.grey[100],
                       }}
                     >
-                     See more
+                      See more
                     </Typography>
                   </Button>
                 </Box>
