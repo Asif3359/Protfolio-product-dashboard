@@ -96,7 +96,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData, secondHeroTitle:
   seeroTitle
   } = secondHeroTitle;
 
-  const heroPic = backgroundImageForProfilePage;
+  const heroPic = backgroundImageForProfilePage || '';
 //   const profilePic = `https://protfolio-product-backend.vercel.app${profilePicture}`;
 
   // Set image dimensions based on device
@@ -118,7 +118,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData, secondHeroTitle:
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundImage: `url(${heroPic})`,
+            backgroundImage: heroPic ? `url(${heroPic})` : 'none',
             backgroundSize: "cover",
             backgroundPosition: "center",
             opacity: 0.2,
