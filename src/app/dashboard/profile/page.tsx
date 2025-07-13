@@ -49,6 +49,14 @@ interface ProfileData {
   ownerEmail: string;
   heroPicture: string;
   profilePicture: string;
+  backgroundImageForProfilePage: string;
+  backgroundImageForExperiencePage: string;
+  backgroundImageForProjectsPage: string;
+  backgroundImageForSkillsPage: string;
+  backgroundImageForEducationPage: string;
+  backgroundImageForResearchPage: string;
+  backgroundImageForAwardsPage: string;
+  backgroundImageForCertificationsPage: string;
 }
 
 const VisuallyHiddenInput = styled("input")({
@@ -105,9 +113,36 @@ export default function ProfilePage() {
     ownerEmail: localStorage.getItem("ownerEmail") || "",
     heroPicture: "",
     profilePicture: "",
+    backgroundImageForProfilePage: "",
+    backgroundImageForExperiencePage: "",
+    backgroundImageForProjectsPage: "",
+    backgroundImageForSkillsPage: "",
+    backgroundImageForEducationPage: "",
+    backgroundImageForResearchPage: "",
+    backgroundImageForAwardsPage: "",
+    backgroundImageForCertificationsPage: "",
   });
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [heroPicture, setHeroPicture] = useState<File | null>(null);
+  const [backgroundImages, setBackgroundImages] = useState<{
+    profile: File | null;
+    experience: File | null;
+    projects: File | null;
+    skills: File | null;
+    education: File | null;
+    research: File | null;
+    awards: File | null;
+    certifications: File | null;
+  }>({
+    profile: null,
+    experience: null,
+    projects: null,
+    skills: null,
+    education: null,
+    research: null,
+    awards: null,
+    certifications: null,
+  });
   const [message, setMessage] = useState<{
     text: string;
     severity: "success" | "error" | "info" | "warning";
@@ -115,6 +150,14 @@ export default function ProfilePage() {
   const [preview, setPreview] = useState({
     profile: "",
     hero: "",
+    backgroundProfile: "",
+    backgroundExperience: "",
+    backgroundProjects: "",
+    backgroundSkills: "",
+    backgroundEducation: "",
+    backgroundResearch: "",
+    backgroundAwards: "",
+    backgroundCertifications: "",
   });
 
   // // Set ownerEmail from localStorage on mount
@@ -159,6 +202,14 @@ export default function ProfilePage() {
             ownerEmail: localStorage.getItem("ownerEmail") || "",
             heroPicture: res.data.heroPicture || "",
             profilePicture: res.data.profilePicture || "",
+            backgroundImageForProfilePage: res.data.backgroundImageForProfilePage || "",
+            backgroundImageForExperiencePage: res.data.backgroundImageForExperiencePage || "",
+            backgroundImageForProjectsPage: res.data.backgroundImageForProjectsPage || "",
+            backgroundImageForSkillsPage: res.data.backgroundImageForSkillsPage || "",
+            backgroundImageForEducationPage: res.data.backgroundImageForEducationPage || "",
+            backgroundImageForResearchPage: res.data.backgroundImageForResearchPage || "",
+            backgroundImageForAwardsPage: res.data.backgroundImageForAwardsPage || "",
+            backgroundImageForCertificationsPage: res.data.backgroundImageForCertificationsPage || "",
           });
 
           if (res.data.profilePicture) {
@@ -172,6 +223,56 @@ export default function ProfilePage() {
             setPreview((prev) => ({
               ...prev,
               hero: res.data.heroPicture,
+            }));
+          }
+
+          // Set background image previews
+          if (res.data.backgroundImageForProfilePage) {
+            setPreview((prev) => ({
+              ...prev,
+              backgroundProfile: res.data.backgroundImageForProfilePage,
+            }));
+          }
+          if (res.data.backgroundImageForExperiencePage) {
+            setPreview((prev) => ({
+              ...prev,
+              backgroundExperience: res.data.backgroundImageForExperiencePage,
+            }));
+          }
+          if (res.data.backgroundImageForProjectsPage) {
+            setPreview((prev) => ({
+              ...prev,
+              backgroundProjects: res.data.backgroundImageForProjectsPage,
+            }));
+          }
+          if (res.data.backgroundImageForSkillsPage) {
+            setPreview((prev) => ({
+              ...prev,
+              backgroundSkills: res.data.backgroundImageForSkillsPage,
+            }));
+          }
+          if (res.data.backgroundImageForEducationPage) {
+            setPreview((prev) => ({
+              ...prev,
+              backgroundEducation: res.data.backgroundImageForEducationPage,
+            }));
+          }
+          if (res.data.backgroundImageForResearchPage) {
+            setPreview((prev) => ({
+              ...prev,
+              backgroundResearch: res.data.backgroundImageForResearchPage,
+            }));
+          }
+          if (res.data.backgroundImageForAwardsPage) {
+            setPreview((prev) => ({
+              ...prev,
+              backgroundAwards: res.data.backgroundImageForAwardsPage,
+            }));
+          }
+          if (res.data.backgroundImageForCertificationsPage) {
+            setPreview((prev) => ({
+              ...prev,
+              backgroundCertifications: res.data.backgroundImageForCertificationsPage,
             }));
           }
         }
@@ -222,6 +323,30 @@ export default function ProfilePage() {
       } else if (e.target.name === "heroPicture") {
         setHeroPicture(file);
         setPreview({ ...preview, hero: reader.result as string });
+      } else if (e.target.name === "backgroundImageForProfilePage") {
+        setBackgroundImages(prev => ({ ...prev, profile: file }));
+        setPreview({ ...preview, backgroundProfile: reader.result as string });
+      } else if (e.target.name === "backgroundImageForExperiencePage") {
+        setBackgroundImages(prev => ({ ...prev, experience: file }));
+        setPreview({ ...preview, backgroundExperience: reader.result as string });
+      } else if (e.target.name === "backgroundImageForProjectsPage") {
+        setBackgroundImages(prev => ({ ...prev, projects: file }));
+        setPreview({ ...preview, backgroundProjects: reader.result as string });
+      } else if (e.target.name === "backgroundImageForSkillsPage") {
+        setBackgroundImages(prev => ({ ...prev, skills: file }));
+        setPreview({ ...preview, backgroundSkills: reader.result as string });
+      } else if (e.target.name === "backgroundImageForEducationPage") {
+        setBackgroundImages(prev => ({ ...prev, education: file }));
+        setPreview({ ...preview, backgroundEducation: reader.result as string });
+      } else if (e.target.name === "backgroundImageForResearchPage") {
+        setBackgroundImages(prev => ({ ...prev, research: file }));
+        setPreview({ ...preview, backgroundResearch: reader.result as string });
+      } else if (e.target.name === "backgroundImageForAwardsPage") {
+        setBackgroundImages(prev => ({ ...prev, awards: file }));
+        setPreview({ ...preview, backgroundAwards: reader.result as string });
+      } else if (e.target.name === "backgroundImageForCertificationsPage") {
+        setBackgroundImages(prev => ({ ...prev, certifications: file }));
+        setPreview({ ...preview, backgroundCertifications: reader.result as string });
       }
     };
 
@@ -263,6 +388,16 @@ export default function ProfilePage() {
       // Append files if they exist
       if (profilePicture) formData.append("profilePicture", profilePicture);
       if (heroPicture) formData.append("heroPicture", heroPicture);
+      
+      // Append background images if they exist
+      if (backgroundImages.profile) formData.append("backgroundImageForProfilePage", backgroundImages.profile);
+      if (backgroundImages.experience) formData.append("backgroundImageForExperiencePage", backgroundImages.experience);
+      if (backgroundImages.projects) formData.append("backgroundImageForProjectsPage", backgroundImages.projects);
+      if (backgroundImages.skills) formData.append("backgroundImageForSkillsPage", backgroundImages.skills);
+      if (backgroundImages.education) formData.append("backgroundImageForEducationPage", backgroundImages.education);
+      if (backgroundImages.research) formData.append("backgroundImageForResearchPage", backgroundImages.research);
+      if (backgroundImages.awards) formData.append("backgroundImageForAwardsPage", backgroundImages.awards);
+      if (backgroundImages.certifications) formData.append("backgroundImageForCertificationsPage", backgroundImages.certifications);
 
       // Use PUT for update, POST for create
       const method = profile ? "put" : "post";
@@ -286,6 +421,16 @@ export default function ProfilePage() {
       // Reset file states after successful upload
       setProfilePicture(null);
       setHeroPicture(null);
+      setBackgroundImages({
+        profile: null,
+        experience: null,
+        projects: null,
+        skills: null,
+        education: null,
+        research: null,
+        awards: null,
+        certifications: null,
+      });
     } catch (error) {
       const err = error as { response?: { data?: { error?: string } } };
       console.error('PUT /api/profile error:', error);
@@ -352,7 +497,7 @@ export default function ProfilePage() {
             </Grid>
             <Grid container spacing={2}>
               <FormControl fullWidth margin="normal">
-                <InputLabel shrink sx={{ mb: 1 }}>Hero Image</InputLabel>
+                <InputLabel shrink sx={{ mb: 1 }}>Home Image</InputLabel>
                 <Stack direction="column" spacing={2} alignItems="flex-start">
                   <Button
                     component="label"
@@ -610,6 +755,317 @@ export default function ProfilePage() {
                 placeholder="https://youtube.com/username"
               />
             </Grid>
+          </Grid>
+        </SectionPaper>
+
+        {/* Background Images */}
+        <SectionPaper elevation={0}>
+          <SectionTitle variant="h6">Background Images for Pages</SectionTitle>
+          <Grid container spacing={3} sx={{ width: '100%' ,flexDirection: 'column' }}>
+            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
+              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
+                <InputLabel shrink sx={{ mb: 1 }}>Profile Page Background</InputLabel>
+                <Stack direction="column" spacing={2} alignItems="flex-center">
+                  <Button
+                    component="label"
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<CloudUpload />}
+                    sx={{ textTransform: 'none' }}
+                  >
+                    Upload Profile Page Background
+                    <VisuallyHiddenInput
+                      type="file"
+                      name="backgroundImageForProfilePage"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                  </Button>
+                  {(preview.backgroundProfile || profile?.backgroundImageForProfilePage) && (
+                    <Card sx={{ width: '100%', borderRadius: 2 }}>
+                      <CardMedia
+                        component="img"
+                        height="120"
+                        image={preview.backgroundProfile || profile?.backgroundImageForProfilePage}
+                        alt="Profile page background preview"
+                        sx={{ objectFit: 'cover' }}
+                      />
+                      <CardContent sx={{ p: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          Profile Page Background
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  )}
+                </Stack>
+              </FormControl>
+            </Box>
+            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
+              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
+                <InputLabel shrink sx={{ mb: 1 }}>Experience Page Background</InputLabel>
+                <Stack direction="column" spacing={2} alignItems="flex-center">
+                  <Button
+                    component="label"
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<CloudUpload />}
+                    sx={{ textTransform: 'none' }}
+                  >
+                    Upload Experience Page Background
+                    <VisuallyHiddenInput
+                      type="file"
+                      name="backgroundImageForExperiencePage"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                  </Button>
+                  {(preview.backgroundExperience || profile?.backgroundImageForExperiencePage) && (
+                    <Card sx={{ width: '100%', borderRadius: 2 }}>
+                      <CardMedia
+                        component="img"
+                        height="120"
+                        image={preview.backgroundExperience || profile?.backgroundImageForExperiencePage}
+                        alt="Experience page background preview"
+                        sx={{ objectFit: 'cover' }}
+                      />
+                      <CardContent sx={{ p: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          Experience Page Background
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  )}
+                </Stack>
+              </FormControl>
+            </Box>
+            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
+              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
+                <InputLabel shrink sx={{ mb: 1 }}>Projects Page Background</InputLabel>
+                <Stack direction="column" spacing={2} alignItems="flex-center">
+                  <Button
+                    component="label"
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<CloudUpload />}
+                    sx={{ textTransform: 'none' }}
+                  >
+                    Upload Projects Page Background
+                    <VisuallyHiddenInput
+                      type="file"
+                      name="backgroundImageForProjectsPage"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                  </Button>
+                  {(preview.backgroundProjects || profile?.backgroundImageForProjectsPage) && (
+                    <Card sx={{ width: '100%', borderRadius: 2 }}>
+                      <CardMedia
+                        component="img"
+                        height="120"
+                        image={preview.backgroundProjects || profile?.backgroundImageForProjectsPage}
+                        alt="Projects page background preview"
+                        sx={{ objectFit: 'cover' }}
+                      />
+                      <CardContent sx={{ p: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          Projects Page Background
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  )}
+                </Stack>
+              </FormControl>
+            </Box>
+            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
+              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
+                <InputLabel shrink sx={{ mb: 1 }}>Skills Page Background</InputLabel>
+                <Stack direction="column" spacing={2} alignItems="flex-center">
+                  <Button
+                    component="label"
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<CloudUpload />}
+                    sx={{ textTransform: 'none' }}
+                  >
+                    Upload Skills Page Background
+                    <VisuallyHiddenInput
+                      type="file"
+                      name="backgroundImageForSkillsPage"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                  </Button>
+                  {(preview.backgroundSkills || profile?.backgroundImageForSkillsPage) && (
+                    <Card sx={{ width: '100%', borderRadius: 2 }}>
+                      <CardMedia
+                        component="img"
+                        height="120"
+                        image={preview.backgroundSkills || profile?.backgroundImageForSkillsPage}
+                        alt="Skills page background preview"
+                        sx={{ objectFit: 'cover' }}
+                      />
+                      <CardContent sx={{ p: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          Skills Page Background
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  )}
+                </Stack>
+              </FormControl>
+            </Box>
+            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
+              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
+                <InputLabel shrink sx={{ mb: 1 }}>Education Page Background</InputLabel>
+                <Stack direction="column" spacing={2} alignItems="flex-center">
+                  <Button
+                    component="label"
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<CloudUpload />}
+                    sx={{ textTransform: 'none' }}
+                  >
+                    Upload Education Page Background
+                    <VisuallyHiddenInput
+                      type="file"
+                      name="backgroundImageForEducationPage"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                  </Button>
+                  {(preview.backgroundEducation || profile?.backgroundImageForEducationPage) && (
+                    <Card sx={{ width: '100%', borderRadius: 2 }}>
+                      <CardMedia
+                        component="img"
+                        height="120"
+                        image={preview.backgroundEducation || profile?.backgroundImageForEducationPage}
+                        alt="Education page background preview"
+                        sx={{ objectFit: 'cover' }}
+                      />
+                      <CardContent sx={{ p: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          Education Page Background
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  )}
+                </Stack>
+              </FormControl>
+              </Box>
+            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
+              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
+                <InputLabel shrink sx={{ mb: 1 }}>Research Page Background</InputLabel>
+                <Stack direction="column" spacing={2} alignItems="flex-center">
+                  <Button
+                    component="label"
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<CloudUpload />}
+                    sx={{ textTransform: 'none' }}
+                  >
+                    Upload Research Page Background
+                    <VisuallyHiddenInput
+                      type="file"
+                      name="backgroundImageForResearchPage"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                  </Button>
+                  {(preview.backgroundResearch || profile?.backgroundImageForResearchPage) && (
+                    <Card sx={{ width: '100%', borderRadius: 2 }}>
+                      <CardMedia
+                        component="img"
+                        height="120"
+                        image={preview.backgroundResearch || profile?.backgroundImageForResearchPage}
+                        alt="Research page background preview"
+                        sx={{ objectFit: 'cover' }}
+                      />
+                      <CardContent sx={{ p: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          Research Page Background
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  )}
+                </Stack>
+              </FormControl>
+            </Box>
+            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
+              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
+                <InputLabel shrink sx={{ mb: 1 }}>Awards Page Background</InputLabel>
+                <Stack direction="column" spacing={2} alignItems="flex-center">
+                  <Button
+                    component="label"
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<CloudUpload />}
+                    sx={{ textTransform: 'none' }}
+                  >
+                    Upload Awards Page Background
+                    <VisuallyHiddenInput
+                      type="file"
+                      name="backgroundImageForAwardsPage"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                  </Button>
+                  {(preview.backgroundAwards || profile?.backgroundImageForAwardsPage) && (
+                    <Card sx={{ width: '100%', borderRadius: 2 }}>
+                      <CardMedia
+                        component="img"
+                        height="120"
+                        image={preview.backgroundAwards || profile?.backgroundImageForAwardsPage}
+                        alt="Awards page background preview"
+                        sx={{ objectFit: 'cover' }}
+                      />
+                      <CardContent sx={{ p: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          Awards Page Background
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  )}
+                </Stack>
+              </FormControl>
+            </Box>
+            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
+              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
+                <InputLabel shrink sx={{ mb: 1 }}>Certifications Page Background</InputLabel>
+                <Stack direction="column" spacing={2} alignItems="flex-center">
+                  <Button
+                    component="label"
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<CloudUpload />}
+                    sx={{ textTransform: 'none' }}
+                  >
+                    Upload Certifications Page Background
+                    <VisuallyHiddenInput
+                      type="file"
+                      name="backgroundImageForCertificationsPage"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                  </Button>
+                  {(preview.backgroundCertifications || profile?.backgroundImageForCertificationsPage) && (
+                    <Card sx={{ width: '100%', borderRadius: 2 }}>
+                      <CardMedia
+                        component="img"
+                        height="120"
+                        image={preview.backgroundCertifications || profile?.backgroundImageForCertificationsPage}
+                        alt="Certifications page background preview"
+                        sx={{ objectFit: 'cover' }}
+                      />
+                      <CardContent sx={{ p: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          Certifications Page Background
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  )}
+                </Stack>
+              </FormControl>
+            </Box>
           </Grid>
         </SectionPaper>
 

@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio - Full Stack Developer",
+  title: "Md. Mehedi Hasan Sagar",
   description: "Professional portfolio showcasing projects, skills, and experience",
 };
 

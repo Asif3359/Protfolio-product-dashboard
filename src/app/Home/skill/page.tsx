@@ -18,7 +18,7 @@ async function SkillPage() {
 
   return (
     <div className="min-h-screen bg-base-100">
-    <HeroSection profileData={profileData} secondHeroTitle={secondHeroTitle}></HeroSection>
+    <HeroSection profileData={profileData} secondHeroTitle={secondHeroTitle} backgroundImageForProfilePage={profileData.backgroundImageForSkillsPage}></HeroSection>
     <SkillsSection skillTitle="Skills" skillTechnical={skillTechnical} isPage={isPage} />
     {/* </Box> */}
   </div>  

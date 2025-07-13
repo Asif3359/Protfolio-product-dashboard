@@ -19,7 +19,7 @@ async function AcademicPage() {
 
   return (
     <div className="min-h-screen bg-base-100">
-    <HeroSection profileData={profileData} secondHeroTitle={secondHeroTitle}></HeroSection>
+    <HeroSection profileData={profileData} secondHeroTitle={secondHeroTitle} backgroundImageForProfilePage={profileData.backgroundImageForEducationPage}></HeroSection>
     <AcademicsSection academicsTitle="Academics" academicsEducations={academicsEducations} isPage={isPage} />
     {/* </Box> */}
   </div>  

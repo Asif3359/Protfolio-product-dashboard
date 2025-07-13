@@ -11,7 +11,7 @@ async function ProfilePage() {
   
   return (
     <div className="min-h-screen bg-base-100">
-      <HeroSection profileData={profileData} secondHeroTitle={secondHeroTitle}></HeroSection>
+      <HeroSection profileData={profileData} secondHeroTitle={secondHeroTitle} backgroundImageForProfilePage={profileData.backgroundImageForProfilePage}></HeroSection>
       {/* <Box className="container mx-auto" sx={{ position: "absolute" }}> */}
         <AboutSection profileData={profileData} />
       {/* </Box> */}

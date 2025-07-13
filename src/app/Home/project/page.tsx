@@ -17,7 +17,7 @@ async function ProjectPage() {
 
   return (
     <div className="min-h-screen bg-base-100">
-    <HeroSection profileData={profileData} secondHeroTitle={secondHeroTitle}></HeroSection>
+    <HeroSection profileData={profileData} secondHeroTitle={secondHeroTitle} backgroundImageForProfilePage={profileData.backgroundImageForProjectsPage}></HeroSection>
     <ProjectsSection projectsDataTitle="Projects" projectsDataList={projectsDataList} isPage={isPage} />
     {/* </Box> */}
   </div>  

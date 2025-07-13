@@ -35,6 +35,7 @@ interface ProfileData {
     email?: string;
     mobile?: string;
   };
+  backgroundImageForProfilePage: string;
   heroPicture: string;
   aboutMe: string;
   ownerEmail: string;
@@ -46,9 +47,10 @@ interface secondHeroTitle{
 interface HeroSectionProps {
   profileData: ProfileData;
   secondHeroTitle:secondHeroTitle;
+  backgroundImageForProfilePage: string;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ profileData, secondHeroTitle:secondHeroTitle }) => {
+const HeroSection: React.FC<HeroSectionProps> = ({ profileData, secondHeroTitle:secondHeroTitle, backgroundImageForProfilePage }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -86,14 +88,15 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData, secondHeroTitle:
     // currentJobTitle,
     // socialMedia,
     // contact,
-    heroPicture,
+    // backgroundImageForProfilePage,
+    // heroPicture,
   } = profileData;
 
   const {
   seeroTitle
   } = secondHeroTitle;
 
-  const heroPic = heroPicture;
+  const heroPic = backgroundImageForProfilePage;
 //   const profilePic = `https://protfolio-product-backend.vercel.app${profilePicture}`;
 
   // Set image dimensions based on device

@@ -19,7 +19,7 @@ async function CertificationPage() {
 
   return (
     <div className="min-h-screen bg-base-100">
-    <HeroSection profileData={profileData} secondHeroTitle={secondHeroTitle}></HeroSection>
+    <HeroSection profileData={profileData} secondHeroTitle={secondHeroTitle} backgroundImageForProfilePage={profileData.backgroundImageForCertificationsPage}></HeroSection>
     <CertificationSection certificationsTitle="Certifications" certificationsList={certificationsList} isPage={isPage} />
     {/* </Box> */}
   </div>  

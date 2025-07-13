@@ -19,7 +19,7 @@ async function AwardPage() {
 
   return (
     <div className="min-h-screen bg-base-100">
-    <HeroSection profileData={profileData} secondHeroTitle={secondHeroTitle}></HeroSection>
+    <HeroSection profileData={profileData} secondHeroTitle={secondHeroTitle} backgroundImageForProfilePage={profileData.backgroundImageForAwardsPage}></HeroSection>
     <AwardsSection title="Awards" list={awardsList} isPage={isPage} />
     {/* </Box> */}
   </div>  
