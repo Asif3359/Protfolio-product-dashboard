@@ -352,6 +352,7 @@ function CertificationCard({
               mb: 2,
               fontSize: isMobile ? "0.75rem" : "0.875rem",
               wordBreak: "break-word",
+              whiteSpace: "pre-line",
             }}
           >
             {certification.description}

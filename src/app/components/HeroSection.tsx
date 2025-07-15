@@ -77,6 +77,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
   const {
     // profilePicture,
     heroTitle,
+    // name,
     heroDescription,
     bestThreeWords,
     currentJobTitle,
@@ -149,7 +150,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
                   component="h1"
                   gutterBottom
                   sx={{
-                    fontWeight: 800,
+                    fontWeight: 500,
                     lineHeight: 1.2,
                     color: theme.palette.primary.dark,
                     textShadow: "1px 1px 2px rgba(0,0,0,0.1)",
@@ -157,6 +158,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
                 >
                   {heroTitle}
                 </Typography>
+
 
                 <Typography
                   variant={isMobile ? "h3" : "h2"}

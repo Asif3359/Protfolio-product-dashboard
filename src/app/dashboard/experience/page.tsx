@@ -354,7 +354,7 @@ function ExperienceCard({ experience, onEdit }: ExperienceCardProps) {
           {experience.isCurrent ? 'Present' : new Date(experience.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
         </Typography>
         
-        <Typography variant="body2" paragraph sx={{ mb: 2 }}>
+        <Typography variant="body2" paragraph sx={{ mb: 2, whiteSpace: "pre-line" , wordBreak: "break-word" }}>
           {experience.description}
         </Typography>
         

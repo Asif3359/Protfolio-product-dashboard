@@ -515,13 +515,13 @@ export default function ProfilePage() {
                     />
                   </Button>
                   {(preview.hero || profile?.heroPicture) && (
-                    <Card sx={{ width: '100%', borderRadius: 2 }}>
+                    <Card sx={{ width: '100%', borderRadius: 2, height: "300px" }}>
                       <CardMedia
                         component="img"
-                        height="180"
+                        height="300"
                         image={preview.hero || profile?.heroPicture}
                         alt="Hero preview"
-                        sx={{ objectFit: 'cover' }}
+                        sx={{ objectFit: 'cover' , height: "300px" }}
                       />
                       <CardContent sx={{ p: 2 }}>
                         <Typography variant="body2" color="text.secondary">
@@ -761,312 +761,149 @@ export default function ProfilePage() {
         {/* Background Images */}
         <SectionPaper elevation={0}>
           <SectionTitle variant="h6">Background Images for Pages</SectionTitle>
-          <Grid container spacing={3} sx={{ width: '100%' ,flexDirection: 'column' }}>
-            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
-              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
-                <InputLabel shrink sx={{ mb: 1 }}>Profile Page Background</InputLabel>
-                <Stack direction="column" spacing={2} alignItems="flex-center">
-                  <Button
-                    component="label"
-                    variant="outlined"
-                    color="secondary"
-                    startIcon={<CloudUpload />}
-                    sx={{ textTransform: 'none' }}
-                  >
-                    Upload Profile Page Background
-                    <VisuallyHiddenInput
-                      type="file"
-                      name="backgroundImageForProfilePage"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                    />
-                  </Button>
-                  {(preview.backgroundProfile || profile?.backgroundImageForProfilePage) && (
-                    <Card sx={{ width: '100%', borderRadius: 2 }}>
-                      <CardMedia
-                        component="img"
-                        height="120"
-                        image={preview.backgroundProfile || profile?.backgroundImageForProfilePage}
-                        alt="Profile page background preview"
-                        sx={{ objectFit: 'cover' }}
+          <Box
+            // container
+            // spacing={2}
+            sx={{
+              width: "100%",
+              flexDirection:'column',
+              alignItems: "flex-center",
+              justifyContent: "flex-center",
+              gap: 2,
+              display: "grid",
+              gridTemplateColumns:{xs:"1fr",sm:"1fr",md:"1fr 1fr"},
+            }}
+          >
+            {[
+              {
+                label: "Profile Page Background",
+                name: "backgroundImageForProfilePage",
+                preview: preview.backgroundProfile,
+                profileImg: profile?.backgroundImageForProfilePage,
+                alt: "Profile page background preview",
+              },
+              {
+                label: "Experience Page Background",
+                name: "backgroundImageForExperiencePage",
+                preview: preview.backgroundExperience,
+                profileImg: profile?.backgroundImageForExperiencePage,
+                alt: "Experience page background preview",
+              },
+              {
+                label: "Projects Page Background",
+                name: "backgroundImageForProjectsPage",
+                preview: preview.backgroundProjects,
+                profileImg: profile?.backgroundImageForProjectsPage,
+                alt: "Projects page background preview",
+              },
+              {
+                label: "Skills Page Background",
+                name: "backgroundImageForSkillsPage",
+                preview: preview.backgroundSkills,
+                profileImg: profile?.backgroundImageForSkillsPage,
+                alt: "Skills page background preview",
+              },
+              {
+                label: "Education Page Background",
+                name: "backgroundImageForEducationPage",
+                preview: preview.backgroundEducation,
+                profileImg: profile?.backgroundImageForEducationPage,
+                alt: "Education page background preview",
+              },
+              {
+                label: "Research Page Background",
+                name: "backgroundImageForResearchPage",
+                preview: preview.backgroundResearch,
+                profileImg: profile?.backgroundImageForResearchPage,
+                alt: "Research page background preview",
+              },
+              {
+                label: "Awards Page Background",
+                name: "backgroundImageForAwardsPage",
+                preview: preview.backgroundAwards,
+                profileImg: profile?.backgroundImageForAwardsPage,
+                alt: "Awards page background preview",
+              },
+              {
+                label: "Certifications Page Background",
+                name: "backgroundImageForCertificationsPage",
+                preview: preview.backgroundCertifications,
+                profileImg: profile?.backgroundImageForCertificationsPage,
+                alt: "Certifications page background preview",
+              },
+            ].map((item) => (
+              <Box
+                key={item.name}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <FormControl fullWidth margin="normal">
+                  {/* <InputLabel shrink sx={{ mb: 1 , fontSize: { xs: "0.8rem", md: "1rem" } }}>
+                    {item.label}
+                  </InputLabel> */}
+                  <Typography variant="h6" sx={{ mb: 1 , fontSize: { xs: "0.8rem", md: "1rem" } }}>{item.label}
+                    
+                  </Typography>
+                  <Stack direction="column" spacing={1} alignItems="center">
+                    <Button
+                      component="label"
+                      variant="outlined"
+                      color="secondary"
+                      startIcon={<CloudUpload />}
+                      sx={{ textTransform: "none", }}
+                    >
+                      Upload
+                      <VisuallyHiddenInput
+                        type="file"
+                        name={item.name}
+                        accept="image/*"
+                        onChange={handleFileChange}
                       />
-                      <CardContent sx={{ p: 2 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Profile Page Background
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  )}
-                </Stack>
-              </FormControl>
-            </Box>
-            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
-              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
-                <InputLabel shrink sx={{ mb: 1 }}>Experience Page Background</InputLabel>
-                <Stack direction="column" spacing={2} alignItems="flex-center">
-                  <Button
-                    component="label"
-                    variant="outlined"
-                    color="secondary"
-                    startIcon={<CloudUpload />}
-                    sx={{ textTransform: 'none' }}
-                  >
-                    Upload Experience Page Background
-                    <VisuallyHiddenInput
-                      type="file"
-                      name="backgroundImageForExperiencePage"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                    />
-                  </Button>
-                  {(preview.backgroundExperience || profile?.backgroundImageForExperiencePage) && (
-                    <Card sx={{ width: '100%', borderRadius: 2 }}>
-                      <CardMedia
-                        component="img"
-                        height="120"
-                        image={preview.backgroundExperience || profile?.backgroundImageForExperiencePage}
-                        alt="Experience page background preview"
-                        sx={{ objectFit: 'cover' }}
-                      />
-                      <CardContent sx={{ p: 2 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Experience Page Background
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  )}
-                </Stack>
-              </FormControl>
-            </Box>
-            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
-              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
-                <InputLabel shrink sx={{ mb: 1 }}>Projects Page Background</InputLabel>
-                <Stack direction="column" spacing={2} alignItems="flex-center">
-                  <Button
-                    component="label"
-                    variant="outlined"
-                    color="secondary"
-                    startIcon={<CloudUpload />}
-                    sx={{ textTransform: 'none' }}
-                  >
-                    Upload Projects Page Background
-                    <VisuallyHiddenInput
-                      type="file"
-                      name="backgroundImageForProjectsPage"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                    />
-                  </Button>
-                  {(preview.backgroundProjects || profile?.backgroundImageForProjectsPage) && (
-                    <Card sx={{ width: '100%', borderRadius: 2 }}>
-                      <CardMedia
-                        component="img"
-                        height="120"
-                        image={preview.backgroundProjects || profile?.backgroundImageForProjectsPage}
-                        alt="Projects page background preview"
-                        sx={{ objectFit: 'cover' }}
-                      />
-                      <CardContent sx={{ p: 2 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Projects Page Background
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  )}
-                </Stack>
-              </FormControl>
-            </Box>
-            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
-              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
-                <InputLabel shrink sx={{ mb: 1 }}>Skills Page Background</InputLabel>
-                <Stack direction="column" spacing={2} alignItems="flex-center">
-                  <Button
-                    component="label"
-                    variant="outlined"
-                    color="secondary"
-                    startIcon={<CloudUpload />}
-                    sx={{ textTransform: 'none' }}
-                  >
-                    Upload Skills Page Background
-                    <VisuallyHiddenInput
-                      type="file"
-                      name="backgroundImageForSkillsPage"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                    />
-                  </Button>
-                  {(preview.backgroundSkills || profile?.backgroundImageForSkillsPage) && (
-                    <Card sx={{ width: '100%', borderRadius: 2 }}>
-                      <CardMedia
-                        component="img"
-                        height="120"
-                        image={preview.backgroundSkills || profile?.backgroundImageForSkillsPage}
-                        alt="Skills page background preview"
-                        sx={{ objectFit: 'cover' }}
-                      />
-                      <CardContent sx={{ p: 2 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Skills Page Background
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  )}
-                </Stack>
-              </FormControl>
-            </Box>
-            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
-              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
-                <InputLabel shrink sx={{ mb: 1 }}>Education Page Background</InputLabel>
-                <Stack direction="column" spacing={2} alignItems="flex-center">
-                  <Button
-                    component="label"
-                    variant="outlined"
-                    color="secondary"
-                    startIcon={<CloudUpload />}
-                    sx={{ textTransform: 'none' }}
-                  >
-                    Upload Education Page Background
-                    <VisuallyHiddenInput
-                      type="file"
-                      name="backgroundImageForEducationPage"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                    />
-                  </Button>
-                  {(preview.backgroundEducation || profile?.backgroundImageForEducationPage) && (
-                    <Card sx={{ width: '100%', borderRadius: 2 }}>
-                      <CardMedia
-                        component="img"
-                        height="120"
-                        image={preview.backgroundEducation || profile?.backgroundImageForEducationPage}
-                        alt="Education page background preview"
-                        sx={{ objectFit: 'cover' }}
-                      />
-                      <CardContent sx={{ p: 2 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Education Page Background
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  )}
-                </Stack>
-              </FormControl>
+                    </Button>
+                    {(item.preview || item.profileImg) && (
+                      <Card
+                        sx={{
+                          width: "100%",
+                          height: 220,
+                          borderRadius: 2,
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          boxShadow: 2,
+                        }}
+                      >
+                        <CardMedia
+                          component="img"
+                          image={item.preview || item.profileImg}
+                          alt={item.alt}
+                          sx={{
+                            width: "100%",
+                            height: "200px",
+                            objectFit: "cover",
+                            borderRadius: 2,
+                          }}
+                        />
+                        <CardContent>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            align="center"
+                          >
+                            {item.label}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </Stack>
+                </FormControl>
               </Box>
-            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
-              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
-                <InputLabel shrink sx={{ mb: 1 }}>Research Page Background</InputLabel>
-                <Stack direction="column" spacing={2} alignItems="flex-center">
-                  <Button
-                    component="label"
-                    variant="outlined"
-                    color="secondary"
-                    startIcon={<CloudUpload />}
-                    sx={{ textTransform: 'none' }}
-                  >
-                    Upload Research Page Background
-                    <VisuallyHiddenInput
-                      type="file"
-                      name="backgroundImageForResearchPage"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                    />
-                  </Button>
-                  {(preview.backgroundResearch || profile?.backgroundImageForResearchPage) && (
-                    <Card sx={{ width: '100%', borderRadius: 2 }}>
-                      <CardMedia
-                        component="img"
-                        height="120"
-                        image={preview.backgroundResearch || profile?.backgroundImageForResearchPage}
-                        alt="Research page background preview"
-                        sx={{ objectFit: 'cover' }}
-                      />
-                      <CardContent sx={{ p: 2 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Research Page Background
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  )}
-                </Stack>
-              </FormControl>
-            </Box>
-            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
-              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
-                <InputLabel shrink sx={{ mb: 1 }}>Awards Page Background</InputLabel>
-                <Stack direction="column" spacing={2} alignItems="flex-center">
-                  <Button
-                    component="label"
-                    variant="outlined"
-                    color="secondary"
-                    startIcon={<CloudUpload />}
-                    sx={{ textTransform: 'none' }}
-                  >
-                    Upload Awards Page Background
-                    <VisuallyHiddenInput
-                      type="file"
-                      name="backgroundImageForAwardsPage"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                    />
-                  </Button>
-                  {(preview.backgroundAwards || profile?.backgroundImageForAwardsPage) && (
-                    <Card sx={{ width: '100%', borderRadius: 2 }}>
-                      <CardMedia
-                        component="img"
-                        height="120"
-                        image={preview.backgroundAwards || profile?.backgroundImageForAwardsPage}
-                        alt="Awards page background preview"
-                        sx={{ objectFit: 'cover' }}
-                      />
-                      <CardContent sx={{ p: 2 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Awards Page Background
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  )}
-                </Stack>
-              </FormControl>
-            </Box>
-            <Box sx={{ width: '100%' ,display: 'flex' ,flexDirection: 'column' ,gap: 2 }}>
-              <FormControl fullWidth margin="normal" sx={{ width: '100%' }}>
-                <InputLabel shrink sx={{ mb: 1 }}>Certifications Page Background</InputLabel>
-                <Stack direction="column" spacing={2} alignItems="flex-center">
-                  <Button
-                    component="label"
-                    variant="outlined"
-                    color="secondary"
-                    startIcon={<CloudUpload />}
-                    sx={{ textTransform: 'none' }}
-                  >
-                    Upload Certifications Page Background
-                    <VisuallyHiddenInput
-                      type="file"
-                      name="backgroundImageForCertificationsPage"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                    />
-                  </Button>
-                  {(preview.backgroundCertifications || profile?.backgroundImageForCertificationsPage) && (
-                    <Card sx={{ width: '100%', borderRadius: 2 }}>
-                      <CardMedia
-                        component="img"
-                        height="120"
-                        image={preview.backgroundCertifications || profile?.backgroundImageForCertificationsPage}
-                        alt="Certifications page background preview"
-                        sx={{ objectFit: 'cover' }}
-                      />
-                      <CardContent sx={{ p: 2 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Certifications Page Background
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  )}
-                </Stack>
-              </FormControl>
-            </Box>
-          </Grid>
+            ))}
+          </Box>
         </SectionPaper>
 
         {/* Submit Button */}

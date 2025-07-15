@@ -331,7 +331,7 @@ function AcademicCard({ academic, onEdit, onDelete }: {
           {academic.gpa && ` • GPA: ${academic.gpa}/4.0`}
         </Typography>
         {academic.description && (
-          <Typography variant="body2" paragraph sx={{ mb: 2 }}>
+          <Typography variant="body2" paragraph sx={{ mb: 2, whiteSpace: "pre-line" , wordBreak: "break-word" }}>
             {academic.description}
           </Typography>
         )}

@@ -137,7 +137,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                 {name}
               </Typography>
               {/* Name */}
-              <Typography
+              {/* <Typography
                 variant="h5"
                 sx={{
                   fontWeight: 700,
@@ -149,7 +149,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                 }}
               >
                 {heroTitle}
-              </Typography>
+              </Typography> */}
 
               <Divider
                 sx={{
@@ -226,11 +226,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                     rel="noopener noreferrer"
                     style={{ cursor: "pointer" }}
                     icon={<FilePresent fontSize="small" />}
-                    label={
-                      contact.cvLink.length > 50
-                        ? contact.cvLink.slice(0, 40) + "..."
-                        : contact.cvLink
-                    }
+                    label="View my CV"
                     sx={{
                       justifyContent: "flex-start",
                       borderRadius: 2,
@@ -448,6 +444,8 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                           "&:last-child": {
                             mb: 0,
                           },
+                          whiteSpace: "pre-line",
+                          wordBreak: "break-word",
                         }}
                       >
                         {paragraph}

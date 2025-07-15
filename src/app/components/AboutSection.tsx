@@ -136,7 +136,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                 {name}
               </Typography>
               {/* Name */}
-              <Typography
+              {/* <Typography
                 variant="h5"
                 sx={{
                   fontWeight: 700,
@@ -148,7 +148,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                 }}
               >
                 {heroTitle}
-              </Typography>
+              </Typography> */}
 
               <Divider
                 sx={{
@@ -226,8 +226,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                       rel="noopener noreferrer"
                       style={{ cursor: "pointer" }}
                       icon={<InsertDriveFile fontSize="small" />}
-                      label={`CV - ${contact.cvLink.slice(0, 30)}...`
-                      }
+                      label="View my CV"
                       sx={{
                         justifyContent: "flex-start",
                         borderRadius: 2,
@@ -446,6 +445,8 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                         "&:last-child": {
                           mb: 0,
                         },
+                        whiteSpace: "pre-line",
+                        wordBreak: "break-word",
                       }}
                     >
                       {paragraph}

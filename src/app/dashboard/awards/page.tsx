@@ -163,7 +163,7 @@ function AwardCard({ award, onEdit, onDelete }: {
           {new Date(award.date).toLocaleDateString("en-US", { year: "numeric", month: "short" })} • {award.category}
         </Typography>
         {award.description && (
-          <Typography variant="body2" paragraph sx={{ mb: 2, fontSize: isMobile ? "0.9rem" : "1rem" }}>
+          <Typography variant="body2" paragraph sx={{ mb: 2, fontSize: isMobile ? "0.9rem" : "1rem", whiteSpace: "pre-line" , wordBreak: "break-word" }}>
             {award.description}
           </Typography>
         )}

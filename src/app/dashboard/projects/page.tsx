@@ -419,7 +419,7 @@ function ProjectCard({ project, onEdit }: { project: Project; onEdit: (p: Projec
         <Typography color="primary" gutterBottom sx={{ fontWeight: "medium", mb: 2 }}>
           {project.status} • {new Date(project.startDate).toLocaleDateString()} {project.endDate ? `- ${new Date(project.endDate).toLocaleDateString()}` : ""}
         </Typography>
-        <Typography variant="body2" paragraph sx={{ mb: 2 }}>
+        <Typography variant="body2" paragraph sx={{ mb: 2 , whiteSpace: "pre-line" , wordBreak: "break-word" }}>
           {project.description}
         </Typography>
         {project.technologies.length > 0 && (

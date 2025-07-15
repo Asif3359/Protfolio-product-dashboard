@@ -36,7 +36,6 @@ const ResearchSection: React.FC<ResearchSectionProps> = ({ researchDataTitle, re
   const [expandedResearch, setExpandedResearch] = useState<string | null>(null);
   const theme = useTheme();
   const router = useRouter();
-
   if (!researchList?.length) {
     return null;
   }
@@ -55,6 +54,11 @@ const ResearchSection: React.FC<ResearchSectionProps> = ({ researchDataTitle, re
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
   };
+
+  // Determine grid columns: 1 if only one item, 2 otherwise
+  const gridColumns = visibleResearch.length === 1
+    ? { xs: '1fr' }
+    : { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)', lg: 'repeat(2, 1fr)' };
 
   return (
     <Box component="section" sx={{ py: { xs: 2, md: 4 }, backgroundColor: theme.palette.background.default }}>
@@ -90,12 +94,7 @@ const ResearchSection: React.FC<ResearchSectionProps> = ({ researchDataTitle, re
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "repeat(2, 1fr)",
-                md: "repeat(2, 1fr)",
-                lg: "repeat(2, 1fr)",
-              },
+              gridTemplateColumns: gridColumns,
               gap: { xs: 3, sm: 4, md: 4 },
               width: "100%",
             }}
@@ -183,12 +182,17 @@ const ResearchSection: React.FC<ResearchSectionProps> = ({ researchDataTitle, re
                       fontSize: { xs: '0.9rem', sm: '1rem' },
                     }}
                   >
-                    {expandedResearch === research._id ? research.description : truncate(research.description, 180)}
+                    {research.description.slice(0, 160)}...
                   </Typography>
 
                   {research.description.length > 180 && (
                     <Button
-                      onClick={() => setExpandedResearch(expandedResearch === research._id ? null : research._id)}
+                      // onClick={() => setExpandedResearch(expandedResearch === research._id ? null : research._id)}
+                      onClick={() => {
+                        console.log("clicked");
+                        router.push(`/Home/research/${research._id}`)
+                      }}
+
                       size="small"
                       sx={{ 
                         alignSelf: 'flex-start', 

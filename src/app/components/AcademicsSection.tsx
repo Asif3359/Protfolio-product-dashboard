@@ -234,6 +234,8 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                       mb: 3,
                       flexGrow: 1,
                       fontSize: { xs: "0.9rem", sm: "1rem" },
+                      whiteSpace: "pre-line",
+                      wordBreak: "break-word",
                     }}
                   >
                     {education.description}

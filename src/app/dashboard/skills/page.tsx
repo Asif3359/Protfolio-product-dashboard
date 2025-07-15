@@ -244,7 +244,7 @@ function SkillCard({ skill, onEdit }: { skill: Skill; onEdit: (s: Skill) => void
           {skill.category} • Proficiency: {skill.proficiency}
         </Typography>
         {skill.description && (
-          <Typography variant="body2" paragraph sx={{ mb: 2 }}>
+          <Typography variant="body2" paragraph sx={{ mb: 2 , whiteSpace: "pre-line" , wordBreak: "break-word" }}>
             {skill.description}
           </Typography>
         )}

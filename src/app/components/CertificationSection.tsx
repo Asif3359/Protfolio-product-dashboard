@@ -42,6 +42,13 @@ const CertificationSection: React.FC<CertificationSectionProps> = ({
   const visibleCerts = isPage.isItPage ? certificationsList : certificationsList.slice(0, 2); // Show only 2 by default
   const hasMore = certificationsList.length > 2;
 
+  // Determine grid columns: 1 if only one item, 2 otherwise
+  const gridColumns = visibleCerts.length === 1
+    ? '1fr'
+    : isMobile
+      ? 'repeat(1, 1fr)'
+      : { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)', lg: 'repeat(2, 1fr)' };
+
   const toggleExpand = (certId: string) => {
     setExpandedCert(expandedCert === certId ? null : certId);
   };
@@ -93,7 +100,7 @@ const CertificationSection: React.FC<CertificationSectionProps> = ({
             )
           }
 
-          <Grid container spacing={4} sx={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(2, 1fr)', gap: 4 }}>
+          <Grid container spacing={4} sx={{ display: 'grid', gridTemplateColumns: gridColumns, gap: 4 }}>
             {visibleCerts.map((cert, index) => (
               <Grid
                 key={cert._id}
@@ -214,7 +221,9 @@ const CertificationSection: React.FC<CertificationSectionProps> = ({
                     {/* Read More Button */}
                     {cert.description && cert.description.length > 120 && (
                       <Button
-                        onClick={() => toggleExpand(cert._id)}
+                        onClick={() => {
+                          router.push(`/Home/certification/${cert._id}`);
+                        }}
                         size="small"
                         sx={{
                           alignSelf: 'flex-start',

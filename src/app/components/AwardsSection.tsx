@@ -44,6 +44,13 @@ const AwardsSection: React.FC<AwardsSectionProps> = ({ title, list, isPage }) =>
   const visibleAwards = showAll ? list : isPage.isItPage ? list : list.slice(0, 2);
   const hasMore = list.length > 2;
 
+  // Determine grid columns: 1 if only one item, 2 otherwise
+  const gridColumns = visibleAwards.length === 1
+    ? '1fr'
+    : isMobile
+      ? 'repeat(1, 1fr)'
+      : { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)', lg: 'repeat(2, 1fr)' };
+
   return (
     <Box component="section" sx={{ py: { xs: 2, md: 4 }, backgroundColor: theme.palette.background.default }}>
       <Container maxWidth="xl" sx={{ maxWidth: '1200px' }}>
@@ -58,17 +65,17 @@ const AwardsSection: React.FC<AwardsSectionProps> = ({ title, list, isPage }) =>
               <></>
             ) : (
               <Typography
-              variant="h3"
-              sx={{
-                fontWeight: 700,
-                mb: 4,
-                color: theme.palette.text.primary,
-                fontSize: { xs: '1.8rem', md: '2.2rem' },
-                textAlign: 'center',
-              }}
-            >
-              {title}
-            </Typography>
+                variant="h3"
+                sx={{
+                  fontWeight: 700,
+                  mb: 4,
+                  color: theme.palette.text.primary,
+                  fontSize: { xs: '1.8rem', md: '2.2rem' },
+                  textAlign: 'center',
+                }}
+              >
+                {title}
+              </Typography>
             )
           }
 
@@ -80,7 +87,7 @@ const AwardsSection: React.FC<AwardsSectionProps> = ({ title, list, isPage }) =>
             )
           }
 
-          <Grid container spacing={4} sx={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(2, 1fr)', gap: 4 }}>
+            <Grid container spacing={4} sx={{ display: 'grid', gridTemplateColumns: gridColumns, gap: 4 }}>
             {visibleAwards.map((award, index) => (
               <Grid key={award._id} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <motion.div
@@ -141,25 +148,26 @@ const AwardsSection: React.FC<AwardsSectionProps> = ({ title, list, isPage }) =>
                         overflow: 'hidden',
                       }}
                     >
-                      {expandedAward === award._id ? award.description : truncate(award.description, 180)}
+                      {award.description.slice(0, 160)}
                     </Typography>
-                    {award.description.length > 180 && (
-                      <Button
-                        onClick={() => setExpandedAward(expandedAward === award._id ? null : award._id)}
-                        size="small"
-                        sx={{ alignSelf: 'flex-start', px: 1, minWidth: 0, color: theme.palette.primary.main, mb: 2, '&:hover': { background: 'none' } }}
-                      >
-                        {expandedAward === award._id ? (
-                          <>
-                            Show less <ExpandLess sx={{ ml: 0.5 }} />
-                          </>
-                        ) : (
-                          <>
-                            Read more <ExpandMore sx={{ ml: 0.5 }} />
-                          </>
-                        )}
-                      </Button>
-                    )}
+
+                    <Button
+                      onClick={() => {
+                        router.push(`/Home/award/${award._id}`);
+                      }}
+                      size="small"
+                      sx={{ alignSelf: 'flex-start', px: 1, minWidth: 0, color: theme.palette.primary.main, mb: 2, '&:hover': { background: 'none' } }}
+                    >
+                      {expandedAward === award._id ? (
+                        <>
+                          Show less <ExpandLess sx={{ ml: 0.5 }} />
+                        </>
+                      ) : (
+                        <>
+                          Read more <ExpandMore sx={{ ml: 0.5 }} />
+                        </>
+                      )}
+                    </Button>
 
                     {/* Award Link */}
                     {award.link && (

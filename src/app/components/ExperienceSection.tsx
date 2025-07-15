@@ -70,7 +70,7 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
   const showAll = false; // always show only first 2 for now
   const visibleExperiences = showAll
     ? experienceJobs
-    : isItPage? experienceJobs : experienceJobs.slice(0, 2);
+    : isItPage ? experienceJobs : experienceJobs.slice(0, 2);
   const hasMore = experienceJobs.length > 2;
 
   return (
@@ -105,9 +105,9 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
             </Typography>
           )}
 
-         {
-          isItPage? <></>: <Divider sx={{ mb: 6, borderColor: theme.palette.divider }} />
-         }
+          {
+            isItPage ? <></> : <Divider sx={{ mb: 6, borderColor: theme.palette.divider }} />
+          }
 
           <Grid
             container
@@ -223,11 +223,11 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                               {job.isCurrent
                                 ? "Present"
                                 : job.endDate
-                                ? new Date(job.endDate).toLocaleDateString(
+                                  ? new Date(job.endDate).toLocaleDateString(
                                     "en-US",
                                     { year: "numeric", month: "short" }
                                   )
-                                : "Present"}
+                                  : "Present"}
                             </Typography>
                           </Box>
                           <Box
@@ -257,40 +257,15 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                         WebkitLineClamp: expandedJob === job._id ? "unset" : 3,
                         WebkitBoxOrient: "vertical",
                         overflow: "hidden",
+                        whiteSpace: "pre-line",
+                        wordBreak: "break-word",
                       }}
                     >
                       {expandedJob === job._id
                         ? job.description
-                        : truncate(job.description, 180)}
+                        : truncate(job.description, 160)}
                     </Typography>
-                    {job.description.length > 180 && (
-                      <Button
-                        onClick={() =>
-                          setExpandedJob(
-                            expandedJob === job._id ? null : job._id
-                          )
-                        }
-                        size="small"
-                        sx={{
-                          alignSelf: "flex-start",
-                          px: 1,
-                          minWidth: 0,
-                          color: theme.palette.primary.main,
-                          mb: 2,
-                          "&:hover": { background: "none" },
-                        }}
-                      >
-                        {expandedJob === job._id ? (
-                          <>
-                            Show less <ExpandLess sx={{ ml: 0.5 }} />
-                          </>
-                        ) : (
-                          <>
-                            Read more <ExpandMore sx={{ ml: 0.5 }} />
-                          </>
-                        )}
-                      </Button>
-                    )}
+
 
                     {/* Responsibilities */}
                     {job.responsibilities &&
@@ -310,7 +285,7 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                             component="ul"
                             sx={{ m: 0, p: 0, pl: 2, listStyleType: "none" }}
                           >
-                            {job.responsibilities.map((responsibility, i) => (
+                            {job.responsibilities.slice(0, 2).map((responsibility, i) => (
                               <Box
                                 component="li"
                                 key={i}
@@ -332,6 +307,10 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                                   sx={{
                                     color: theme.palette.text.secondary,
                                     lineHeight: 1.6,
+                                    // width: "100%",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
                                   }}
                                 >
                                   {responsibility}
@@ -359,7 +338,7 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                           component="ul"
                           sx={{ m: 0, p: 0, pl: 2, listStyleType: "none" }}
                         >
-                          {job.achievements.map((achievement, i) => (
+                          {job.achievements.slice(0, 2).map((achievement, i) => (
                             <Box
                               component="li"
                               key={i}
@@ -381,6 +360,10 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                                 sx={{
                                   color: theme.palette.text.secondary,
                                   lineHeight: 1.6,
+                                  width: "100%",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
                                 }}
                               >
                                 {achievement}
@@ -404,22 +387,73 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                         >
                           Technologies Used:
                         </Typography>
-                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                          {job.technologies.map((tech, i) => (
-                            <Chip
+                        <Box
+                          component="ul"
+                          sx={{ m: 0, p: 0, pl: 2, listStyleType: "none" }}
+                        >
+                          {job.technologies.slice(0, 2).map((tech, i) => (
+                            <Box
+                              component="li"
                               key={i}
-                              label={tech}
-                              size="small"
-                              variant="outlined"
                               sx={{
-                                borderColor: theme.palette.divider,
-                                color: theme.palette.text.secondary,
+                                display: "flex",
+                                alignItems: "center",
+                                mb: 1,
+                                "&:before": {
+                                  content: '"•"',
+                                  color: theme.palette.primary.main,
+                                  mr: 1,
+                                  fontSize: "1.2rem",
+                                  lineHeight: 1,
+                                },
                               }}
-                            />
+                            >
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: theme.palette.text.secondary,
+                                  lineHeight: 1.6,
+                                  width: "100%",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                {tech}
+                              </Typography>
+                            </Box>
                           ))}
                         </Box>
                       </Box>
                     )}
+
+                    <Button
+                      onClick={() =>
+                        // setExpandedJob(
+                        //   expandedJob === job._id ? null : job._id
+                        // )
+                        router.push(`/Home/experience/${job._id}`)
+                      }
+                      size="small"
+                      sx={{
+                        alignSelf: "flex-start",
+                        px: 1,
+                        minWidth: 0,
+                        color: theme.palette.primary.main,
+                        mb: 2,
+                        "&:hover": { background: "none" },
+                      }}
+                    >
+                      {expandedJob === job._id ? (
+                        <>
+                          Show less <ExpandLess sx={{ ml: 0.5 }} />
+                        </>
+                      ) : (
+                        <>
+                          Read more <ExpandMore sx={{ ml: 0.5 }} />
+                        </>
+                      )}
+                    </Button>
 
                     {/* Owner Email (optional) */}
                     {job.ownerEmail && (

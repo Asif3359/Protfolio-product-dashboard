@@ -232,6 +232,8 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
                             sx={{
                               lineHeight: 1.6,
                               fontSize: { xs: "0.8rem", md: "0.9rem" },
+                              whiteSpace: "pre-line",
+                              wordBreak: "break-word",
                             }}
                           >
                             {skill.description}

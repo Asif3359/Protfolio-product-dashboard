@@ -272,44 +272,14 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         lineHeight: 1.7,
                         mb: 2,
                         display: "-webkit-box",
-                        WebkitLineClamp:
-                          expandedProject === project._id ? "unset" : 3,
+                        WebkitLineClamp: 3,
                         WebkitBoxOrient: "vertical",
                         overflow: "hidden",
                       }}
                     >
-                      {project.description}
+                      {project.description.slice(0, 160)}...
                     </Typography>
-
-                    {/* Read More Button */}
-                    <Button
-                      onClick={() => toggleExpand(project._id)}
-                      size="small"
-                      sx={{
-                        alignSelf: "flex-start",
-                        px: 1,
-                        minWidth: 0,
-                        color: theme.palette.primary.main,
-                        "&:hover": {
-                          background: "none",
-                        },
-                        mb: 2,
-                      }}
-                    >
-                      {expandedProject === project._id ? (
-                        <>
-                          Show less <ExpandLess sx={{ ml: 0.5 }} />
-                        </>
-                      ) : (
-                        <>
-                          Read more <ExpandMore sx={{ ml: 0.5 }} />
-                        </>
-                      )}
-                    </Button>
-
-                    {/* Expanded Content */}
-                    {expandedProject === project._id && (
-                      <Box>
+                    <Box>
                         {/* Features */}
                         {project.features?.length > 0 && (
                           <Box sx={{ mb: 3 }}>
@@ -332,7 +302,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                                 listStyleType: "none",
                               }}
                             >
-                              {project.features.map((feature, i) => (
+                              {project.features.slice(0, 2).map((feature, i) => (
                                 <Box
                                   component="li"
                                   key={i}
@@ -354,6 +324,10 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                                     sx={{
                                       color: theme.palette.text.secondary,
                                       lineHeight: 1.6,
+                                      width: "100%",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      whiteSpace: "nowrap",
                                     }}
                                   >
                                     {feature}
@@ -378,25 +352,75 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                               Technologies Used:
                             </Typography>
                             <Box
-                              sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}
+                              component="ul"
+                              sx={{
+                                m: 0,
+                                p: 0,
+                                pl: 2,
+                                listStyleType: "none",
+                              }}
                             >
-                              {project.technologies.map((tech, i) => (
-                                <Chip
+                              {project.technologies.slice(0, 2).map((tech, i) => (
+                                <Box
+                                component="li"
                                   key={i}
-                                  label={tech}
-                                  size="small"
-                                  variant="outlined"
                                   sx={{
-                                    borderColor: theme.palette.divider,
-                                    color: theme.palette.text.secondary,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    mb: 1,
+                                    "&:before": {
+                                      content: '"•"',
+                                      color: theme.palette.primary.main,
+                                      mr: 1,
+                                      fontSize: "1.2rem",
+                                      lineHeight: 1,
+                                    },
                                   }}
-                                />
+                                >
+                                 <Typography
+                                    variant="body2"
+                                    sx={{
+                                      color: theme.palette.text.secondary,
+                                      lineHeight: 1.6,
+                                      width: "100%",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      whiteSpace: "nowrap",
+                                    }}
+                                  >
+                                    {tech}
+                                  </Typography>
+                                </Box>
                               ))}
                             </Box>
                           </Box>
                         )}
                       </Box>
-                    )}
+
+                    <Button
+                      onClick={() => router.push(`/Home/project/${project._id}`)}
+                      size="small"
+                      sx={{
+                        alignSelf: "flex-start",
+                        px: 1,
+                        minWidth: 0,
+                        color: theme.palette.primary.main,
+                        "&:hover": {
+                          background: "none",
+                        },
+                        mb: 2,
+                      }}
+                    >
+                      {expandedProject === project._id ? (
+                        <>
+                          Show less <ExpandLess sx={{ ml: 0.5 }} />
+                        </>
+                      ) : (
+                        <>
+                          Read more <ExpandMore sx={{ ml: 0.5 }} />
+                        </>
+                      )}
+                    </Button>
 
                     {/* Action Buttons */}
                     <Box

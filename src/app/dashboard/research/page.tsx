@@ -226,7 +226,7 @@ function ResearchCard({ research, onEdit, onDelete }: {
           Authors: {(research.authors || []).join(", ")}
         </Typography>
         {research.description && (
-          <Typography variant="body2" paragraph sx={{ mb: 2, fontSize: isMobile ? "0.9rem" : "1rem" }}>
+          <Typography variant="body2" paragraph sx={{ mb: 2, fontSize: isMobile ? "0.9rem" : "1rem" , whiteSpace: "pre-line" , wordBreak: "break-word" }}>
             {research.description}
           </Typography>
         )}

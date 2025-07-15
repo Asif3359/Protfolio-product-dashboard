@@ -16,7 +16,7 @@ const StatCard: React.FC<StatCardProps> = ({ icon, count, title, subtitle, color
     whileHover={{ y: -5 }}
     transition={{ duration: 0.2 }}
     style={{ height: "100%", width: "100%" }}
-  >
+  > 
     <Card
       sx={{
         p: 3,
