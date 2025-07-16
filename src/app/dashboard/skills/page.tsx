@@ -40,6 +40,7 @@ interface Skill {
   proficiency: number;
   description?: string;
   ownerEmail: string;
+  logo: string; // <-- required!
 }
 
 const categories = [
@@ -62,12 +63,14 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
       proficiency: 50,
       description: "",
       ownerEmail: localStorage.getItem("ownerEmail") || "",
+      logo: "", // <-- add this line
     }
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [logoFile, setLogoFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (initialData) setForm(initialData);
@@ -100,13 +103,23 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
     try {
       const method = form._id ? "put" : "post";
       const url = form._id ? `${API_URL}/${form._id}` : API_URL;
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("category", form.category);
+      formData.append("proficiency", String(form.proficiency));
+      formData.append("description", form.description || "");
+      formData.append("ownerEmail", form.ownerEmail);
+      if (logoFile) {
+        formData.append("logo", logoFile);
+      }
+      // console.log(formData);
       const res = await fetch(url, {
         method: method.toUpperCase(),
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          // Do NOT set Content-Type, browser will set it for FormData
         },
-        body: JSON.stringify(form),
+        body: formData,
       });
       if (!res.ok) throw new Error("Error saving skill");
       onSuccess();
@@ -116,8 +129,10 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
           category: "Programming",
           proficiency: 50,
           description: "",
-          ownerEmail: form.ownerEmail, // keep the current email
+          ownerEmail: form.ownerEmail,
+          logo: "",
         });
+        setLogoFile(null);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -205,6 +220,31 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
               disabled
             />
           </Grid>
+          <Grid container spacing={2}>
+            <Button
+              variant="outlined"
+              component="label"
+              fullWidth
+              sx={{ textAlign: "left" }}
+            >
+              {logoFile ? logoFile.name : (form.logo ? "Change Logo" : "Upload Logo")}
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setLogoFile(e.target.files[0]);
+                  }
+                }}
+              />
+            </Button>
+            {form.logo && !logoFile && (
+              <Box sx={{ mt: 1 }}>
+                <img src={form.logo} alt="Logo" style={{ maxHeight: 40 }} />
+              </Box>
+            )}
+          </Grid>
         </Grid>
         <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4, gap: 2, flexDirection: { xs: "column", sm: "row" } }}>
           <Button
@@ -237,14 +277,20 @@ function SkillCard({ skill, onEdit }: { skill: Skill; onEdit: (s: Skill) => void
   return (
     <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
       <CardContent>
-        <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1 }}>
-          {skill.name}
-        </Typography>
+        <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 2, justifyContent: "start" }}>
+          {skill.logo && (
+            <img src={skill.logo} alt={skill.name} style={{ maxHeight: 40 }} />
+          )}
+          <Typography variant="h6" component="div" sx={{ fontWeight: "bold", width: "100%" }}>
+            {skill.name}
+          </Typography>
+        </Box>
+
         <Typography color="primary" gutterBottom sx={{ fontWeight: "medium", mb: 2 }}>
           {skill.category} • Proficiency: {skill.proficiency}
         </Typography>
         {skill.description && (
-          <Typography variant="body2" paragraph sx={{ mb: 2 , whiteSpace: "pre-line" , wordBreak: "break-word" }}>
+          <Typography variant="body2" paragraph sx={{ mb: 2, whiteSpace: "pre-line", wordBreak: "break-word" }}>
             {skill.description}
           </Typography>
         )}

@@ -20,6 +20,7 @@ interface Skill {
   proficiency: number;
   description?: string;
   category?: string;
+  logo?: string;
 }
 
 interface isPage {
@@ -170,24 +171,34 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
                         },
                       }}
                     >
-                      <Box>
+                      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                         <Box
                           sx={{
                             display: "flex",
+                            alignItems: "center",
                             justifyContent: "space-between",
                             mb: 1,
                           }}
                         >
-                          <Typography
-                            variant="h6"
-                            sx={{
-                              fontWeight: 600,
-                              color: theme.palette.text.primary,
-                              fontSize: { xs: "1rem", md: "1.1rem" },
-                            }}
-                          >
-                            {skill.name}
-                          </Typography>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                            {skill.logo && (
+                              <img
+                                src={skill.logo}
+                                alt={skill.name}
+                                style={{ height: 32, width: 32, objectFit: "contain", borderRadius: 4, background: "#fff" }}
+                              />
+                            )}
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                fontWeight: 600,
+                                color: theme.palette.text.primary,
+                                fontSize: { xs: "1rem", md: "1.1rem" },
+                              }}
+                            >
+                              {skill.name}
+                            </Typography>
+                          </Box>
                           <Typography
                             color="primary"
                             sx={{
@@ -289,13 +300,16 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
                     }}
                   >
                     <Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          mb: 1,
-                        }}
-                      >
+
+                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+                        {skill.logo && (
+                          <img
+                            src={skill.logo}
+                            alt={skill.name}
+                            style={{ height: 32, width: 32, objectFit: "contain", borderRadius: 4, background: "#fff" }}
+                          />
+                        )}
                         <Typography
                           variant="h6"
                           sx={{
@@ -306,15 +320,16 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
                         >
                           {skill.name}
                         </Typography>
-                        <Typography
-                          color="primary"
-                          sx={{
-                            fontWeight: 600,
-                            fontSize: { xs: "0.9rem", md: "1rem" },
-                          }}
-                        >
-                          {skill.proficiency}%
-                        </Typography>
+                      </Box>
+                      <Typography
+                            color="primary"
+                            sx={{
+                              fontWeight: 600,
+                              fontSize: { xs: "0.9rem", md: "1rem" },
+                            }}
+                          >
+                            {skill.proficiency}%
+                          </Typography>
                       </Box>
 
                       <Box
