@@ -9,9 +9,10 @@ import {
   Button,
   useTheme,
   Container,
+  CardMedia,
 } from "@mui/material";
 import {
-  School,
+  // School,
   CalendarToday,
   Grade,
   ArrowDownward,
@@ -29,6 +30,7 @@ interface Education {
   description: string;
   achievements?: string[];
   gpa?: number;
+  logo?: string;  
 }
 
 interface AcademicsSectionProps {
@@ -142,14 +144,11 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                   }}
                 >
                   <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-                    <School
-                      fontSize="large"
-                      color="primary"
-                      sx={{
-                        mt: 0.5,
-                        fontSize: { xs: "2rem", md: "2.5rem" },
-                        flexShrink: 0,
-                      }}
+                    <CardMedia
+                      component="img"
+                      image={education.logo}
+                      alt={education.institution}
+                      sx={{ width: 40, height: 40, objectFit: "contain", borderRadius: 2, marginRight: 2 }}
                     />
                     <Box sx={{ minWidth: 0, flex: 1 }}>
                       <Typography

@@ -23,6 +23,7 @@ type Academic = {
   achievements?: string[];
   gpa?: number;
   ownerEmail?: string;
+  logo?: string; // Added logo field
 };
 
 // AcademicForm component
@@ -41,9 +42,11 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
     description: '',
     achievements: [],
     gpa: undefined,
-    ownerEmail: localStorage.getItem("ownerEmail") || ''
+    ownerEmail: localStorage.getItem("ownerEmail") || '',
+    logo: undefined,
   });
   const [achievementInput, setAchievementInput] = useState('');
+  const [logoFile, setLogoFile] = useState<File | null>(null); // New state for file
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const theme = useTheme();
@@ -60,14 +63,17 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
         description: initialData.description || '',
         achievements: initialData.achievements || [],
         gpa: initialData.gpa,
-        ownerEmail: initialData.ownerEmail || ''
+        ownerEmail: initialData.ownerEmail || '',
+        logo: initialData.logo,
       });
+      setLogoFile(null); // Reset file input on edit
     } else {
       // Get ownerEmail from localStorage
       const ownerEmail = localStorage.getItem("ownerEmail");
       if (ownerEmail) {
         setFormData((prev) => ({ ...prev, ownerEmail }));
       }
+      setLogoFile(null);
     }
   }, [initialData]);
 
@@ -78,6 +84,12 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
 
   const handleDateChange = (name: string) => (date: Date | null) => {
     setFormData((prev: Partial<Academic>) => ({ ...prev, [name]: date }));
+  };
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setLogoFile(e.target.files[0]);
+    }
   };
 
   const handleAddAchievement = () => {
@@ -107,21 +119,37 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
         ? `https://protfolio-product-backend.vercel.app/api/academic/${initialData._id}` 
         : 'https://protfolio-product-backend.vercel.app/api/academic';
       const method = initialData ? 'PUT' : 'POST';
-      // Always include ownerEmail
-      const body = { ...formData, ownerEmail: formData.ownerEmail };
+      const form = new FormData();
+      form.append('degree', formData.degree || '');
+      form.append('institution', formData.institution || '');
+      form.append('field', formData.field || '');
+      form.append('startDate', formData.startDate ? new Date(formData.startDate).toISOString() : '');
+      if (formData.endDate) form.append('endDate', new Date(formData.endDate).toISOString());
+      if (formData.description) form.append('description', formData.description);
+      if (formData.gpa !== undefined) form.append('gpa', String(formData.gpa));
+      if (formData.ownerEmail) form.append('ownerEmail', formData.ownerEmail);
+      if (formData.achievements && formData.achievements.length > 0) {
+        formData.achievements.forEach((ach, idx) => form.append(`achievements[${idx}]`, ach));
+      }
+      // Logo: required for create, optional for edit
+      if (!initialData && !logoFile) {
+        setError('Logo is required.');
+        setLoading(false);
+        return;
+      }
+      if (logoFile) {
+        form.append('logo', logoFile);
+      }
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(body)
+        body: form
       });
-
       if (!response.ok) {
         throw new Error(initialData ? 'Failed to update academic' : 'Failed to create academic');
       }
-
       onSuccess();
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -141,8 +169,48 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
           {error}
         </Alert>
       )}
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={4} style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '16px' }}>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
+        <Grid container spacing={4} style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(1, 1fr)', gap: '16px' }}>
+          {/* Move logo upload to the very top and improve labeling */}
+          <Grid container spacing={2} alignItems="center">
+            <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', gap: 2, width: '100%' }}>
+              <Box>
+                <Typography variant="subtitle1" sx={{ fontWeight: 500, mb: 1 }}>
+                  Institution Logo {(!initialData && <span style={{ color: '#d32f2f' }}>*</span>)}
+                </Typography>
+                <Button
+                  variant="contained"
+                  component="label"
+                  sx={{ minWidth: 140 }}
+                >
+                  {logoFile ? 'Change Logo' : (formData.logo ? 'Change Logo' : 'Upload Logo')}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={handleLogoChange}
+                  />
+                </Button>
+                {!initialData && (
+                  <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                    * Logo is required
+                  </Typography>
+                )}
+              </Box>
+              {(logoFile || formData.logo) && (
+                <Box sx={{ ml: isMobile ? 0 : 2, mt: isMobile ? 2 : 0 }}>
+                  <img
+                    src={logoFile ? URL.createObjectURL(logoFile) : (formData.logo as string)}
+                    alt="Logo Preview"
+                    style={{ width: 64, height: 64, objectFit: 'contain', borderRadius: 6, border: '1px solid #eee', background: '#fafafa' }}
+                  />
+                </Box>
+              )}
+            </Box>
+            <Box sx={{ width: '100%', mt: 2 }}>
+              <hr style={{ border: 0, borderTop: '1px solid #eee', margin: 0 }} />
+            </Box>
+          </Grid>
           <Grid container spacing={2}>
             <TextField
               fullWidth
@@ -183,11 +251,11 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
               label="GPA"
               name="gpa"
               type="number"
-              inputProps={{ step: "0.01", min: "0", max: "4.0" }}
+              inputProps={{ step: "0.01", min: "0", max: "5.00" }}
               value={formData.gpa || ''}
               onChange={handleChange}
               InputProps={{
-                endAdornment: <InputAdornment position="end">/4.0</InputAdornment>,
+                endAdornment: <InputAdornment position="end">/5.00</InputAdornment>,
               }}
               size="small"
             />
@@ -320,9 +388,18 @@ function AcademicCard({ academic, onEdit, onDelete }: {
   return (
     <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
       <CardContent>
-        <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', mb: 1 }}>
-          {academic.degree} in {academic.field}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+          {academic.logo && (
+            <img
+              src={academic.logo}
+              alt="Logo"
+              style={{ width: 40, height: 40, objectFit: 'contain', borderRadius: 4, marginRight: 12, border: '1px solid #eee' }}
+            />
+          )}
+          <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', mb: 0 }}>
+            {academic.degree} in {academic.field}
+          </Typography>
+        </Box>
         <Typography color="primary" gutterBottom sx={{ fontWeight: 'medium', mb: 2 }}>
           {academic.institution}
         </Typography>
@@ -337,10 +414,10 @@ function AcademicCard({ academic, onEdit, onDelete }: {
         )}
         {academic.achievements && academic.achievements.length > 0 && (
           <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 'medium', mb: 1 }}>Achievements:</Typography>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1, fontSize: "14px" }}>Achievements:</Typography>
             <ul style={{ marginTop: 4, marginBottom: 0, paddingLeft: 20 }}>
               {academic.achievements?.map((ach: string, i: number) => (
-                <li key={i}>{ach}</li>
+                <li style={{ wordBreak: "break-word" , whiteSpace: "pre-line", fontSize: "12px" }}  key={i}>{ach}</li>
               ))}
             </ul>
           </Box>

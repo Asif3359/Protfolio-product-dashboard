@@ -11,7 +11,6 @@ import {
   AlertTitle,
   Grid,
   Container,
-  Chip,
   IconButton,
   Card,
   CardContent,
@@ -37,14 +36,14 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { styled, useTheme } from "@mui/material/styles";
 
-const API_URL = "https://protfolio-product-backend.vercel.app/api/project";
-
+// const API_URL = "https://protfolio-product-backend.vercel.app/api/project";
+const API_URL = "https://protfolio-product-backend.vercel.app/api/project";  
 interface Project {
   _id?: string;
   title: string;
   description: string;
   technologies: string[];
-  image?: string;
+  images?: string[]; // <-- changed
   startDate: string;
   endDate?: string;
   link?: string;
@@ -72,7 +71,7 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
       title: "",
       description: "",
       technologies: [""],
-      image: "",
+      images: [""],
       startDate: "",
       endDate: "",
       link: "",
@@ -82,16 +81,16 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
       ownerEmail: localStorage.getItem("ownerEmail") || "",
     }
   );
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>("");
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    if (initialData && initialData.image) {
-      setImagePreview(initialData.image);
+    if (initialData && initialData.images) {
+      setImagePreviews(initialData.images);
     }
   }, [initialData]);
 
@@ -132,11 +131,20 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
-    setImageFile(file);
-    const reader = new FileReader();
-    reader.onloadend = () => setImagePreview(reader.result as string);
-    reader.readAsDataURL(file);
+    const files = Array.from(e.target.files);
+    setImageFiles((prev) => [...prev, ...files]);
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviews((prev) => [...prev, reader.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleRemoveImage = (idx: number) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== idx));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -155,7 +163,7 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
       if (form.githubLink) formData.append("githubLink", form.githubLink);
       formData.append("status", form.status);
       formData.append("ownerEmail", form.ownerEmail);
-      if (imageFile) formData.append("image", imageFile);
+      imageFiles.forEach((file) => formData.append("images", file));
       const method = form._id ? "put" : "post";
       const url = form._id ? `${API_URL}/${form._id}` : API_URL;
       const res = await fetch(url, {
@@ -172,7 +180,7 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
           title: "",
           description: "",
           technologies: [""],
-          image: "",
+          images: [""],
           startDate: "",
           endDate: "",
           link: "",
@@ -181,8 +189,8 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
           status: "In Progress",
           ownerEmail: form.ownerEmail,
         });
-        setImageFile(null);
-        setImagePreview("");
+        setImageFiles([]);
+        setImagePreviews([]);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -228,7 +236,7 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
   );
 
   return (
-    <Paper elevation={0} sx={{ p: 0, mb: 4, borderRadius: 2 } }>
+    <Paper elevation={0} sx={{ p: 0, mb: 4, borderRadius: 2 }}>
       <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold", mb: 3 }}>
         {form._id ? "Edit Project" : "Add New Project"}
       </Typography>
@@ -239,7 +247,7 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
         </Alert>
       )}
       <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <Grid container spacing={4} style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(2, 1fr)', gap: '16px' }}>
+        <Grid container spacing={4} style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(1, 1fr)', gap: '16px' }}>
           <Grid container spacing={2}>
             <TextField
               name="title"
@@ -336,37 +344,64 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
           </Grid>
           <Grid container spacing={2}>
             <FormControl fullWidth margin="normal">
-              <InputLabel shrink sx={{ mb: 1 }}>Project Image</InputLabel>
+              <InputLabel shrink sx={{ mb: 1 }}>Project Images</InputLabel>
               <Stack direction="column" spacing={2} alignItems="flex-start">
                 <Button
                   component="label"
                   variant="outlined"
                   color="secondary"
                   startIcon={<CloudUpload />}
-                  sx={{ textTransform: "none" }}
+                  sx={{ textTransform: "none", width: "100%" }}
                 >
-                  Upload Image
+                  Upload Images
                   <VisuallyHiddenInput
                     type="file"
-                    name="image"
+                    name="images"
                     accept="image/*"
+                    multiple
                     onChange={handleImageChange}
                   />
                 </Button>
-                {imagePreview && (
-                  <Card sx={{ width: "100%", borderRadius: 2 }}>
-                    <img
-                      src={imagePreview}
-                      alt="Project preview"
-                      style={{ width: "100%", maxHeight: 180, objectFit: "cover" }}
-                    />
-                    <CardContent sx={{ p: 2 }}>
-                      <Typography variant="body2" color="text.secondary">
-                        Current Project Image
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                )}
+                <Grid container spacing={2} sx={{ display: "grid", gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(3, 1fr)', gap: '16px' }}>
+                  {imagePreviews.map((preview, idx) => (
+                    <Grid  key={idx} component="div">
+                      <Box
+                        sx={{
+                          width: "100%",
+                          position: "relative",
+                          borderRadius: 2,
+                          overflow: "hidden",
+                          boxShadow: 1,
+                          bgcolor: "background.paper",
+                          minHeight: 80, // Optional: ensures some height for empty images
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <img
+                          src={preview}
+                          alt={`Project preview ${idx + 1}`}
+                          style={{
+                            width: "100%",
+                            height: "300px",
+                            objectFit: "cover",
+                            display: "block",
+                            maxHeight: 200, // Optional: limit max height
+                          }}
+                        />
+                        <IconButton
+                          size="small"
+                          color="error"
+                          sx={{ position: "absolute", top: 2, right: 2, background: "#fff" }}
+                          onClick={() => handleRemoveImage(idx)}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Box>
+                    </Grid>
+                  ))}
+                </Grid>
               </Stack>
             </FormControl>
           </Grid>
@@ -410,42 +445,50 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
 }
 
 function ProjectCard({ project, onEdit }: { project: Project; onEdit: (p: Project) => void }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
       <CardContent>
-        <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1 }}>
+        <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1, wordBreak: "break-word", whiteSpace: "pre-line" }}>
           {project.title}
         </Typography>
         <Typography color="primary" gutterBottom sx={{ fontWeight: "medium", mb: 2 }}>
           {project.status} • {new Date(project.startDate).toLocaleDateString()} {project.endDate ? `- ${new Date(project.endDate).toLocaleDateString()}` : ""}
         </Typography>
-        <Typography variant="body2" paragraph sx={{ mb: 2 , whiteSpace: "pre-line" , wordBreak: "break-word" }}>
+        <Typography variant="body2" paragraph sx={{ mb: 2, whiteSpace: "pre-line", wordBreak: "break-word" }}>
           {project.description}
         </Typography>
         {project.technologies.length > 0 && (
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 2 }}>
-            {project.technologies.map((tech, idx) => (
-              <Chip key={idx} label={tech} size="small" color="primary" variant="outlined" />
-            ))}
-          </Box>
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>Technologies:</Typography>
+            <Box component="ul" style={{ display: "flex", flexDirection: "column", flexWrap: "wrap", gap: 1, listStyle: "disc", marginLeft: isMobile ? 30 : 30 }}>
+              {project.technologies.map((tech, idx) => (
+                <Typography component="li" key={idx} style={{ fontSize: 14,}}>{tech}</Typography >
+              ))}
+            </Box>
+          </Box>  
         )}
         {project.features.length > 0 && (
           <Box sx={{ mt: 2 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: "medium", mb: 1 }}>Features:</Typography>
-            <ul style={{ margin: 0, paddingLeft: 20 }}>
+            <Typography variant="subtitle2" sx={{ fontWeight:700, mb: 1 }}>Features :</Typography>
+            <Box component="ul" style={{ display: "flex", flexDirection: "column", flexWrap: "wrap", gap: 1, listStyle: "disc", marginLeft: isMobile ? 30 : 30 }}>
               {project.features.map((feat, idx) => (
-                <li key={idx} style={{ fontSize: 14 }}>{feat}</li>
+                <Typography component="li" key={idx} style={{ fontSize: 14,}}>{feat}</Typography >
               ))}
-            </ul>
+            </Box>
           </Box>
         )}
-        {project.image && (
-          <Box sx={{ mt: 2 }}>
-            <img
-              src={project.image}
-              alt={project.title}
-              style={{ width: "100%", maxHeight: 180, objectFit: "cover", borderRadius: 8 }}
-            />
+        {project.images && project.images.length > 0 && (
+          <Box sx={{ mt: 2, display: "grid", gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(3, 1fr)', gap: '16px' }}>
+            {project.images.map((img, idx) => (
+              <img
+                key={idx}
+                src={img}
+                alt={`${project.title} ${idx + 1}`}
+                style={{ width: "100%", maxHeight: 100, objectFit: "cover", borderRadius: 8 }}
+              />
+            ))}
           </Box>
         )}
         <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
@@ -496,7 +539,7 @@ export default function ProjectsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
-  
+
   const fetchProjects = async () => {
     setLoading(true);
     try {
@@ -517,20 +560,20 @@ export default function ProjectsPage() {
 
   return (
     <Container maxWidth="md" sx={{ py: { xs: 1, sm: 1.5, md: 2 } }}>
-      <Box sx={{ 
-        display: "flex", 
-        justifyContent: "space-between", 
-        alignItems: "center", 
-        mb: { xs: 3, sm: 3.5, md: 4 }, 
+      <Box sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        mb: { xs: 3, sm: 3.5, md: 4 },
         flexDirection: { xs: "column", sm: "row" },
         gap: { xs: 2, sm: 0 }
       }}>
-        <Typography 
-          variant="h4" 
-          component="h1" 
-          sx={{ 
-            fontWeight: "bold", 
-            color: "primary.main", 
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{
+            fontWeight: "bold",
+            color: "primary.main",
             textAlign: { xs: "center", sm: "left" },
             fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' }
           }}
@@ -544,7 +587,7 @@ export default function ProjectsPage() {
             setSelected(null);
             setOpenDialog(true);
           }}
-          sx={{ 
+          sx={{
             borderRadius: 2,
             width: { xs: '100%', sm: 'auto' },
             minWidth: { xs: 'auto', sm: 140, md: 160 }
@@ -578,7 +621,7 @@ export default function ProjectsPage() {
             }}
             onCancel={() => setOpenDialog(false)}
             token={token || ""}
-          />  
+          />
         </DialogContent>
       </Dialog>
       {loading ? (

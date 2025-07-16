@@ -102,7 +102,7 @@ function AwardForm({ initialData, onSuccess, onCancel, token }: {
         </Alert>
       )}
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={4} style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)", gap: "16px" }}>
+        <Grid container spacing={4} style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(1, 1fr)", gap: "16px" }}>
           <Grid container spacing={2}>
             <TextField fullWidth label="Title" name="title" value={formData.title} onChange={handleChange} required size="small" />
           </Grid>

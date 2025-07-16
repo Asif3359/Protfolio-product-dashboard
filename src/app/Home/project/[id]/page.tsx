@@ -1,6 +1,7 @@
 import { getDataById } from '@/utils/getData';
-import { Typography, Box, Chip, Stack, Divider, Paper, CardMedia, Link } from '@mui/material';
+import { Typography, Box, Chip, Stack, Divider, Paper, Link } from '@mui/material';
 import { CalendarToday } from '@mui/icons-material';
+import ProjectImageSlider from "../../../components/ProjectImageSlider";
 
 interface ProjectPageProps {
   params: Promise<{ id: string }>;
@@ -45,20 +46,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       </Stack>
 
       {/* Image */}
-      {projectData.image && (
-        <CardMedia
-          component="img"
-          image={projectData.image}
-          alt={projectData.title}
-          sx={{
-            width: '100%',
-            maxHeight: 350,
-            objectFit: 'contain',
-            borderRadius: 2,
-            mb: 3,
-            background: '#f5f5f5',
-          }}
-        />
+      {projectData.images && projectData.images.length > 0 && (
+        <ProjectImageSlider images={projectData.images} title={projectData.title} />
       )}
 
       {/* Description */}

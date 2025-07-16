@@ -141,7 +141,7 @@ function CertificationForm({
           spacing={4}
           style={{
             display: "grid",
-            gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)",
+            gridTemplateColumns: isMobile ? "1fr" : "repeat(1, 1fr)",
             gap: "16px",
           }}
         >

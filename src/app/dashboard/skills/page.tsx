@@ -138,7 +138,7 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
         </Alert>
       )}
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={4} style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(2, 1fr)', gap: '16px' }}>
+        <Grid container spacing={4} style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(1, 1fr)', gap: '16px' }}>
           <Grid container spacing={2}>
             <TextField
               name="name"

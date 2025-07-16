@@ -31,7 +31,7 @@ interface Project {
   title: string;
   description: string;
   technologies: string[];
-  image: string;
+  images: string[];
   startDate: string;
   endDate: string;
   link: string;
@@ -176,7 +176,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                     }}
                   >
                     {/* Project Image */}
-                    {project.image && (
+                    {project.images && project.images.length > 0 && (
                       <Box
                         sx={{
                           position: "relative",
@@ -189,7 +189,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         }}
                       >
                         <Image
-                          src={project.image}
+                          src={project.images[0]}
                           alt={project.title}
                           fill
                           style={{ objectFit: "cover" }}
