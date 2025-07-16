@@ -51,7 +51,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
     return null;
   }
 
-  const { name, aboutMe, profilePicture, heroTitle, contact, socialMedia } =
+  const { name, aboutMe, profilePicture, contact, socialMedia } =
     profileData;
   const profilePic = profilePicture;
 

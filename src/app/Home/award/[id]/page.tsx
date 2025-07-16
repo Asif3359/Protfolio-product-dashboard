@@ -1,9 +1,12 @@
 import { getDataById } from '@/utils/getData';
-import React from 'react';
 import { Typography, Box, Chip, Stack, Divider, Paper, Link } from '@mui/material';
 import { CalendarToday, EmojiEvents } from '@mui/icons-material';
 
-export default async function AwardPage({ params }: { params: { id: string } }) {
+interface AwardPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function AwardPage({ params }: AwardPageProps) {
   const { id } = await params;
   const awardData = await getDataById("award", id);
 

@@ -25,13 +25,8 @@ interface AwardsSectionProps {
   };
 }
 
-const truncate = (text: string, maxLength: number) => {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength) + '...';
-};
-
 const AwardsSection: React.FC<AwardsSectionProps> = ({ title, list, isPage }) => {
-  const [expandedAward, setExpandedAward] = useState<string | null>(null);
+  const [expandedAward] = useState<string | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();

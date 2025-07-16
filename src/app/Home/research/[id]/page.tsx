@@ -1,12 +1,15 @@
-import { getData } from "@/utils/getData";
-import React from "react";
+import { getDataById } from "@/utils/getData";
 import { Typography, Box, Chip, Stack, Divider, Paper, Link } from "@mui/material";
 import { CalendarToday, People, Description, Link as LinkIcon } from '@mui/icons-material';
 
-export default async function ResearchPage({ params }: { params: { id: string } }) {
+interface ResearchPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function ResearchPage({ params }: ResearchPageProps) {
   const { id } = await params;
-  const researchData = await getData("research");
-  const research = researchData.find((research: any) => research._id === id);
+  const researchData = await getDataById("research", id);
+  const research = researchData;
 
   if (!research) {
     return (
@@ -76,7 +79,8 @@ export default async function ResearchPage({ params }: { params: { id: string } 
         <Typography 
           variant="body1" 
           sx={{ 
-            whiteSpace: "pre-line", 
+            wordBreak: 'break-word',
+            whiteSpace: 'pre-line',
             lineHeight: 1.8,
             fontSize: '1.1rem'
           }}

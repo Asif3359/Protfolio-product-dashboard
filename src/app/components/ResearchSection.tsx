@@ -27,13 +27,8 @@ interface ResearchSectionProps {
   };
 }
 
-const truncate = (text: string, maxLength: number) => {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength) + '...';
-};
-
 const ResearchSection: React.FC<ResearchSectionProps> = ({ researchDataTitle, researchList, isPage }) => {
-  const [expandedResearch, setExpandedResearch] = useState<string | null>(null);
+  const [expandedResearch] = useState<string | null>(null);
   const theme = useTheme();
   const router = useRouter();
   if (!researchList?.length) {

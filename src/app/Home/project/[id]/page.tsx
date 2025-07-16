@@ -1,9 +1,12 @@
 import { getDataById } from '@/utils/getData';
-import React from 'react';
 import { Typography, Box, Chip, Stack, Divider, Paper, CardMedia, Link } from '@mui/material';
 import { CalendarToday } from '@mui/icons-material';
 
-export default async function ProjectPage({ params }: { params: { id: string } }) {
+interface ProjectPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function ProjectPage({ params }: ProjectPageProps) {
   const { id } = await params;
   const projectData = await getDataById("project", id);
 

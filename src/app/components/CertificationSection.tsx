@@ -31,7 +31,7 @@ const CertificationSection: React.FC<CertificationSectionProps> = ({
   certificationsList,
   isPage
 }) => {
-  const [expandedCert, setExpandedCert] = useState<string | null>(null);
+  const [expandedCert] = useState<string | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
@@ -49,9 +49,7 @@ const CertificationSection: React.FC<CertificationSectionProps> = ({
       ? 'repeat(1, 1fr)'
       : { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)', lg: 'repeat(2, 1fr)' };
 
-  const toggleExpand = (certId: string) => {
-    setExpandedCert(expandedCert === certId ? null : certId);
-  };
+
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

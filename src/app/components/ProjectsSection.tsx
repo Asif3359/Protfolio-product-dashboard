@@ -54,7 +54,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   projectsDataList = [],
   isPage: isPage,
 }) => {
-  const [expandedProject, setExpandedProject] = useState<string | null>(null);
+  const [expandedProject] = useState<string | null>(null);
   const [showAll] = useState(false);
   const theme = useTheme();
   const router = useRouter();
@@ -71,9 +71,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
     : projectsDataList.slice(0, 2);
   const hasMore = projectsDataList.length > 2;
 
-  const toggleExpand = (projectId: string) => {
-    setExpandedProject(expandedProject === projectId ? null : projectId);
-  };
+
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {

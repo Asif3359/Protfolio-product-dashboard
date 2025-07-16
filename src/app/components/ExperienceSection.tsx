@@ -57,7 +57,7 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
   experienceJobs,
   isPage: isPage,
 }) => {
-  const [expandedJob, setExpandedJob] = useState<string | null>(null);
+  const [expandedJob] = useState<string | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const router = useRouter();

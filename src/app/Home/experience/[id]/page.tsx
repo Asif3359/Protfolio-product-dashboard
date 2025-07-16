@@ -1,9 +1,12 @@
-import { getData, getDataById } from '@/utils/getData';
-import React from 'react';
+import { getDataById } from '@/utils/getData';
 import { Typography, Box, Chip, Stack, Divider, Paper, Avatar } from '@mui/material';
 import { Work, CalendarToday, LocationOn } from '@mui/icons-material';
 
-export default async function ExperiencePage({ params }: { params: { id: string } }) {
+interface ExperiencePageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function ExperiencePage({ params }: ExperiencePageProps) {
   const { id } = await params;
   const experienceData = await getDataById("experience", id);
 
@@ -67,6 +70,7 @@ export default async function ExperiencePage({ params }: { params: { id: string 
           variant="body1"
           sx={{
             whiteSpace: 'pre-line',
+            wordBreak: 'break-word',
             lineHeight: 1.8,
             fontSize: { xs: '1rem', sm: '1.1rem' },
             color: 'text.secondary',

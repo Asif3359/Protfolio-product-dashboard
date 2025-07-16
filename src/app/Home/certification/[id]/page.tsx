@@ -1,9 +1,12 @@
 import { getDataById } from '@/utils/getData';
-import React from 'react';
 import { Typography, Box, Chip, Stack, Divider, Paper, Link } from '@mui/material';
 import { CalendarToday, Verified } from '@mui/icons-material';
 
-export default async function CertificationPage({ params }: { params: { id: string } }) {
+interface CertificationPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function CertificationPage({ params }: CertificationPageProps) {
   const { id } = await params;
   const certificationData = await getDataById("certification", id);
 
