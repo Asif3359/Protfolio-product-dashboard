@@ -15,7 +15,7 @@ import {
   // School,
   CalendarToday,
   Grade,
-  ArrowDownward,
+  ExpandMore,
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -30,7 +30,7 @@ interface Education {
   description: string;
   achievements?: string[];
   gpa?: number;
-  logo?: string;  
+  logo?: string;
 }
 
 interface AcademicsSectionProps {
@@ -49,7 +49,7 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
   const [showAll] = useState(false);
   const theme = useTheme();
   const router = useRouter();
-  
+
   if (!academicsEducations?.length) {
     return null;
   }
@@ -88,11 +88,25 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
             <Typography
               variant="h3"
               sx={{
-                fontWeight: 700,
-                mb: 4,
+                fontWeight: 800,
+                mb: 2,
                 color: theme.palette.text.primary,
-                fontSize: { xs: "1.8rem", md: "2.2rem" },
+                fontSize: { xs: "2rem", md: "2.8rem" },
                 textAlign: "center",
+                background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                textShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                position: "relative",
+                "&::after": {
+                  content: '""',
+                  display: "block",
+                  width: "200px",
+                  height: "4px",
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                  margin: "16px auto 0",
+                  borderRadius: "2px",
+                },
               }}
             >
               {academicsTitle}
@@ -198,11 +212,10 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                   >
                     <Chip
                       icon={<CalendarToday fontSize="small" />}
-                      label={`${formatDate(education.startDate)} - ${
-                        education.endDate
+                      label={`${formatDate(education.startDate)} - ${education.endDate
                           ? formatDate(education.endDate)
                           : "Present"
-                      }`}
+                        }`}
                       size="small"
                       sx={{
                         bgcolor: theme.palette.action.selected,
@@ -213,7 +226,7 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                     {education.gpa && (
                       <Chip
                         icon={<Grade fontSize="small" />}
-                        label={`GPA: ${education.gpa}/4.0`}
+                        label={`GPA: ${education.gpa}`}
                         size="small"
                         color="primary"
                         sx={{
@@ -302,21 +315,33 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
           </Box>
 
           {hasMore && !showAll && !isPage.isItPage && (
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
-              <Button
-                variant="outlined"
-                color="primary"
-                endIcon={<ArrowDownward />}
-                onClick={() => router.push("/Home/academic")}
-                sx={{
-                  borderRadius: 50,
-                  textTransform: "none",
-                  fontWeight: 600,
-                  fontSize: { xs: "0.9rem", sm: "1rem" },
-                }}
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Show More Education
-              </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  endIcon={<ExpandMore />}
+                  onClick={() => router.push("/Home/academic")}
+                  sx={{
+                    borderRadius: "12px",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    fontSize: "1rem",
+                    px: 4,
+                    py: 1.5,
+                    background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                    boxShadow: `0 4px 12px ${theme.palette.primary.main}40`,
+                    "&:hover": {
+                      boxShadow: `0 6px 16px ${theme.palette.primary.main}60`,
+                    },
+                  }}
+                >
+                  Explore All Educations
+                </Button>
+              </motion.div>
             </Box>
           )}
         </motion.div>

@@ -39,13 +39,15 @@ export default async function ResearchPage({ params }: ResearchPageProps) {
         sx={{
           color: 'primary.main',
           mb: 3,
-          fontSize: { xs: '1.8rem', sm: '2.2rem' }
+          fontSize: { xs: '1.5rem', sm: '2.2rem' },
+          whiteSpace: 'pre-line',
+          wordBreak: 'break-word'
         }}
       >
         {research.title}
       </Typography>
 
-      <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
+      <Stack    sx={{ mb: 3, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center' ,gap:2  }}>
         <Chip 
           label={research.type} 
           color="primary" 
@@ -82,7 +84,7 @@ export default async function ResearchPage({ params }: ResearchPageProps) {
             wordBreak: 'break-word',
             whiteSpace: 'pre-line',
             lineHeight: 1.8,
-            fontSize: '1.1rem'
+            fontSize: '1rem'
           }}
         >
           {research.description}

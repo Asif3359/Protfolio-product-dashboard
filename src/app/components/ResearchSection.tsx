@@ -70,11 +70,25 @@ const ResearchSection: React.FC<ResearchSectionProps> = ({ researchDataTitle, re
             <Typography
               variant="h3"
               sx={{
-                fontWeight: 700,
-                mb: 4,
+                fontWeight: 800,
+                mb: 2,
                 color: theme.palette.text.primary,
-                fontSize: { xs: "1.8rem", md: "2.2rem" },
+                fontSize: { xs: "2rem", md: "2.8rem" },
                 textAlign: "center",
+                background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                textShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                position: "relative",
+                "&::after": {
+                  content: '""',
+                  display: "block",
+                  width: "180px",
+                  height: "4px",
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                  margin: "16px auto 0",
+                  borderRadius: "2px",
+                },
               }}
             >
               {researchDataTitle}
@@ -308,22 +322,34 @@ const ResearchSection: React.FC<ResearchSectionProps> = ({ researchDataTitle, re
           </Box>
 
           {hasMore && !isPage.isItPage && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
-              <Button
-                variant="outlined"
-                color="primary"
-                endIcon={<ExpandMore />}
-                onClick={() => router.push('/Home/research')}
-                sx={{
-                  borderRadius: 50,
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  fontSize: { xs: '0.9rem', sm: '1rem' },
-                }}
-              >
-                Show More Research
-              </Button>
-            </Box>
+                <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    endIcon={<ExpandMore />}
+                    onClick={() => router.push("/Home/research")}
+                    sx={{
+                      borderRadius: "12px",
+                      textTransform: "none",
+                      fontWeight: 600,
+                      fontSize: "1rem",
+                      px: 4,
+                      py: 1.5,
+                      background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                      boxShadow: `0 4px 12px ${theme.palette.primary.main}40`,
+                      "&:hover": {
+                        boxShadow: `0 6px 16px ${theme.palette.primary.main}60`,
+                      },
+                    }}
+                  >
+                    Explore All Research
+                  </Button>
+                </motion.div>
+              </Box>
           )}
         </motion.div>
       </Container>

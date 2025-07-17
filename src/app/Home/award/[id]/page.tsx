@@ -34,7 +34,7 @@ export default async function AwardPage({ params }: AwardPageProps) {
       <Typography variant="h4" fontWeight={700} sx={{ color: 'primary.main', mb: 2 }}>
         {awardData.title}
       </Typography>
-      <Stack direction="row" spacing={2} sx={{ mb: 2, flexWrap: 'wrap' }}>
+      <Stack sx={{ mb: 2, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: {xs:'flex-start',sm:'center'} ,gap:2  }}>
         <Chip label={awardData.issuer} color="primary" size="small" icon={<EmojiEvents fontSize="small" />} />
         <Chip
           icon={<CalendarToday fontSize="small" />}

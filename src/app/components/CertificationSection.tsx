@@ -76,17 +76,31 @@ const CertificationSection: React.FC<CertificationSectionProps> = ({
               <></>
             ) : (
               <Typography
-              variant="h3"
-              sx={{
-                fontWeight: 700,
-                mb: 4,
-                color: theme.palette.text.primary,
-                fontSize: { xs: '1.8rem', md: '2.2rem' },
-                textAlign: 'center',
-              }}
-            >
-              {certificationsTitle}
-            </Typography>
+                variant="h3"
+                sx={{
+                  fontWeight: 800,
+                  mb: 2,
+                  color: theme.palette.text.primary,
+                  fontSize: { xs: "2rem", md: "2.8rem" },
+                  textAlign: "center",
+                  background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  textShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  position: "relative",
+                  "&::after": {
+                    content: '""',
+                    display: "block",
+                    width: "180px",
+                    height: "4px",
+                    background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                    margin: "16px auto 0",
+                    borderRadius: "2px",
+                  },
+                }}
+              >
+                {certificationsTitle}
+              </Typography>
             )
           }
 
@@ -277,22 +291,33 @@ const CertificationSection: React.FC<CertificationSectionProps> = ({
           </Grid>
 
           {hasMore && !isPage.isItPage && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
-              <Button
-                variant="outlined"
-                color="primary"
-                endIcon={<ExpandMore />}
-                // You can add navigation or expand logic here
-                onClick={() => router.push('/Home/certification')}
-                sx={{
-                  borderRadius: 50,
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                }}
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Show More Certifications
-              </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  endIcon={<ExpandMore />}
+                  onClick={() => router.push("/Home/certification")}
+                  sx={{
+                    borderRadius: "12px",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    fontSize: "1rem",
+                    px: 4,
+                    py: 1.5,
+                    background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                    boxShadow: `0 4px 12px ${theme.palette.primary.main}40`,
+                    "&:hover": {
+                      boxShadow: `0 6px 16px ${theme.palette.primary.main}60`,
+                    },
+                  }}
+                >
+                  Explore All Certifications
+                </Button>
+              </motion.div>
             </Box>
           )}
         </motion.div>

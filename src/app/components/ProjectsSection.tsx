@@ -67,8 +67,8 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   const visibleProjects = showAll
     ? projectsDataList
     : isItPage
-    ? projectsDataList
-    : projectsDataList.slice(0, 2);
+      ? projectsDataList
+      : projectsDataList.slice(0, 2);
   const hasMore = projectsDataList.length > 2;
 
 
@@ -115,11 +115,25 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
             <Typography
               variant="h3"
               sx={{
-                fontWeight: 700,
-                mb: 4,
+                fontWeight: 800,
+                mb: 2,
                 color: theme.palette.text.primary,
-                fontSize: { xs: "1.8rem", md: "2.2rem" },
+                fontSize: { xs: "2rem", md: "2.8rem" },
                 textAlign: "center",
+                background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                textShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                position: "relative",
+                "&::after": {
+                  content: '""',
+                  display: "block",
+                  width: "180px",
+                  height: "4px",
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                  margin: "16px auto 0",
+                  borderRadius: "2px",
+                },
               }}
             >
               {projectsDataTitle}
@@ -278,122 +292,122 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                       {project.description.slice(0, 160)}...
                     </Typography>
                     <Box>
-                        {/* Features */}
-                        {project.features?.length > 0 && (
-                          <Box sx={{ mb: 3 }}>
-                            <Typography
-                              variant="subtitle2"
-                              sx={{
-                                fontWeight: 600,
-                                color: theme.palette.text.primary,
-                                mb: 1,
-                              }}
-                            >
-                              Key Features:
-                            </Typography>
-                            <Box
-                              component="ul"
-                              sx={{
-                                m: 0,
-                                p: 0,
-                                pl: 2,
-                                listStyleType: "none",
-                              }}
-                            >
-                              {project.features.slice(0, 2).map((feature, i) => (
-                                <Box
-                                  component="li"
-                                  key={i}
-                                  sx={{
-                                    display: "flex",
-                                    alignItems: "flex-start",
-                                    mb: 1,
-                                    "&:before": {
-                                      content: '"•"',
-                                      color: theme.palette.primary.main,
-                                      mr: 1,
-                                      fontSize: "1.2rem",
-                                      lineHeight: 1,
-                                    },
-                                  }}
-                                >
-                                  <Typography
-                                    variant="body2"
-                                    sx={{
-                                      color: theme.palette.text.secondary,
-                                      lineHeight: 1.6,
-                                      width: "100%",
-                                      overflow: "hidden",
-                                      textOverflow: "ellipsis",
-                                      whiteSpace: "nowrap",
-                                    }}
-                                  >
-                                    {feature}
-                                  </Typography>
-                                </Box>
-                              ))}
-                            </Box>
-                          </Box>
-                        )}
-
-                        {/* Technologies */}
-                        {project.technologies?.length > 0 && (
-                          <Box sx={{ mb: 3 }}>
-                            <Typography
-                              variant="subtitle2"
-                              sx={{
-                                fontWeight: 600,
-                                color: theme.palette.text.primary,
-                                mb: 1,
-                              }}
-                            >
-                              Technologies Used:
-                            </Typography>
-                            <Box
-                              component="ul"
-                              sx={{
-                                m: 0,
-                                p: 0,
-                                pl: 2,
-                                listStyleType: "none",
-                              }}
-                            >
-                              {project.technologies.slice(0, 2).map((tech, i) => (
-                                <Box
+                      {/* Features */}
+                      {project.features?.length > 0 && (
+                        <Box sx={{ mb: 3 }}>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{
+                              fontWeight: 600,
+                              color: theme.palette.text.primary,
+                              mb: 1,
+                            }}
+                          >
+                            Key Features:
+                          </Typography>
+                          <Box
+                            component="ul"
+                            sx={{
+                              m: 0,
+                              p: 0,
+                              pl: 2,
+                              listStyleType: "none",
+                            }}
+                          >
+                            {project.features.slice(0, 2).map((feature, i) => (
+                              <Box
                                 component="li"
-                                  key={i}
+                                key={i}
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "flex-start",
+                                  mb: 1,
+                                  "&:before": {
+                                    content: '"•"',
+                                    color: theme.palette.primary.main,
+                                    mr: 1,
+                                    fontSize: "1.2rem",
+                                    lineHeight: 1,
+                                  },
+                                }}
+                              >
+                                <Typography
+                                  variant="body2"
                                   sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    mb: 1,
-                                    "&:before": {
-                                      content: '"•"',
-                                      color: theme.palette.primary.main,
-                                      mr: 1,
-                                      fontSize: "1.2rem",
-                                      lineHeight: 1,
-                                    },
+                                    color: theme.palette.text.secondary,
+                                    lineHeight: 1.6,
+                                    width: "100%",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
                                   }}
                                 >
-                                 <Typography
-                                    variant="body2"
-                                    sx={{
-                                      color: theme.palette.text.secondary,
-                                      lineHeight: 1.6,
-                                      width: "100%",
-                                      overflow: "hidden",
-                                      textOverflow: "ellipsis",
-                                      whiteSpace: "nowrap",
-                                    }}
-                                  >
-                                    {tech}
-                                  </Typography>
-                                </Box>
-                              ))}
-                            </Box>
+                                  {feature}
+                                </Typography>
+                              </Box>
+                            ))}
                           </Box>
-                        )}
-                      </Box>
+                        </Box>
+                      )}
+
+                      {/* Technologies */}
+                      {project.technologies?.length > 0 && (
+                        <Box sx={{ mb: 3 }}>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{
+                              fontWeight: 600,
+                              color: theme.palette.text.primary,
+                              mb: 1,
+                            }}
+                          >
+                            Technologies Used:
+                          </Typography>
+                          <Box
+                            component="ul"
+                            sx={{
+                              m: 0,
+                              p: 0,
+                              pl: 2,
+                              listStyleType: "none",
+                            }}
+                          >
+                            {project.technologies.slice(0, 2).map((tech, i) => (
+                              <Box
+                                component="li"
+                                key={i}
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  mb: 1,
+                                  "&:before": {
+                                    content: '"•"',
+                                    color: theme.palette.primary.main,
+                                    mr: 1,
+                                    fontSize: "1.2rem",
+                                    lineHeight: 1,
+                                  },
+                                }}
+                              >
+                                <Typography
+                                  variant="body2"
+                                  sx={{
+                                    color: theme.palette.text.secondary,
+                                    lineHeight: 1.6,
+                                    width: "100%",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                  }}
+                                >
+                                  {tech}
+                                </Typography>
+                              </Box>
+                            ))}
+                          </Box>
+                        </Box>
+                      )}
+                    </Box>
 
                     <Button
                       onClick={() => router.push(`/Home/project/${project._id}`)}
@@ -491,20 +505,32 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
 
           {!isItPage && hasMore && !showAll && (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
-              <Button
-                variant="outlined"
-                color="primary"
-                endIcon={<ExpandMore />}
-                onClick={() => router.push("/Home/project")}
-                sx={{
-                  borderRadius: 50,
-                  textTransform: "none",
-                  fontWeight: 600,
-                  fontSize: "1rem",
-                }}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Show More Projects
-              </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  endIcon={<ExpandMore />}
+                  onClick={() => router.push("/Home/project")}
+                  sx={{
+                    borderRadius: "12px",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    fontSize: "1rem",
+                    px: 4,
+                    py: 1.5,
+                    background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                    boxShadow: `0 4px 12px ${theme.palette.primary.main}40`,
+                    "&:hover": {
+                      boxShadow: `0 6px 16px ${theme.palette.primary.main}60`,
+                    },
+                  }}
+                >
+                  Explore All Projects
+                </Button>
+              </motion.div>
             </Box>
           )}
         </motion.div>

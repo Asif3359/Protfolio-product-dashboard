@@ -98,13 +98,13 @@ const portfolioTheme = createTheme({
 const navigationItems = [
   { name: 'Home', path: '/', icon: <HomeIcon /> },
   { name: 'Profile', path: '/Home/profile', icon: <PersonIcon /> },
-  { name: 'Experience', path: '/Home/experience', icon: <WorkIcon /> },
-  { name: 'Projects', path: '/Home/project', icon: <CodeIcon /> },
-  { name: 'Skills', path: '/Home/skill', icon: <SkillsIcon /> },
   { name: 'Education', path: '/Home/academic', icon: <SchoolIcon /> },
   { name: 'Research', path: '/Home/research', icon: <ResearchIcon /> },
-  { name: 'Awards', path: '/Home/award', icon: <AwardsIcon /> },
+  { name: 'Projects', path: '/Home/project', icon: <CodeIcon /> },
+  { name: 'Experience', path: '/Home/experience', icon: <WorkIcon /> },
+  { name: 'Skills', path: '/Home/skill', icon: <SkillsIcon /> },
   { name: 'Certifications', path: '/Home/certification', icon: <CertificationIcon /> },
+  { name: 'Honors & Awards', path: '/Home/award', icon: <AwardsIcon /> },
 ];
 
 function HomeLayout({ children }: { children: React.ReactNode }) {

@@ -34,7 +34,7 @@ export default async function CertificationPage({ params }: CertificationPagePro
       <Typography variant="h4" fontWeight={700} sx={{ color: 'primary.main', mb: 2 }}>
         {certificationData.title}
       </Typography>
-      <Stack direction="row" spacing={2} sx={{ mb: 2, flexWrap: 'wrap' }}>
+      <Stack sx={{ mb: 2, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: {xs:'flex-start',sm:'center'} ,gap:2  }}>
         <Chip label={certificationData.issuer} color="primary" size="small" icon={<Verified fontSize="small" />} />
         <Chip
           icon={<CalendarToday fontSize="small" />}

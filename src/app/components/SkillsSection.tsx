@@ -4,13 +4,19 @@ import {
   Box,
   Typography,
   Paper,
-  Divider,
   Button,
   useTheme,
   useMediaQuery,
   Container,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  LinearProgress,
+  Chip,
+  Avatar,
 } from "@mui/material";
-import { ExpandMore } from "@mui/icons-material";
+import { ExpandMore, Star } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
@@ -21,6 +27,7 @@ interface Skill {
   description?: string;
   category?: string;
   logo?: string;
+  yearsOfExperience?: number;
 }
 
 interface isPage {
@@ -43,6 +50,10 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
   const router = useRouter();
   const sliderRef = useRef<HTMLDivElement>(null);
 
+  // Modal state for skill details
+  const [openModal, setOpenModal] = React.useState(false);
+  const [selectedSkill, setSelectedSkill] = React.useState<Skill | null>(null);
+
   if (!skillTechnical?.length) {
     return null;
   }
@@ -56,72 +67,111 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
     ...skillTechnical,
   ];
 
+  // Function to get proficiency color
+  const getProficiencyColor = (proficiency: number) => {
+    if (proficiency >= 80) return "#4CAF50"; // Green
+    if (proficiency >= 60) return "#2196F3"; // Blue
+    if (proficiency >= 40) return "#FFC107"; // Amber
+    return "#F44336"; // Red
+  };
+
   return (
     <Box
       component="section"
       sx={{
-        py: { xs: 2, md: 4 },
+        py: { xs: 4, md: 8 },
         backgroundColor: theme.palette.background.default,
         overflow: "hidden",
+        position: "relative",
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "100%",
+          background: `radial-gradient(circle at 20% 50%, ${theme.palette.primary.light}20, transparent 40%)`,
+          zIndex: 0,
+        },
       }}
     >
-      <Container maxWidth="xl" sx={{ maxWidth: "1200px" }}>
+      <Container maxWidth="xl" sx={{ maxWidth: "1200px", position: "relative", zIndex: 1 }}>
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8 }}
           viewport={{ once: true, margin: "-50px" }}
         >
-          {isItPage ? (
-            <></>
-          ) : (
-            <Typography
-              variant="h3"
-              sx={{
-                fontWeight: 700,
-                mb: 4,
-                color: theme.palette.text.primary,
-                fontSize: { xs: "1.8rem", md: "2.2rem" },
-                textAlign: "center",
-              }}
-            >
-              {skillTitle}
-            </Typography>
-          )}
-          {isItPage ? (
-            <></>
-          ) : (
-            <Divider sx={{ mb: 6, borderColor: theme.palette.divider }} />
+          {!isItPage && (
+            <>
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 800,
+                  mb: 2,
+                  color: theme.palette.text.primary,
+                  fontSize: { xs: "2rem", md: "2.8rem" },
+                  textAlign: "center",
+                  background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  textShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  position: "relative",
+                  "&::after": {
+                    content: '""',
+                    display: "block",
+                    width: "180px",
+                    height: "4px",
+                    background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                    margin: "16px auto 0",
+                    borderRadius: "2px",
+                  },
+                }}
+              >
+                {skillTitle}
+              </Typography>
+              
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  textAlign: "center",
+                  maxWidth: "700px",
+                  mx: "auto",
+                  mb: 6,
+                  color: theme.palette.text.secondary,
+                  fontSize: { xs: "1rem", md: "1.1rem" },
+                }}
+              >
+                Technologies I&apos;ve mastered and tools I use to bring ideas to life
+              </Typography>
+            </>
           )}
 
           {/* Infinity Slider Container */}
-          {isItPage ? (
-            <></>
-          ) : (
+          {!isItPage && (
             <Box
               sx={{
                 position: "relative",
                 width: "100%",
                 overflow: "hidden",
-                pt: 4,
-                pb: 4,
+                py: 4,
                 mb: 2,
                 "&::before, &::after": {
                   content: '""',
                   position: "absolute",
                   top: 0,
                   bottom: 0,
-                  width: "100px",
+                  width: "120px",
                   zIndex: 2,
                   pointerEvents: "none",
                 },
                 "&::before": {
                   left: 0,
-                  background: `linear-gradient(to right, ${theme.palette.background.default}, transparent)`,
+                  background: `linear-gradient(to right, ${theme.palette.background.default}FF, ${theme.palette.background.default}00)`,
                 },
                 "&::after": {
                   right: 0,
-                  background: `linear-gradient(to left, ${theme.palette.background.default}, transparent)`,
+                  background: `linear-gradient(to left, ${theme.palette.background.default}FF, ${theme.palette.background.default}00)`,
                 },
               }}
             >
@@ -129,7 +179,7 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
                 ref={sliderRef}
                 style={{
                   display: "flex",
-                  gap: isMobile ? "16px" : "24px",
+                  gap: isMobile ? "20px" : "30px",
                   width: "fit-content",
                 }}
                 animate={{
@@ -144,111 +194,117 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
                 {duplicatedSkills.map((skill, index) => (
                   <motion.div
                     key={`${skill._id}-${index}`}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{
                       duration: 0.5,
                       delay: (index % skillTechnical.length) * 0.1,
                     }}
                     viewport={{ once: true, margin: "-50px" }}
                     style={{
-                      minWidth: isMobile ? "260px" : "300px",
+                      minWidth: isMobile ? "280px" : "320px",
                       flexShrink: 0,
                     }}
+                    whileHover={{ scale: 1.03 }}
                   >
                     <Paper
                       elevation={4}
                       sx={{
                         p: { xs: 2, sm: 2.5, md: 3 },
-                        borderRadius: 3,
+                        borderRadius: "16px",
                         height: "100%",
-                        width: isMobile ? "260px" : "300px",
-                        background: theme.palette.background.paper,
-                        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                        width: isMobile ? "280px" : "320px",
+                        background: `linear-gradient(135deg, ${theme.palette.background.paper}, ${theme.palette.background.default})`,
+                        transition: "all 0.3s ease",
+                        border: `1px solid ${theme.palette.divider}`,
+                        boxShadow: `0 8px 24px -4px ${theme.palette.primary.main}20`,
                         "&:hover": {
-                          transform: "translateY(-5px)",
-                          boxShadow: theme.shadows[6],
+                          transform: "translateY(-8px)",
+                          boxShadow: `0 12px 28px -2px ${theme.palette.primary.main}30`,
+                        },
+                        cursor: "pointer",
+                        position: "relative",
+                        overflow: "hidden",
+                        "&::before": {
+                          content: '""',
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          height: "4px",
+                          background: getProficiencyColor(skill.proficiency),
                         },
                       }}
+                      onClick={() => {
+                        setSelectedSkill(skill);
+                        setOpenModal(true);
+                      }}
                     >
-                      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            mb: 1,
-                          }}
-                        >
-                          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Box>
+                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                             {skill.logo && (
-                              <img
+                              <Avatar
                                 src={skill.logo}
                                 alt={skill.name}
-                                style={{ height: 32, width: 32, objectFit: "contain", borderRadius: 4, background: "#fff" }}
+                                sx={{ 
+                                  height: 40, 
+                                  width: 40, 
+                                  borderRadius: "8px",
+                                  background: "#fff",
+                                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                                }}
                               />
                             )}
                             <Typography
                               variant="h6"
                               sx={{
-                                fontWeight: 600,
+                                fontWeight: 700,
                                 color: theme.palette.text.primary,
-                                fontSize: { xs: "1rem", md: "1.1rem" },
+                                fontSize: { xs: "1.1rem", md: "1.2rem" },
                               }}
                             >
                               {skill.name}
                             </Typography>
                           </Box>
-                          <Typography
-                            color="primary"
+                          <Chip
+                            label={`${skill.proficiency}%`}
+                            size="small"
                             sx={{
-                              fontWeight: 600,
-                              fontSize: { xs: "0.9rem", md: "1rem" },
-                            }}
-                          >
-                            {skill.proficiency}%
-                          </Typography>
-                        </Box>
-
-                        <Box
-                          sx={{
-                            width: "100%",
-                            height: 8,
-                            backgroundColor: theme.palette.action.hover,
-                            borderRadius: 4,
-                            overflow: "hidden",
-                            mb: 1,
-                          }}
-                        >
-                          <motion.div
-                            initial={{ width: 0 }}
-                            whileInView={{ width: `${skill.proficiency}%` }}
-                            transition={{
-                              duration: 1,
-                              delay: (index % skillTechnical.length) * 0.1,
-                            }}
-                            viewport={{ once: true }}
-                            style={{
-                              height: "100%",
-                              backgroundColor: theme.palette.primary.main,
-                              borderRadius: 4,
+                              fontWeight: 700,
+                              fontSize: "0.8rem",
+                              backgroundColor: `${getProficiencyColor(skill.proficiency)}20`,
+                              color: getProficiencyColor(skill.proficiency),
                             }}
                           />
                         </Box>
-
-                        {skill.description && (
-                          <Typography
-                            variant="body2"
-                            color="textSecondary"
+                        
+                        <LinearProgress
+                          variant="determinate"
+                          value={skill.proficiency}
+                          sx={{
+                            height: 8,
+                            borderRadius: 4,
+                            mb: 2,
+                            backgroundColor: `${theme.palette.divider}30`,
+                            "& .MuiLinearProgress-bar": {
+                              borderRadius: 4,
+                              backgroundColor: getProficiencyColor(skill.proficiency),
+                            },
+                          }}
+                        />
+                        
+                        {skill.category && (
+                          <Chip
+                            label={skill.category}
+                            size="small"
                             sx={{
-                              lineHeight: 1.6,
-                              fontSize: { xs: "0.8rem", md: "0.9rem" },
-                              whiteSpace: "pre-line",
-                              wordBreak: "break-word",
+                              backgroundColor: `${theme.palette.primary.main}15`,
+                              color: theme.palette.primary.main,
+                              fontSize: "0.7rem",
+                              height: "24px",
                             }}
-                          >
-                            {skill.description}
-                          </Typography>
+                          />
                         )}
                       </Box>
                     </Paper>
@@ -258,9 +314,8 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
             </Box>
           )}
 
-          {!isItPage ? (
-            <></>
-          ) : (
+          {/* Grid Layout for Skills Page */}
+          {isItPage && (
             <Box
               sx={{
                 display: "grid",
@@ -277,98 +332,112 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
               {skillTechnical.map((skill, index) => (
                 <motion.div
                   key={`${skill._id}-${index}`}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{
                     duration: 0.5,
-                    delay: (index % skillTechnical.length) * 0.1,
+                    delay: index * 0.05,
                   }}
                   viewport={{ once: true, margin: "-50px" }}
+                  whileHover={{ scale: 1.02 }}
                 >
                   <Paper
                     elevation={4}
                     sx={{
                       p: { xs: 2.5, md: 3 },
-                      borderRadius: 3,
+                      borderRadius: "16px",
                       height: "100%",
-                      background: theme.palette.background.paper,
-                      transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                      background: `linear-gradient(135deg, ${theme.palette.background.paper}, ${theme.palette.background.default})`,
+                      transition: "all 0.3s ease",
+                      border: `1px solid ${theme.palette.divider}`,
+                      boxShadow: `0 8px 24px -4px ${theme.palette.primary.main}20`,
                       "&:hover": {
                         transform: "translateY(-5px)",
-                        boxShadow: theme.shadows[6],
+                        boxShadow: `0 12px 28px -2px ${theme.palette.primary.main}30`,
                       },
+                      cursor: "pointer",
+                      position: "relative",
+                      overflow: "hidden",
+                      "&::before": {
+                        content: '""',
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: "4px",
+                        background: getProficiencyColor(skill.proficiency),
+                      },
+                    }}
+                    onClick={() => {
+                      setSelectedSkill(skill);
+                      setOpenModal(true);
                     }}
                   >
                     <Box>
-
-                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-                        {skill.logo && (
-                          <img
-                            src={skill.logo}
-                            alt={skill.name}
-                            style={{ height: 32, width: 32, objectFit: "contain", borderRadius: 4, background: "#fff" }}
-                          />
-                        )}
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontWeight: 600,
-                            color: theme.palette.text.primary,
-                            fontSize: { xs: "1rem", md: "1.1rem" },
-                          }}
-                        >
-                          {skill.name}
-                        </Typography>
-                      </Box>
-                      <Typography
-                            color="primary"
+                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                          {skill.logo && (
+                            <Avatar
+                              src={skill.logo}
+                              alt={skill.name}
+                              sx={{ 
+                                height: 40, 
+                                width: 40, 
+                                borderRadius: "8px",
+                                background: "#fff",
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                              }}
+                            />
+                          )}
+                          <Typography
+                            variant="h6"
                             sx={{
-                              fontWeight: 600,
-                              fontSize: { xs: "0.9rem", md: "1rem" },
+                              fontWeight: 700,
+                              color: theme.palette.text.primary,
+                              fontSize: { xs: "1.1rem", md: "1.2rem" },
                             }}
                           >
-                            {skill.proficiency}%
+                            {skill.name}
                           </Typography>
-                      </Box>
-
-                      <Box
-                        sx={{
-                          width: "100%",
-                          height: 8,
-                          backgroundColor: theme.palette.action.hover,
-                          borderRadius: 4,
-                          overflow: "hidden",
-                          mb: 1,
-                        }}
-                      >
-                        <motion.div
-                          initial={{ width: 0 }}
-                          whileInView={{ width: `${skill.proficiency}%` }}
-                          transition={{
-                            duration: 1,
-                            delay: (index % skillTechnical.length) * 0.1,
-                          }}
-                          viewport={{ once: true }}
-                          style={{
-                            height: "100%",
-                            backgroundColor: theme.palette.primary.main,
-                            borderRadius: 4,
+                        </Box>
+                        <Chip
+                          label={`${skill.proficiency}%`}
+                          size="small"
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: "0.8rem",
+                            backgroundColor: `${getProficiencyColor(skill.proficiency)}20`,
+                            color: getProficiencyColor(skill.proficiency),
                           }}
                         />
                       </Box>
-
-                      {skill.description && (
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
+                      
+                      <LinearProgress
+                        variant="determinate"
+                        value={skill.proficiency}
+                        sx={{
+                          height: 8,
+                          borderRadius: 4,
+                          mb: 2,
+                          backgroundColor: `${theme.palette.divider}30`,
+                          "& .MuiLinearProgress-bar": {
+                            borderRadius: 4,
+                            backgroundColor: getProficiencyColor(skill.proficiency),
+                          },
+                        }}
+                      />
+                      
+                      {skill.category && (
+                        <Chip
+                          label={skill.category}
+                          size="small"
                           sx={{
-                            lineHeight: 1.6,
-                            fontSize: { xs: "0.8rem", md: "0.9rem" },
+                            backgroundColor: `${theme.palette.primary.main}15`,
+                            color: theme.palette.primary.main,
+                            fontSize: "0.7rem",
+                            height: "24px",
                           }}
-                        >
-                          {skill.description}
-                        </Typography>
+                        />
                       )}
                     </Box>
                   </Paper>
@@ -378,27 +447,186 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
           )}
 
           {/* Show More Button */}
-          {isItPage ? (
-            <></>
-          ) : (
+          {!isItPage && (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
-              <Button
-                variant="outlined"
-                color="primary"
-                endIcon={<ExpandMore />}
-                onClick={() => router.push("/Home/skill")}
-                sx={{
-                  borderRadius: 50,
-                  textTransform: "none",
-                  fontWeight: 600,
-                  fontSize: "1rem",
-                }}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Show More Skills
-              </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  endIcon={<ExpandMore />}
+                  onClick={() => router.push("/Home/skill")}
+                  sx={{
+                    borderRadius: "12px",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    fontSize: "1rem",
+                    px: 4,
+                    py: 1.5,
+                    background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                    boxShadow: `0 4px 12px ${theme.palette.primary.main}40`,
+                    "&:hover": {
+                      boxShadow: `0 6px 16px ${theme.palette.primary.main}60`,
+                    },
+                  }}
+                >
+                  Explore All Skills
+                </Button>
+              </motion.div>
             </Box>
           )}
         </motion.div>
+
+        {/* Skill Details Modal */}
+        <Dialog
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{
+            sx: {
+              borderRadius: "16px",
+              background: `linear-gradient(145deg, ${theme.palette.background.paper}, ${theme.palette.background.default})`,
+              overflow: "hidden",
+              border: `1px solid ${theme.palette.divider}`,
+            },
+          }}
+        >
+          <DialogTitle
+            sx={{
+              fontWeight: 700,
+              fontSize: "1.5rem",
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+              background: `${theme.palette.primary.main}10`,
+              borderBottom: `1px solid ${theme.palette.divider}`,
+            }}
+          >
+            {selectedSkill?.logo && (
+              <Avatar
+                src={selectedSkill.logo}
+                alt={selectedSkill.name}
+                sx={{ 
+                  height: 48, 
+                  width: 48, 
+                  borderRadius: "12px",
+                  background: "#fff",
+                  boxShadow: "0 2px 12px rgba(0,0,0,0.1)"
+                }}
+              />
+            )}
+            {selectedSkill?.name}
+          </DialogTitle>
+          <DialogContent dividers sx={{ py: 3 }}>
+            <Box sx={{ mb: 3 }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                  Proficiency
+                </Typography>
+                <Typography 
+                  variant="subtitle1" 
+                  sx={{ 
+                    fontWeight: 700,
+                    color: getProficiencyColor(selectedSkill?.proficiency || 0),
+                  }}
+                >
+                  {selectedSkill?.proficiency}%
+                </Typography>
+              </Box>
+              <LinearProgress
+                variant="determinate"
+                value={selectedSkill?.proficiency || 0}
+                sx={{
+                  height: 10,
+                  borderRadius: 5,
+                  backgroundColor: `${theme.palette.divider}30`,
+                  "& .MuiLinearProgress-bar": {
+                    borderRadius: 5,
+                    background: `linear-gradient(90deg, ${getProficiencyColor(selectedSkill?.proficiency || 0)}, ${getProficiencyColor((selectedSkill?.proficiency || 0) + 10)})`,
+                  },
+                }}
+              />
+            </Box>
+
+            {selectedSkill?.category && (
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+                  Category
+                </Typography>
+                <Chip
+                  label={selectedSkill.category}
+                  sx={{
+                    backgroundColor: `${theme.palette.primary.main}15`,
+                    color: theme.palette.primary.main,
+                    fontSize: "0.8rem",
+                    height: "28px",
+                    px: 1,
+                  }}
+                />
+              </Box>
+            )}
+
+            {selectedSkill?.yearsOfExperience && (
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+                  Experience
+                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      sx={{
+                        color: i < Math.min(5, Math.floor(selectedSkill.yearsOfExperience! / 2))
+                          ? theme.palette.warning.main
+                          : theme.palette.action.disabled,
+                        fontSize: "1.2rem",
+                      }}
+                    />
+                  ))}
+                  <Typography variant="body2" sx={{ ml: 1 }}>
+                    {selectedSkill.yearsOfExperience} {selectedSkill.yearsOfExperience === 1 ? "year" : "years"}
+                  </Typography>
+                </Box>
+              </Box>
+            )}
+
+            {selectedSkill?.description && (
+              <Box>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+                  Description
+                </Typography>
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    whiteSpace: "pre-line",
+                    lineHeight: 1.7,
+                    color: theme.palette.text.secondary,
+                  }}
+                >
+                  {selectedSkill.description}
+                </Typography>
+              </Box>
+            )}
+          </DialogContent>
+          <DialogActions sx={{ px: 3, py: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
+            <Button 
+              onClick={() => setOpenModal(false)} 
+              variant="outlined"
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 600,
+                px: 3,
+                py: 1,
+              }}
+            >
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </Box>
   );

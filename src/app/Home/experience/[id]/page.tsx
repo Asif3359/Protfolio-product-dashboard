@@ -45,7 +45,7 @@ export default async function ExperiencePage({ params }: ExperiencePageProps) {
         </Box>
       </Stack>
 
-      <Stack direction="row" spacing={2} sx={{ mb: 2, flexWrap: 'wrap' }}>
+      <Stack   sx={{ mb: 2, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: {xs:'flex-start',sm:'center'} ,gap:2 }}>
         <Chip
           label={experienceData.isCurrent ? 'Current' : 'Past'}
           color={experienceData.isCurrent ? 'success' : 'default'}
@@ -149,15 +149,28 @@ export default async function ExperiencePage({ params }: ExperiencePageProps) {
           <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', mb: 1 }}>
             Technologies Used:
           </Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+          <Box component="ul" sx={{ m: 0, p: 0, pl: 2, listStyleType: 'none' }}>
             {experienceData.technologies.map((tech: string, i: number) => (
-              <Chip
+              <Box
+                component="li"
                 key={i}
-                label={tech}
-                size="small"
-                variant="outlined"
-                sx={{ borderColor: 'divider', color: 'text.secondary' }}
-              />
+                sx={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  mb: 1,
+                  '&:before': {
+                    content: '"•"',
+                    color: 'primary.main',
+                    mr: 1,
+                    fontSize: '1.2rem',
+                    lineHeight: 1,
+                  },
+                }}
+              >
+                <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
+                  {tech}
+                </Typography>
+              </Box>
             ))}
           </Box>
         </Box>
