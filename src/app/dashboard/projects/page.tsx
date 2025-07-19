@@ -37,7 +37,7 @@ import { useAuth } from "@/context/AuthContext";
 import { styled, useTheme } from "@mui/material/styles";
 
 // const API_URL = "https://protfolio-product-backend.vercel.app/api/project";
-const API_URL = "http://localhost:3000/api/project";  
+const API_URL = "https://protfolio-product-backend.vercel.app/api/project";  
 interface Project {
   _id?: string;
   title: string;
