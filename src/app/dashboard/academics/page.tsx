@@ -378,7 +378,7 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
 function AcademicCard({ academic, onEdit, onDelete }: { 
   academic: Academic, 
   onEdit: (a: Academic) => void,
-  onDelete: (id: string) => void 
+  onDelete: (a: Academic) => void 
 }) {
   const formatDate = (dateString: string | Date) => {
     const date = new Date(dateString);
@@ -433,7 +433,7 @@ function AcademicCard({ academic, onEdit, onDelete }: {
           Edit
         </Button>
         <Button 
-          onClick={() => onDelete(academic._id || '')} 
+          onClick={() => onDelete(academic)} 
           size="small" 
           color="error"
           startIcon={<DeleteIcon />}
@@ -452,6 +452,8 @@ export default function AcademicsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [academicToDelete, setAcademicToDelete] = useState<Academic | null>(null);
   // Responsive UI like ExperiencePage
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -470,11 +472,12 @@ export default function AcademicsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this academic record?')) return;
+  const handleDelete = async () => {
+    if (!academicToDelete) return;
     
+    setLoading(true);
     try {
-      const res = await fetch(`https://protfolio-product-backend.vercel.app/api/academic/${id}`, {
+      const res = await fetch(`https://protfolio-product-backend.vercel.app/api/academic/${academicToDelete._id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -482,10 +485,19 @@ export default function AcademicsPage() {
       });
       
       if (!res.ok) throw new Error('Failed to delete academic');
-      fetchAcademics();
+      await fetchAcademics();
+      setDeleteDialog(false);
+      setAcademicToDelete(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleDeleteClick = (academic: Academic) => {
+    setAcademicToDelete(academic);
+    setDeleteDialog(true);
   };
 
   useEffect(() => {
@@ -538,6 +550,46 @@ export default function AcademicsPage() {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialog}
+        onClose={() => setDeleteDialog(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 2 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 'bold', borderBottom: '1px solid', borderColor: 'divider', py: 2 }}>
+          Confirm Delete
+        </DialogTitle>
+        <DialogContent sx={{ py: 3 }}>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            Are you sure you want to delete the academic record &apos;{academicToDelete?.degree} in {academicToDelete?.field}&apos; at {academicToDelete?.institution}?
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, p: 3, pt: 0 }}>
+          <Button
+            onClick={() => setDeleteDialog(false)}
+            variant="outlined"
+            color="secondary"
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDelete}
+            variant="contained"
+            color="error"
+            startIcon={loading ? <CircularProgress size={20} /> : <DeleteIcon />}
+            disabled={loading}
+          >
+            Delete
+          </Button>
+        </Box>
+      </Dialog>
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
           <CircularProgress />
@@ -570,7 +622,7 @@ export default function AcademicsPage() {
                 setSelected(academic);
                 setOpenDialog(true);
               }}
-              onDelete={handleDelete}
+              onDelete={handleDeleteClick}
             />
           ))}
         </Box>

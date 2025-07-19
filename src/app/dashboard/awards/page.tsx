@@ -146,7 +146,7 @@ function AwardForm({ initialData, onSuccess, onCancel, token }: {
 function AwardCard({ award, onEdit, onDelete }: {
   award: Award,
   onEdit: (a: Award) => void,
-  onDelete: (id: string) => void
+  onDelete: (a: Award) => void
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -177,7 +177,7 @@ function AwardCard({ award, onEdit, onDelete }: {
         <Button size="small" startIcon={<EditIcon />} onClick={() => onEdit(award)} sx={{ color: "primary.main" }}>
           Edit
         </Button>
-        <Button onClick={() => onDelete(award._id || "")} size="small" color="error" startIcon={<DeleteIcon />}>
+        <Button onClick={() => onDelete(award)} size="small" color="error" startIcon={<DeleteIcon />}>
           Delete
         </Button>
       </CardActions>
@@ -192,6 +192,8 @@ export default function AwardsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [awardToDelete, setAwardToDelete] = useState<Award | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -209,18 +211,29 @@ export default function AwardsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this award?")) return;
+  const handleDelete = async () => {
+    if (!awardToDelete) return;
+    
+    setLoading(true);
     try {
-      const res = await fetch(`https://protfolio-product-backend.vercel.app/api/award/${id}`, {
+      const res = await fetch(`https://protfolio-product-backend.vercel.app/api/award/${awardToDelete._id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!res.ok) throw new Error("Failed to delete award");
-      fetchAwards();
+      await fetchAwards();
+      setDeleteDialog(false);
+      setAwardToDelete(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleDeleteClick = (award: Award) => {
+    setAwardToDelete(award);
+    setDeleteDialog(true);
   };
 
   useEffect(() => { fetchAwards(); }, []);
@@ -254,6 +267,46 @@ export default function AwardsPage() {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialog}
+        onClose={() => setDeleteDialog(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 2 } }}
+      >
+        <DialogTitle sx={{ fontWeight: "bold", borderBottom: "1px solid", borderColor: "divider", py: 2 }}>
+          Confirm Delete
+        </DialogTitle>
+        <DialogContent sx={{ py: 3 }}>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            Are you sure you want to delete the award &apos;{awardToDelete?.title}&apos;?
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, p: 3, pt: 0 }}>
+          <Button
+            onClick={() => setDeleteDialog(false)}
+            variant="outlined"
+            color="secondary"
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDelete}
+            variant="contained"
+            color="error"
+            startIcon={loading ? <CircularProgress size={20} /> : <DeleteIcon />}
+            disabled={loading}
+          >
+            Delete
+          </Button>
+        </Box>
+      </Dialog>
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <CircularProgress />
@@ -275,7 +328,7 @@ export default function AwardsPage() {
               key={award._id}
               award={award}
               onEdit={(award) => { setSelected(award); setOpenDialog(true); }}
-              onDelete={handleDelete}
+              onDelete={handleDeleteClick}
             />
           ))}
         </Box>

@@ -285,7 +285,7 @@ function CertificationCard({
 }: {
   certification: Certification;
   onEdit: (c: Certification) => void;
-  onDelete: (id: string) => void;
+  onDelete: (c: Certification) => void;
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -416,7 +416,7 @@ function CertificationCard({
           Edit
         </Button>
         <Button
-          onClick={() => onDelete(certification._id || "")}
+          onClick={() => onDelete(certification)}
           size={isMobile ? "small" : "medium"}
           color="error"
           startIcon={<DeleteIcon fontSize={isMobile ? "small" : "medium"} />}
@@ -438,6 +438,8 @@ export default function CertificationsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [certificationToDelete, setCertificationToDelete] = useState<Certification | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -457,22 +459,32 @@ export default function CertificationsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this certification?"))
-      return;
+  const handleDelete = async () => {
+    if (!certificationToDelete) return;
+    
+    setLoading(true);
     try {
       const res = await fetch(
-        `https://protfolio-product-backend.vercel.app/api/certification/${id}`,
+        `https://protfolio-product-backend.vercel.app/api/certification/${certificationToDelete._id}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       if (!res.ok) throw new Error("Failed to delete certification");
-      fetchCertifications();
+      await fetchCertifications();
+      setDeleteDialog(false);
+      setCertificationToDelete(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleDeleteClick = (certification: Certification) => {
+    setCertificationToDelete(certification);
+    setDeleteDialog(true);
   };
 
   useEffect(() => {
@@ -561,6 +573,46 @@ export default function CertificationsPage() {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialog}
+        onClose={() => setDeleteDialog(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 2 } }}
+      >
+        <DialogTitle sx={{ fontWeight: "bold", borderBottom: "1px solid", borderColor: "divider", py: 2 }}>
+          Confirm Delete
+        </DialogTitle>
+        <DialogContent sx={{ py: 3 }}>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            Are you sure you want to delete the certification &apos;{certificationToDelete?.title}&apos;?
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, p: 3, pt: 0 }}>
+          <Button
+            onClick={() => setDeleteDialog(false)}
+            variant="outlined"
+            color="secondary"
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDelete}
+            variant="contained"
+            color="error"
+            startIcon={loading ? <CircularProgress size={20} /> : <DeleteIcon />}
+            disabled={loading}
+          >
+            Delete
+          </Button>
+        </Box>
+      </Dialog>
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <CircularProgress />
@@ -618,7 +670,7 @@ export default function CertificationsPage() {
                 setSelected(certification);
                 setOpenDialog(true);
               }}
-              onDelete={handleDelete}
+              onDelete={handleDeleteClick}
             />
           ))}
         </Box>

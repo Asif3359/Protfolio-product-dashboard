@@ -37,7 +37,7 @@ import { useAuth } from "@/context/AuthContext";
 import { styled, useTheme } from "@mui/material/styles";
 
 // const API_URL = "https://protfolio-product-backend.vercel.app/api/project";
-const API_URL = "https://protfolio-product-backend.vercel.app/api/project";  
+const API_URL = "http://localhost:3000/api/project";  
 interface Project {
   _id?: string;
   title: string;
@@ -444,7 +444,7 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
   );
 }
 
-function ProjectCard({ project, onEdit }: { project: Project; onEdit: (p: Project) => void }) {
+function ProjectCard({ project, onEdit, onDelete }: { project: Project; onEdit: (p: Project) => void; onDelete: (p: Project) => void }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
@@ -527,6 +527,14 @@ function ProjectCard({ project, onEdit }: { project: Project; onEdit: (p: Projec
         >
           Edit
         </Button>
+        <Button
+          size="small"
+          startIcon={<DeleteIcon />}
+          onClick={() => onDelete(project)}
+          sx={{ color: "error.main" }}
+        >
+          Delete
+        </Button>
       </CardActions>
     </Card>
   );
@@ -539,7 +547,8 @@ export default function ProjectsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
-
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
   const fetchProjects = async () => {
     setLoading(true);
     try {
@@ -552,6 +561,35 @@ export default function ProjectsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDelete = async () => {
+    if (!projectToDelete) return;
+    
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/${projectToDelete._id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      if (!res.ok) throw new Error("Failed to delete project");
+      
+      await fetchProjects();
+      setDeleteDialog(false);
+      setProjectToDelete(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteClick = (project: Project) => {
+    setProjectToDelete(project);
+    setDeleteDialog(true);
   };
 
   useEffect(() => {
@@ -624,6 +662,46 @@ export default function ProjectsPage() {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialog}
+        onClose={() => setDeleteDialog(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 2 } }}
+      >
+        <DialogTitle sx={{ fontWeight: "bold", borderBottom: "1px solid", borderColor: "divider", py: 2 }}>
+          Confirm Delete
+        </DialogTitle>
+        <DialogContent sx={{ py: 3 }}>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            Are you sure you want to delete the project &apos;{projectToDelete?.title}&apos;?
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, p: 3, pt: 0 }}>
+          <Button
+            onClick={() => setDeleteDialog(false)}
+            variant="outlined"
+            color="secondary"
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDelete}
+            variant="contained"
+            color="error"
+            startIcon={loading ? <CircularProgress size={20} /> : <DeleteIcon />}
+            disabled={loading}
+          >
+            Delete
+          </Button>
+        </Box>
+      </Dialog>
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <CircularProgress />
@@ -656,6 +734,7 @@ export default function ProjectsPage() {
                 setSelected(proj);
                 setOpenDialog(true);
               }}
+              onDelete={handleDeleteClick}
             />
           ))}
         </Box>

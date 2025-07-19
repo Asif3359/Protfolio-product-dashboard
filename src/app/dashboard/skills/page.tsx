@@ -28,10 +28,12 @@ import {
   Edit as EditIcon,
   Save as SaveIcon,
   Cancel as CancelIcon,
+  Delete as DeleteIcon,
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 
-const API_URL = "https://protfolio-product-backend.vercel.app/api/skill";
+// const API_URL = "https://protfolio-product-backend.vercel.app/api/skill";
+const API_URL = "http://localhost:3000/api/skill";
 
 interface Skill {
   _id?: string;
@@ -273,7 +275,7 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
   );
 }
 
-function SkillCard({ skill, onEdit }: { skill: Skill; onEdit: (s: Skill) => void }) {
+function SkillCard({ skill, onEdit, onDelete }: { skill: Skill; onEdit: (s: Skill) => void; onDelete: (s: Skill) => void }) {
   return (
     <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
       <CardContent>
@@ -305,6 +307,14 @@ function SkillCard({ skill, onEdit }: { skill: Skill; onEdit: (s: Skill) => void
         >
           Edit
         </Button>
+        <Button
+          size="small"
+          startIcon={<DeleteIcon />}
+          onClick={() => onDelete(skill)}
+          sx={{ color: "error.main" }}
+        >
+          Delete
+        </Button>
       </CardActions>
     </Card>
   );
@@ -317,6 +327,8 @@ export default function SkillsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [skillToDelete, setSkillToDelete] = useState<Skill | null>(null);
   const fetchSkills = async () => {
     setLoading(true);
     try {
@@ -329,6 +341,35 @@ export default function SkillsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDelete = async () => {
+    if (!skillToDelete) return;
+    
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/${skillToDelete._id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      if (!res.ok) throw new Error("Failed to delete skill");
+      
+      await fetchSkills();
+      setDeleteDialog(false);
+      setSkillToDelete(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteClick = (skill: Skill) => {
+    setSkillToDelete(skill);
+    setDeleteDialog(true);
   };
 
   useEffect(() => {
@@ -381,6 +422,46 @@ export default function SkillsPage() {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialog}
+        onClose={() => setDeleteDialog(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 2 } }}
+      >
+        <DialogTitle sx={{ fontWeight: "bold", borderBottom: "1px solid", borderColor: "divider", py: 2 }}>
+          Confirm Delete
+        </DialogTitle>
+        <DialogContent sx={{ py: 3 }}>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            Are you sure you want to delete the skill &apos;{skillToDelete?.name}&apos;?
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, p: 3, pt: 0 }}>
+          <Button
+            onClick={() => setDeleteDialog(false)}
+            variant="outlined"
+            color="secondary"
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDelete}
+            variant="contained"
+            color="error"
+            startIcon={loading ? <CircularProgress size={20} /> : <DeleteIcon />}
+            disabled={loading}
+          >
+            Delete
+          </Button>
+        </Box>
+      </Dialog>
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <CircularProgress />
@@ -413,6 +494,7 @@ export default function SkillsPage() {
                 setSelected(s);
                 setOpenDialog(true);
               }}
+              onDelete={handleDeleteClick}
             />
           ))}
         </Box>

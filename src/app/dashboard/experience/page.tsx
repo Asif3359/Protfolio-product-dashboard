@@ -337,9 +337,10 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
 interface ExperienceCardProps {
   experience: Experience;
   onEdit: (exp: Experience) => void;
+  onDelete: (exp: Experience) => void;
 }
 
-function ExperienceCard({ experience, onEdit }: ExperienceCardProps) {
+function ExperienceCard({ experience, onEdit, onDelete }: ExperienceCardProps) {
   return (
     <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
       <CardContent>
@@ -407,6 +408,14 @@ function ExperienceCard({ experience, onEdit }: ExperienceCardProps) {
         >
           Edit
         </Button>
+        <Button
+          size="small"
+          startIcon={<DeleteIcon />}
+          onClick={() => onDelete(experience)}
+          sx={{ color: 'error.main' }}
+        >
+          Delete
+        </Button>
       </CardActions>
     </Card>
   );
@@ -419,6 +428,8 @@ export default function ExperiencePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [experienceToDelete, setExperienceToDelete] = useState<Experience | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -434,6 +445,35 @@ export default function ExperiencePage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDelete = async () => {
+    if (!experienceToDelete) return;
+    
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/${experienceToDelete._id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      if (!res.ok) throw new Error("Failed to delete experience");
+      
+      await fetchExperiences();
+      setDeleteDialog(false);
+      setExperienceToDelete(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteClick = (experience: Experience) => {
+    setExperienceToDelete(experience);
+    setDeleteDialog(true);
   };
 
   useEffect(() => {
@@ -488,6 +528,46 @@ export default function ExperiencePage() {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialog}
+        onClose={() => setDeleteDialog(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 2 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 'bold', borderBottom: '1px solid', borderColor: 'divider', py: 2 }}>
+          Confirm Delete
+        </DialogTitle>
+        <DialogContent sx={{ py: 3 }}>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            Are you sure you want to delete the experience &apos;{experienceToDelete?.title}&apos; at {experienceToDelete?.company}?
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, p: 3, pt: 0 }}>
+          <Button
+            onClick={() => setDeleteDialog(false)}
+            variant="outlined"
+            color="secondary"
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDelete}
+            variant="contained"
+            color="error"
+            startIcon={loading ? <CircularProgress size={20} /> : <DeleteIcon />}
+            disabled={loading}
+          >
+            Delete
+          </Button>
+        </Box>
+      </Dialog>
       
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -521,6 +601,7 @@ export default function ExperiencePage() {
                 setSelected(exp);
                 setOpenDialog(true);
               }}
+              onDelete={handleDeleteClick}
             />
           ))}
         </Box>

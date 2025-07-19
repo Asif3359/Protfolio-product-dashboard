@@ -206,7 +206,7 @@ function ResearchForm({ initialData, onSuccess, onCancel, token }: {
 function ResearchCard({ research, onEdit, onDelete }: {
   research: Research,
   onEdit: (r: Research) => void,
-  onDelete: (id: string) => void
+  onDelete: (r: Research) => void
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -250,7 +250,7 @@ function ResearchCard({ research, onEdit, onDelete }: {
         <Button size="small" startIcon={<EditIcon />} onClick={() => onEdit(research)} sx={{ color: "primary.main" }}>
           Edit
         </Button>
-        <Button onClick={() => onDelete(research._id || "")} size="small" color="error" startIcon={<DeleteIcon />}>
+        <Button onClick={() => onDelete(research)} size="small" color="error" startIcon={<DeleteIcon />}>
           Delete
         </Button>
       </CardActions>
@@ -265,6 +265,8 @@ export default function ResearchPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [researchToDelete, setResearchToDelete] = useState<Research | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -282,18 +284,29 @@ export default function ResearchPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this research?")) return;
+  const handleDelete = async () => {
+    if (!researchToDelete) return;
+    
+    setLoading(true);
     try {
-      const res = await fetch(`https://protfolio-product-backend.vercel.app/api/research/${id}`, {
+      const res = await fetch(`https://protfolio-product-backend.vercel.app/api/research/${researchToDelete._id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!res.ok) throw new Error("Failed to delete research");
-      fetchResearches();
+      await fetchResearches();
+      setDeleteDialog(false);
+      setResearchToDelete(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleDeleteClick = (research: Research) => {
+    setResearchToDelete(research);
+    setDeleteDialog(true);
   };
 
   useEffect(() => { fetchResearches(); }, []);
@@ -327,6 +340,46 @@ export default function ResearchPage() {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialog}
+        onClose={() => setDeleteDialog(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 2 } }}
+      >
+        <DialogTitle sx={{ fontWeight: "bold", borderBottom: "1px solid", borderColor: "divider", py: 2 }}>
+          Confirm Delete
+        </DialogTitle>
+        <DialogContent sx={{ py: 3 }}>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            Are you sure you want to delete the research &apos;{researchToDelete?.title}&apos;?
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, p: 3, pt: 0 }}>
+          <Button
+            onClick={() => setDeleteDialog(false)}
+            variant="outlined"
+            color="secondary"
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDelete}
+            variant="contained"
+            color="error"
+            startIcon={loading ? <CircularProgress size={20} /> : <DeleteIcon />}
+            disabled={loading}
+          >
+            Delete
+          </Button>
+        </Box>
+      </Dialog>
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <CircularProgress />
@@ -348,7 +401,7 @@ export default function ResearchPage() {
               key={research._id}
               research={research}
               onEdit={(research) => { setSelected(research); setOpenDialog(true); }}
-              onDelete={handleDelete}
+              onDelete={handleDeleteClick}
             />
           ))}
         </Box>
