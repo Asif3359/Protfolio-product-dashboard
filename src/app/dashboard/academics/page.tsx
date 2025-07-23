@@ -297,7 +297,7 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
               label="Description"
               name="description"
               multiline
-              rows={3}
+              rows={10}
               value={formData.description}
               onChange={handleChange}
               size="small"
@@ -405,7 +405,7 @@ function AcademicCard({ academic, onEdit, onDelete }: {
         </Typography>
         <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
           {formatDate(academic.startDate)} - {academic.endDate ? formatDate(academic.endDate) : 'Present'}
-          {academic.gpa && ` • GPA: ${academic.gpa}/4.0`}
+          {academic.gpa && ` • GPA: ${academic.gpa}`}
         </Typography>
         {academic.description && (
           <Typography variant="body2" paragraph sx={{ mb: 2, whiteSpace: "pre-line" , wordBreak: "break-word" }}>

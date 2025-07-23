@@ -310,7 +310,7 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
               onChange={handleChange}
               fullWidth
               multiline
-              rows={3}
+              rows={10}
               required
               size="small"
               sx={{ width: "100%", maxWidth: "100%" }}

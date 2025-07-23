@@ -7,7 +7,7 @@ async function CertificationPage() {
 
   const profileData = await getData("profile");
   const secondHeroTitle = {
-    seeroTitle :'About Certification -'
+    seeroTitle :'About Certification'
   };
 
   const certificationsList = await getData("certification");

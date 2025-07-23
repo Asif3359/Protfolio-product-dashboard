@@ -143,7 +143,7 @@ function ResearchForm({ initialData, onSuccess, onCancel, token }: {
             <TextField fullWidth label="Title" name="title" value={formData.title} onChange={handleChange} required size="small" />
           </Grid>
           <Grid container spacing={2}>
-            <TextField fullWidth label="Description" name="description" value={formData.description} onChange={handleChange} required multiline rows={3} size="small" />
+            <TextField fullWidth label="Description" name="description" value={formData.description} onChange={handleChange} required multiline rows={10} size="small" />
           </Grid>
           <Grid container spacing={2}>
             <Box sx={{ width: "100%" }}>

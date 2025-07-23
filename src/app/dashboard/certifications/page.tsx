@@ -228,7 +228,7 @@ function CertificationForm({
               value={formData.description}
               onChange={handleChange}
               multiline
-              rows={3}
+              rows={10}
               size="small"
             />
           </Grid>

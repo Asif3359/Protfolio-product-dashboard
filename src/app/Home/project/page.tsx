@@ -8,7 +8,7 @@ async function ProjectPage() {
   const profileData = await getData("profile");
   const projectsDataList = await getData("project");
   const secondHeroTitle = {
-    seeroTitle :'About Project -'
+    seeroTitle :'About Project'
   };
   const isPage ={
     isItPage:true

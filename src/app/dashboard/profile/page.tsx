@@ -489,7 +489,7 @@ export default function ProfilePage() {
                 onChange={handleChange}
                 fullWidth
                 multiline
-                minRows={3}
+                rows={10}
                 margin="normal"
                 variant="outlined"
                 size="small"
@@ -615,8 +615,7 @@ export default function ProfilePage() {
                 onChange={handleChange}
                 fullWidth
                 multiline
-                minRows={6}
-                maxRows={12}
+                rows={12}
                 margin="normal"
                 variant="outlined"
                 size="small"
@@ -760,7 +759,7 @@ export default function ProfilePage() {
 
         {/* Background Images */}
         <SectionPaper elevation={0}>
-          <SectionTitle variant="h6">Background Images for Pages</SectionTitle>
+          <SectionTitle variant="h6">Background Images for Pages (1440 x 445)</SectionTitle>
           <Box
             // container
             // spacing={2}

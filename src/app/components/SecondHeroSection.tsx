@@ -61,7 +61,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData, secondHeroTitle:
     .typewriter-best-words {
       font-weight: bold;
       font-size: 2rem;
-      background: linear-gradient(90deg,rgb(109, 47, 255),rgb(36, 110, 221), #1fa2ff,rgb(250, 188, 18), #a6ffcb);
+      background: linear-gradient(90deg,rgb(109, 47, 255),rgb(36, 110, 221), #1fa2ff,rgb(160, 129, 44),rgb(12, 114, 54));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;

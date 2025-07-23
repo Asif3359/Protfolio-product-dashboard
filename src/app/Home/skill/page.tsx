@@ -8,7 +8,7 @@ async function SkillPage() {
   const profileData = await getData("profile");
   const skillTechnical = await getData("skill");
   const secondHeroTitle = {
-    seeroTitle :'About Skills -'
+    seeroTitle :'About Skills'
   };
   const isPage ={
     isItPage:true

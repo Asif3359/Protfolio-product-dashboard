@@ -7,7 +7,7 @@ async function AcademicPage() {
 
   const profileData = await getData("profile");
   const secondHeroTitle = {
-    seeroTitle :'About Educations -'
+    seeroTitle :'About Educations'
   };
 
   const academicsEducations = await getData("academic");

@@ -41,15 +41,15 @@ import GetProfileName from "../components/GetProfileName";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { text: "Profile", icon: <AccountCircle />, href: "/dashboard/profile", color: "#1996b2" },
-  { text: "Experience", icon: <Work />, href: "/dashboard/experience", color: "#388e3c" },
-  { text: "Projects", icon: <Folder />, href: "/dashboard/projects", color: "#7b1fa2" },
-  { text: "Skills", icon: <Star />, href: "/dashboard/skills", color: "#fbc02d" },
-  { text: "Academics", icon: <School />, href: "/dashboard/academics", color: "#0288d1" },
-  { text: "Certifications", icon: <EmojiEvents />, href: "/dashboard/certifications", color: "#ff7043" },
-  { text: "Awards", icon: <EmojiEvents />, href: "/dashboard/awards", color: "#8d6e63" },
-  { text: "Research", icon: <Science />, href: "/dashboard/research", color: "#43a047" },
   { text: "Home", icon: <Home />, href: "/", color: "#616161" },
+  { text: "Profile", icon: <AccountCircle />, href: "/dashboard/profile", color: "#1996b2" },
+  { text: "Education", icon: <School />, href: "/dashboard/academics", color: "#0288d1" },
+  { text: "Research", icon: <Science />, href: "/dashboard/research", color: "#43a047" },
+  { text: "Projects", icon: <Folder />, href: "/dashboard/projects", color: "#7b1fa2" },
+  { text: "Experience", icon: <Work />, href: "/dashboard/experience", color: "#388e3c" },
+  { text: "Skills", icon: <Star />, href: "/dashboard/skills", color: "#fbc02d" },
+  { text: "Certifications", icon: <EmojiEvents />, href: "/dashboard/certifications", color: "#ff7043" },
+  { text: "Honors & Awards", icon: <EmojiEvents />, href: "/dashboard/awards", color: "#8d6e63" },
 ];
 
 export default function DashboardLayout({

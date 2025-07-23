@@ -121,7 +121,7 @@ function AwardForm({ initialData, onSuccess, onCancel, token }: {
             </TextField>
           </Grid>
           <Grid container spacing={2}>
-            <TextField fullWidth label="Description" name="description" value={formData.description} onChange={handleChange} multiline rows={3} size="small" />
+            <TextField fullWidth label="Description" name="description" value={formData.description} onChange={handleChange} multiline rows={10} size="small" />
           </Grid>
           <Grid container spacing={2}>
             <TextField fullWidth label="Link" name="link" value={formData.link} onChange={handleChange} size="small" />

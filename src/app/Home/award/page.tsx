@@ -7,7 +7,7 @@ async function AwardPage() {
 
   const profileData = await getData("profile");
   const secondHeroTitle = {
-    seeroTitle :'About Awards -'
+    seeroTitle :'About Awards'
   };
 
   const awardsList = await getData("award");

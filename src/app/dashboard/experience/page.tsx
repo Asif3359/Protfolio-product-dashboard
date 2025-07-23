@@ -279,7 +279,7 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
               onChange={handleChange}
               fullWidth
               multiline
-              rows={3}
+              rows={10}
               required
               size="small"
               sx={{ width: '100%', maxWidth: '100%' }}

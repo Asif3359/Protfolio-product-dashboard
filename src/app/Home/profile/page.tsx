@@ -6,7 +6,7 @@ import React from "react";
 async function ProfilePage() {
   const profileData = await getData("profile");
   const secondHeroTitle = {
-    seeroTitle :'About Me -'
+    seeroTitle :'About Me'
   };
   
   // Add null checking for profileData

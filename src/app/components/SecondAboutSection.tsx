@@ -16,9 +16,9 @@ import {
   Phone,
   LinkedIn,
   Twitter,
-  FilePresent,
   YouTube,
   Facebook,
+  InsertDriveFile,
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -225,7 +225,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ cursor: "pointer" }}
-                    icon={<FilePresent fontSize="small" />}
+                    icon={<InsertDriveFile fontSize="small" />}
                     label="View my CV"
                     sx={{
                       justifyContent: "flex-start",
@@ -411,7 +411,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                       lineHeight: 1.2,
                     }}
                   >
-                    Biography -
+                    Biography
                   </Typography>
                   <Divider
                     sx={{

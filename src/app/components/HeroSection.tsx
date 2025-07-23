@@ -21,6 +21,7 @@ import Typewriter from "typewriter-effect";
 
 interface ProfileData {
   profilePicture: string;
+  name: string;
   heroTitle: string;
   heroDescription: string;
   bestThreeWords: string[];
@@ -55,7 +56,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
     .typewriter-best-words {
       font-weight: bold;
       font-size: 2.5rem;
-      background: linear-gradient(90deg,rgb(109, 47, 255),rgb(36, 110, 221), #1fa2ff,rgb(250, 188, 18), #a6ffcb);
+      background: linear-gradient(90deg,rgb(109, 47, 255),rgb(36, 110, 221), #1fa2ff,rgb(160, 129, 44),rgb(12, 114, 54));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -77,7 +78,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
   const {
     // profilePicture,
     heroTitle,
-    // name,
+    name,
     heroDescription,
     bestThreeWords,
     currentJobTitle,
@@ -150,13 +151,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
                   component="h1"
                   gutterBottom
                   sx={{
-                    fontWeight: 500,
                     lineHeight: 1.2,
                     color: theme.palette.primary.dark,
                     textShadow: "1px 1px 2px rgba(0,0,0,0.1)",
                   }}
                 >
-                  {heroTitle}
+                  <span className="typewriter-hero-title" style={{ fontWeight: 500, fontSize: isMobile ? "1.5rem" : "1.5rem" }}>
+                    {heroTitle}
+                  </span>
+                  <br />
+                  <span className="typewriter-hero-name"  style={{ fontWeight: 700, fontSize: isMobile ? "2.5rem" : "2.5rem" }}>
+                    {name}
+                  </span>
                 </Typography>
 
 

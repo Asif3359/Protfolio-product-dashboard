@@ -9,7 +9,7 @@ async function ExperiencePage() {
   const experienceJobs = await getData("experience");
 
   const secondHeroTitle = {
-    seeroTitle :'About Experience -'
+    seeroTitle :'About Experience'
   };
   const isPage ={
     isItPage:true

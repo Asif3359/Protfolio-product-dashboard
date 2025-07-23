@@ -206,7 +206,7 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
               onChange={handleChange}
               fullWidth
               multiline
-              rows={2}
+              rows={10}
               size="small"
               variant="outlined"
             />
