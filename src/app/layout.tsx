@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Md. Mehedi Hasan Sagar",
-  description: "Professional portfolio showcasing projects, skills, and experience",
+  description: "Mechanical Emgineer from BUET",
 };
 
 export default function RootLayout({
