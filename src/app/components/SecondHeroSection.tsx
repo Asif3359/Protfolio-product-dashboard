@@ -121,7 +121,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData, secondHeroTitle:
             backgroundImage: heroPic ? `url(${heroPic})` : 'none',
             backgroundSize: "cover",
             backgroundPosition: "center",
-            opacity: 0.2,
+            opacity: 0.3,
             zIndex: 0,
             filter: "blur(1px) brightness(1.1)",
           },
