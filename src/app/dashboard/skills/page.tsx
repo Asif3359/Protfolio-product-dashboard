@@ -19,7 +19,6 @@ import {
   DialogTitle,
   DialogContent,
   MenuItem,
-  Slider,
   useTheme,
   useMediaQuery,
 } from "@mui/material";
@@ -32,18 +31,24 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 
-// const API_URL = "https://protfolio-product-backend.vercel.app/api/skill";
 const API_URL = "https://protfolio-product-backend.vercel.app/api/skill";
 
 interface Skill {
   _id?: string;
   name: string;
+  type: string;
   category: string;
-  proficiency: number;
   description?: string;
   ownerEmail: string;
-  logo: string; // <-- required!
+  logo: string;
 }
+
+const types = [
+  "Technical",
+  "Soft",
+  "Language",
+  "Other",
+];
 
 const categories = [
   "Programming",
@@ -61,11 +66,11 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
   const [form, setForm] = useState<Skill>(
     initialData || {
       name: "",
+      type: "Technical",
       category: "Programming",
-      proficiency: 50,
       description: "",
       ownerEmail: localStorage.getItem("ownerEmail") || "",
-      logo: "", // <-- add this line
+      logo: "",
     }
   );
   const [loading, setLoading] = useState(false);
@@ -79,9 +84,7 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
   }, [initialData]);
 
   useEffect(() => {
-    // Only fetch if adding a new skill (not editing)
     if (!initialData) {
-      // Get ownerEmail from localStorage
       const ownerEmail = localStorage.getItem("ownerEmail");
       if (ownerEmail) {
         setForm((prev) => ({ ...prev, ownerEmail }));
@@ -91,11 +94,7 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: name === "proficiency" ? Number(value) : value }));
-  };
-
-  const handleSliderChange = (_: Event, value: number | number[]) => {
-    setForm((prev) => ({ ...prev, proficiency: value as number }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -107,8 +106,8 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
       const url = form._id ? `${API_URL}/${form._id}` : API_URL;
       const formData = new FormData();
       formData.append("name", form.name);
+      formData.append("type", form.type);
       formData.append("category", form.category);
-      formData.append("proficiency", String(form.proficiency));
       formData.append("description", form.description || "");
       formData.append("ownerEmail", form.ownerEmail);
       if (logoFile) {
@@ -119,7 +118,6 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
         method: method.toUpperCase(),
         headers: {
           Authorization: `Bearer ${token}`,
-          // Do NOT set Content-Type, browser will set it for FormData
         },
         body: formData,
       });
@@ -128,8 +126,8 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
       if (!form._id) {
         setForm({
           name: "",
+          type: "Technical",
           category: "Programming",
-          proficiency: 50,
           description: "",
           ownerEmail: form.ownerEmail,
           logo: "",
@@ -170,6 +168,23 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
           </Grid>
           <Grid container spacing={2}>
             <TextField
+              name="type"
+              label="Type"
+              value={form.type}
+              onChange={handleChange}
+              fullWidth
+              select
+              size="small"
+              variant="outlined"
+              required
+            >
+              {types.map((t) => (
+                <MenuItem key={t} value={t}>{t}</MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid container spacing={2}>
+            <TextField
               name="category"
               label="Category"
               value={form.category}
@@ -183,20 +198,6 @@ function SkillForm({ initialData, onSuccess, onCancel, token }: { initialData: S
                 <MenuItem key={cat} value={cat}>{cat}</MenuItem>
               ))}
             </TextField>
-          </Grid>
-          <Grid container spacing={2}>
-            <Box sx={{ px: 1 }}>
-              <Typography gutterBottom>Proficiency: {form.proficiency}</Typography>
-              <Slider
-                value={form.proficiency}
-                onChange={handleSliderChange}
-                min={1}
-                max={100}
-                step={1}
-                valueLabelDisplay="auto"
-                name="proficiency"
-              />
-            </Box>
           </Grid>
           <Grid container spacing={2}>
             <TextField
@@ -287,9 +288,8 @@ function SkillCard({ skill, onEdit, onDelete }: { skill: Skill; onEdit: (s: Skil
             {skill.name}
           </Typography>
         </Box>
-
         <Typography color="primary" gutterBottom sx={{ fontWeight: "medium", mb: 2 }}>
-          {skill.category} • Proficiency: {skill.proficiency}
+          {skill.type} • {skill.category}
         </Typography>
         {skill.description && (
           <Typography variant="body2" paragraph sx={{ mb: 2, whiteSpace: "pre-line", wordBreak: "break-word" }}>

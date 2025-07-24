@@ -35,6 +35,9 @@ import {
   Cancel as CancelIcon,
 } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 const API_URL = 'https://protfolio-product-backend.vercel.app/api/experience';
 
@@ -183,6 +186,10 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
     </Box>
   );
 
+  const handleDateChange = (name: string) => (date: Date | null) => {
+    setForm((prev) => ({ ...prev, [name]: date ? date.toISOString() : null }));
+  };
+
   return (
     <Paper elevation={0} sx={{ p: 0, mb: 4, borderRadius: 2 }}>
       <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
@@ -231,20 +238,24 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
           </Grid>
 
           <Grid container spacing={2}>
-            <TextField
-              name="startDate"
-              label="Start Date"
-              type="date"
-              value={form.startDate?.slice(0,10) || ''}
-              onChange={handleChange}
-              fullWidth
-              required
-              size="small"
-              InputLabelProps={{ shrink: true }}
-            />
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                format="dd/MM/yyyy"
+                label="Start Date"
+                value={form.startDate ? new Date(form.startDate) : null}
+                onChange={handleDateChange('startDate')}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    required: true,
+                    size: 'small',
+                  }
+                }}
+              />
+            </LocalizationProvider>
           </Grid>
           <Grid container spacing={2}>
-            <TextField
+            {/* <TextField
               name="endDate"
               label="End Date"
               type="date"
@@ -254,7 +265,23 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
               size="small"
               disabled={form.isCurrent}
               InputLabelProps={{ shrink: true }}
-            />
+            /> */}
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                format="dd/MM/yyyy"
+                label="End Date"
+                value={form.endDate ? new Date(form.endDate) : null}
+                onChange={handleDateChange('endDate')}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    // required: true,
+                    disabled: form.isCurrent,
+                    size: 'small',
+                  }
+                }}
+              />
+            </LocalizationProvider>
           </Grid>
 
           <Grid container spacing={2}>

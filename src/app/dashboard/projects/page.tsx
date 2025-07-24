@@ -35,6 +35,10 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 import { styled, useTheme } from "@mui/material/styles";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { format } from "date-fns";
 
 // const API_URL = "https://protfolio-product-backend.vercel.app/api/project";
 const API_URL = "https://protfolio-product-backend.vercel.app/api/project";  
@@ -235,6 +239,10 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
     </Box>
   );
 
+  const handleDateChange = (name: string) => (date: Date | null) => {
+    setForm((prev) => ({ ...prev, [name]: date ? date.toISOString() : null }));
+  };
+
   return (
     <Paper elevation={0} sx={{ p: 0, mb: 4, borderRadius: 2 }}>
       <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold", mb: 3 }}>
@@ -278,29 +286,36 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
             </TextField>
           </Grid>
           <Grid container spacing={2}>
-            <TextField
-              name="startDate"
-              label="Start Date"
-              type="date"
-              value={form.startDate?.slice(0, 10) || ""}
-              onChange={handleChange}
-              fullWidth
-              required
-              size="small"
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid container spacing={2}>
-            <TextField
-              name="endDate"
-              label="End Date"
-              type="date"
-              value={form.endDate?.slice(0, 10) || ""}
-              onChange={handleChange}
-              fullWidth
-              size="small"
-              InputLabelProps={{ shrink: true }}
-            />
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                format="dd/MM/yyyy"
+                label="Start Date"
+                value={form.startDate ? new Date(form.startDate) : null}
+                onChange={handleDateChange('startDate')}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    // required: true,
+                    size: 'small',
+                  }
+                }}
+              />
+            </LocalizationProvider>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                format="dd/MM/yyyy"
+                label="End Date"
+                value={form.endDate ? new Date(form.endDate) : null}
+                onChange={handleDateChange('endDate')}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    // required: true,
+                    size: 'small',
+                  }
+                }}
+              />
+            </LocalizationProvider>
           </Grid>
           <Grid container spacing={2}>
             <TextField
@@ -310,7 +325,7 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
               onChange={handleChange}
               fullWidth
               multiline
-              rows={10}
+              rows={15}
               required
               size="small"
               sx={{ width: "100%", maxWidth: "100%" }}
@@ -454,7 +469,9 @@ function ProjectCard({ project, onEdit, onDelete }: { project: Project; onEdit: 
           {project.title}
         </Typography>
         <Typography color="primary" gutterBottom sx={{ fontWeight: "medium", mb: 2 }}>
-          {project.status} • {new Date(project.startDate).toLocaleDateString()} {project.endDate ? `- ${new Date(project.endDate).toLocaleDateString()}` : ""}
+          {project.status} •
+          {project.startDate ? format(new Date(project.startDate), "dd/MM/yyyy") : ""}
+          {project.endDate ? ` - ${format(new Date(project.endDate), "dd/MM/yyyy")}` : ""}
         </Typography>
         <Typography variant="body2" paragraph sx={{ mb: 2, whiteSpace: "pre-line", wordBreak: "break-word" }}>
           {project.description}

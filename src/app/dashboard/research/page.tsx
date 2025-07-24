@@ -9,6 +9,9 @@ import { Add as AddIcon, Delete as DeleteIcon, Cancel as CancelIcon, Save as Sav
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 type Research = {
   _id?: string;
@@ -120,6 +123,10 @@ function ResearchForm({ initialData, onSuccess, onCancel, token }: {
     }
   };
 
+  const handleDateChange = (name: string) => (date: Date | null) => {
+    setFormData((prev) => ({ ...prev, [name]: date ? date.toISOString() : null }));
+  };
+
   return (
     <Paper elevation={0} sx={{ p: 0, mb: 4, borderRadius: 2 }}>
       <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold", mb: 3 }}>
@@ -168,7 +175,21 @@ function ResearchForm({ initialData, onSuccess, onCancel, token }: {
             </Box>
           </Grid>
           <Grid container spacing={2}>
-            <TextField fullWidth label="Publication Date" name="publicationDate" type="date" value={formData.publicationDate ? new Date(formData.publicationDate).toISOString().slice(0, 10) : ""} onChange={handleChange} size="small" InputLabelProps={{ shrink: true }} />
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                format="dd/MM/yyyy"
+                label="dd/MM/yyyy"
+                value={formData.publicationDate ? new Date(formData.publicationDate) : null}
+                onChange={handleDateChange('publicationDate')}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    // required: true,
+                    size: 'small',
+                  }
+                }}
+              />
+            </LocalizationProvider>
           </Grid>
           <Grid container spacing={2}>
             <TextField fullWidth label="Journal" name="journal" value={formData.journal} onChange={handleChange} size="small" />

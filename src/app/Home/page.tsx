@@ -57,11 +57,12 @@ export default async function Home() {
         <AboutSection profileData={profileData} />
         <AcademicsSection academicsTitle="Academics" academicsEducations={academicsEducations} isPage={isPage} />
         <ResearchSection researchDataTitle="Research" researchList={researchData} isPage={isPage} />
-        <ExperienceSection experienceTitle="Experience" experienceJobs={experienceJobs} isPage={isPage} />
         <ProjectsSection projectsDataTitle="Projects" projectsDataList={projectsDataList} isPage={isPage} />
+        <ExperienceSection experienceTitle="Experience" experienceJobs={experienceJobs} isPage={isPage} />
+        <SkillsSection skillTitle="Skills" skillTechnical={skillTechnical} isPage={isPage} />
         <CertificationSection certificationsTitle="Certifications" certificationsList={certificationsList} isPage={isPage} />
         <AwardsSection title="Awards" list={awardsList} isPage={isPage} />
-        <SkillsSection skillTitle="Skills" skillTechnical={skillTechnical} isPage={isPage} />
+        
       </section>
     </div>
   );

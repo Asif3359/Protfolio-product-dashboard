@@ -29,6 +29,9 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 type Certification = {
   _id?: string;
@@ -124,6 +127,10 @@ function CertificationForm({
     }
   };
 
+  const handleDateChange = (name: string) => (date: Date | null) => {
+    setFormData((prev) => ({ ...prev, [name]: date ? date.toISOString() : null }));
+  };
+
   return (
     <Paper elevation={0} sx={{ p: 0, mb: 4, borderRadius: 2 }}>
       <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold", mb: 3 }}>
@@ -168,7 +175,7 @@ function CertificationForm({
             />
           </Grid>
           <Grid container spacing={2}>
-            <TextField
+            {/* <TextField
               fullWidth
               label="Date"
               name="date"
@@ -182,10 +189,28 @@ function CertificationForm({
               required
               size="small"
               InputLabelProps={{ shrink: true }}
-            />
+            /> */}
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                format="dd/MM/yyyy"
+                label="Date"
+                value={formData.date ? new Date(formData.date) : null}
+                onChange={handleDateChange('date')}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    required: true,
+                    size: 'small',
+                    InputLabelProps: {
+                      shrink: true,
+                    },
+                  }
+                }}
+              />
+            </LocalizationProvider>
           </Grid>
           <Grid container spacing={2}>
-            <TextField
+            {/* <TextField
               fullWidth
               label="Expiry Date"
               name="expiryDate"
@@ -198,7 +223,25 @@ function CertificationForm({
               onChange={handleChange}
               size="small"
               InputLabelProps={{ shrink: true }}
-            />
+            /> */}
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                format="dd/MM/yyyy"
+                label="Expiry Date"
+                value={formData.expiryDate ? new Date(formData.expiryDate) : null}
+                onChange={handleDateChange('expiryDate')}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    // required: true,
+                    size: 'small',
+                    InputLabelProps: {
+                      shrink: true,
+                    },
+                  }
+                }}
+              />
+            </LocalizationProvider>
           </Grid>
           <Grid container spacing={2}>
             <TextField

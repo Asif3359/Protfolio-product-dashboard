@@ -147,8 +147,13 @@ const ResearchSection: React.FC<ResearchSectionProps> = ({ researchDataTitle, re
                     </Avatar>
                     <Box sx={{ flex: 1, minWidth: 0 }}>
                       <Typography 
+                        onClick={() => router.push(`/Home/research/${research._id}`)}
                         variant="h5" 
                         sx={{ 
+                          cursor: 'pointer',
+                          '&:hover': {
+                            color: theme.palette.primary.main,
+                          },
                           fontWeight: 700, 
                           lineHeight: 1.2, 
                           color: theme.palette.text.primary, 

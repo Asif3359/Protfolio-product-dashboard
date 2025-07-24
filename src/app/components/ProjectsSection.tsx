@@ -200,7 +200,9 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                           borderRadius: 2,
                           overflow: "hidden",
                           bgcolor: theme.palette.action.hover,
+                          cursor: "pointer",
                         }}
+                        onClick={() => router.push(`/Home/project/${project._id}`)}
                       >
                         <Image
                           src={project.images[0]}
@@ -239,7 +241,12 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                             lineHeight: 1.2,
                             color: theme.palette.text.primary,
                             fontSize: { xs: "1.2rem", md: "1.3rem" },
+                            cursor: "pointer",
+                            "&:hover": {
+                              color: theme.palette.primary.main,
+                            },
                           }}
+                          onClick={() => router.push(`/Home/project/${project._id}`)}
                         >
                           {project.title}
                         </Typography>
@@ -491,7 +498,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                               variant="button"
                               sx={{ fontSize: "0.75rem" }}
                             >
-                              Live
+                              Demo
                             </Typography>
                           </IconButton>
                         </Tooltip>

@@ -9,6 +9,9 @@ import { Add as AddIcon, Delete as DeleteIcon, Cancel as CancelIcon, Save as Sav
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 type Award = {
   _id?: string;
@@ -19,6 +22,7 @@ type Award = {
   category: "Academic" | "Professional" | "Research" | "Other";
   link?: string;
   ownerEmail?: string;
+  image?: string;
 };
 
 function AwardForm({ initialData, onSuccess, onCancel, token }: {
@@ -34,10 +38,13 @@ function AwardForm({ initialData, onSuccess, onCancel, token }: {
     description: "",
     category: "Academic",
     link: "",
-    ownerEmail: localStorage.getItem("ownerEmail") || ""
+    ownerEmail: localStorage.getItem("ownerEmail") || "",
+    image: undefined
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -46,19 +53,31 @@ function AwardForm({ initialData, onSuccess, onCancel, token }: {
       setFormData({
         ...initialData,
         date: new Date(initialData.date),
+        image: initialData.image
       });
+      setImagePreview(initialData.image || null);
     } else {
-      // Get ownerEmail from localStorage
       const ownerEmail = localStorage.getItem("ownerEmail");
       if (ownerEmail) {
         setFormData((prev) => ({ ...prev, ownerEmail }));
       }
+      setImagePreview(null);
     }
   }, [initialData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, files } = e.target;
+    if (type === "file" && files && files[0]) {
+      setImageFile(files[0]);
+      setFormData((prev) => ({ ...prev, image: files[0].name }));
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setImagePreview(ev.target?.result as string);
+      };
+      reader.readAsDataURL(files[0]);
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,14 +89,29 @@ function AwardForm({ initialData, onSuccess, onCancel, token }: {
         ? `https://protfolio-product-backend.vercel.app/api/award/${initialData._id}`
         : "https://protfolio-product-backend.vercel.app/api/award";
       const method = initialData ? "PUT" : "POST";
-      const body = { ...formData, ownerEmail: formData.ownerEmail };
+      const body: FormData | string = new FormData();
+      let headers: Record<string, string> = {
+        Authorization: `Bearer ${token}`,
+      };
+  
+      body.append("title", formData.title || "");
+      body.append("issuer", formData.issuer || "");
+      body.append("date", formData.date ? new Date(formData.date).toISOString() : "");
+      body.append("description", formData.description || "");
+      body.append("category", formData.category || "Academic");
+      body.append("link", formData.link || "");
+      body.append("ownerEmail", formData.ownerEmail || "");
+      if (imageFile) {
+        body.append("image", imageFile);
+      } else if (formData.image) {
+        body.append("image", formData.image);
+      }
+      headers = { Authorization: `Bearer ${token}` };
+  
       const response = await fetch(url, {
         method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(body),
+        headers,
+        body,
       });
       if (!response.ok) {
         throw new Error(initialData ? "Failed to update award" : "Failed to create award");
@@ -110,7 +144,26 @@ function AwardForm({ initialData, onSuccess, onCancel, token }: {
             <TextField fullWidth label="Issuer" name="issuer" value={formData.issuer} onChange={handleChange} required size="small" />
           </Grid>
           <Grid container spacing={2}>
-            <TextField fullWidth label="Date" name="date" type="date" value={formData.date ? new Date(formData.date).toISOString().slice(0, 10) : ""} onChange={handleChange} required size="small" InputLabelProps={{ shrink: true }} />
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Date"
+                format="dd/MM/yyyy"
+                value={formData.date ? new Date(formData.date) : null}
+                onChange={(date) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    date: date ? date.toISOString() : ""
+                  }));
+                }}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    required: true,
+                    size: "small",
+                  }
+                }}
+              />
+            </LocalizationProvider>
           </Grid>
           <Grid container spacing={2}>
             <TextField select fullWidth label="Category" name="category" value={formData.category} onChange={handleChange} required size="small">
@@ -128,6 +181,37 @@ function AwardForm({ initialData, onSuccess, onCancel, token }: {
           </Grid>
           <Grid container spacing={2}>
             <TextField name="ownerEmail" label="Owner Email" value={formData.ownerEmail} onChange={handleChange} fullWidth size="small" disabled />
+          </Grid>
+          <Grid container spacing={2}>
+            <Box sx={{ display: "flex", flexDirection: isMobile ? "column" : "column", alignItems: isMobile ? "flex-start" : "center", gap: 2, width: "100%" }}>
+              <input
+                accept="image/*"
+                type="file"
+                name="image"
+                id="award-image-upload"
+                style={{ display: "none", cursor: "pointer", width: "100%" }}
+                onChange={handleChange}
+              />
+              <label htmlFor="award-image-upload" style={{ width: "100%" }}>
+                <Button
+                  variant="outlined"
+                  component="span"
+                  sx={{ borderRadius: 2, fontWeight: 600, width: "100%", textAlign: "center" }}
+                >
+                  {imagePreview ? "Change Image" : "Upload Image"}
+                </Button>
+              </label>
+              {imagePreview && (
+                <Box sx={{ ml: isMobile ? 0 : 2, mt: isMobile ? 2 : 0, border: "1px solid #eee", borderRadius: 2, p: 1, bgcolor: "#fafbfc", display: "flex", alignItems: "center", justifyContent: "center", width: "100%", minHeight: 80 }}>
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    style={{ maxHeight: 200, width: "100%", borderRadius: 8, objectFit: "cover" }}
+                  />
+                </Box>
+              )}
+
+            </Box>
           </Grid>
         </Grid>
         <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4, gap: 2, flexDirection: isMobile ? "column" : "row" }}>
@@ -153,6 +237,15 @@ function AwardCard({ award, onEdit, onDelete }: {
   return (
     <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2, width: "100%" }}>
       <CardContent>
+        {award.image && (
+          <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+            <img
+              src={award.image}
+              alt={award.title}
+              style={{ maxHeight: 250, width: "100%", maxWidth: "100%", borderRadius: 8, objectFit: "cover" }}
+            />
+          </Box>
+        )}
         <Typography variant={isMobile ? "h6" : "h5"} component="div" sx={{ fontWeight: "bold", mb: 1, fontSize: isMobile ? "1.2rem" : "1.5rem" }}>
           {award.title}
         </Typography>
@@ -163,12 +256,12 @@ function AwardCard({ award, onEdit, onDelete }: {
           {new Date(award.date).toLocaleDateString("en-US", { year: "numeric", month: "short" })} • {award.category}
         </Typography>
         {award.description && (
-          <Typography variant="body2" paragraph sx={{ mb: 2, fontSize: isMobile ? "0.9rem" : "1rem", whiteSpace: "pre-line" , wordBreak: "break-word" }}>
+          <Typography variant="body2" paragraph sx={{ mb: 2, fontSize: isMobile ? "0.9rem" : "1rem", whiteSpace: "pre-line", wordBreak: "break-word" }}>
             {award.description}
           </Typography>
         )}
         {award.link && (
-          <Typography variant="body2" sx={{ mb: 1, fontSize: isMobile ? "0.9rem" : "1rem"  }}>
+          <Typography variant="body2" sx={{ mb: 1, fontSize: isMobile ? "0.9rem" : "1rem" }}>
             Link: <a href={award.link} target="_blank" style={{ wordWrap: "break-word", wordBreak: "break-all", overflowWrap: "break-word" }} rel="noopener noreferrer">{award.link}</a>
           </Typography>
         )}
@@ -213,7 +306,7 @@ export default function AwardsPage() {
 
   const handleDelete = async () => {
     if (!awardToDelete) return;
-    
+
     setLoading(true);
     try {
       const res = await fetch(`https://protfolio-product-backend.vercel.app/api/award/${awardToDelete._id}`, {

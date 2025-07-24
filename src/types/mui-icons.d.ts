@@ -214,3 +214,5 @@ declare module '@mui/icons-material/Grade' {
   export default GradeIcon;
 }
 
+declare module '@mui/icons-material/PhotoCamera';
+

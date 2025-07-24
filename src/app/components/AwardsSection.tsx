@@ -59,32 +59,32 @@ const AwardsSection: React.FC<AwardsSectionProps> = ({ title, list, isPage }) =>
             isPage.isItPage ? (
               <></>
             ) : (
-<Typography
-              variant="h3"
-              sx={{
-                fontWeight: 800,
-                mb: 2,
-                color: theme.palette.text.primary,
-                fontSize: { xs: "2rem", md: "2.8rem" },
-                textAlign: "center",
-                background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                textShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                position: "relative",
-                "&::after": {
-                  content: '""',
-                  display: "block",
-                  width: "180px",
-                  height: "4px",
-                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-                  margin: "16px auto 0",
-                  borderRadius: "2px",
-                },
-              }}
-            >
-              {title}
-            </Typography>
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 800,
+                  mb: 2,
+                  color: theme.palette.text.primary,
+                  fontSize: { xs: "2rem", md: "2.8rem" },
+                  textAlign: "center",
+                  background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  textShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  position: "relative",
+                  "&::after": {
+                    content: '""',
+                    display: "block",
+                    width: "180px",
+                    height: "4px",
+                    background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                    margin: "16px auto 0",
+                    borderRadius: "2px",
+                  },
+                }}
+              >
+                {title}
+              </Typography>
             )
           }
 
@@ -96,7 +96,7 @@ const AwardsSection: React.FC<AwardsSectionProps> = ({ title, list, isPage }) =>
             )
           }
 
-            <Grid container spacing={4} sx={{ display: 'grid', gridTemplateColumns: gridColumns, gap: 4 }}>
+          <Grid container spacing={4} sx={{ display: 'grid', gridTemplateColumns: gridColumns, gap: 4 }}>
             {visibleAwards.map((award, index) => (
               <Grid key={award._id} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <motion.div
@@ -123,12 +123,26 @@ const AwardsSection: React.FC<AwardsSectionProps> = ({ title, list, isPage }) =>
                     }}
                   >
                     {/* Header: Icon, Title, Issuer */}
+                    {award.image && (
+                      <Box sx={{ width: '100%', height: '300px', overflow: 'hidden', mb: 2, cursor: 'pointer' }}
+                        onClick={() => {
+                          router.push(`/Home/award/${award._id}`);
+                        }}
+                      >
+                        <img src={award.image} alt={award.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </Box>
+                    )}
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
                       <Avatar sx={{ bgcolor: theme.palette.primary.main, color: theme.palette.primary.contrastText, width: 40, height: 40 }}>
                         <EmojiEvents />
                       </Avatar>
                       <Box sx={{ flex: 1 }}>
-                        <Typography variant="h5" sx={{ fontWeight: 700, lineHeight: 1.2, color: theme.palette.text.primary, fontSize: { xs: '1.2rem', md: '1.3rem' } }}>{award.title}</Typography>
+                        <Typography variant="h5" sx={{ fontWeight: 700, lineHeight: 1.2, color: theme.palette.text.primary, fontSize: { xs: '1.2rem', md: '1.3rem' }, cursor: 'pointer', '&:hover': { color: theme.palette.primary.main } }}
+                          onClick={() => {
+                            router.push(`/Home/award/${award._id}`);
+                          }}
+                        >{award.title}
+                        </Typography>
                         <Typography variant="h6" color="primary" sx={{ fontWeight: 600, mb: 0.5 }}>{award.issuer}</Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5, flexWrap: 'wrap' }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -207,34 +221,34 @@ const AwardsSection: React.FC<AwardsSectionProps> = ({ title, list, isPage }) =>
           </Grid>
 
           {hasMore && !showAll && !isPage.isItPage && (
-                  <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      endIcon={<ExpandMore />}
-                      onClick={() => router.push("/Home/award")}
-                      sx={{
-                        borderRadius: "12px",
-                        textTransform: "none",
-                        fontWeight: 600,
-                        fontSize: "1rem",
-                        px: 4,
-                        py: 1.5,
-                        background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-                        boxShadow: `0 4px 12px ${theme.palette.primary.main}40`,
-                        "&:hover": {
-                          boxShadow: `0 6px 16px ${theme.palette.primary.main}60`,
-                        },
-                      }}
-                    >
-                      Explore All Awards
-                    </Button>
-                  </motion.div>
-                </Box>
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  endIcon={<ExpandMore />}
+                  onClick={() => router.push("/Home/award")}
+                  sx={{
+                    borderRadius: "12px",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    fontSize: "1rem",
+                    px: 4,
+                    py: 1.5,
+                    background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                    boxShadow: `0 4px 12px ${theme.palette.primary.main}40`,
+                    "&:hover": {
+                      boxShadow: `0 6px 16px ${theme.palette.primary.main}60`,
+                    },
+                  }}
+                >
+                  Explore All Awards
+                </Button>
+              </motion.div>
+            </Box>
           )}
         </motion.div>
       </Container>
