@@ -359,7 +359,7 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
           </Grid>
           <Grid container spacing={2}>
             <FormControl fullWidth margin="normal">
-              <InputLabel shrink sx={{ mb: 1 }}>Project Images</InputLabel>
+              <InputLabel shrink sx={{ mb: 1 }}>Project Images (max size 1mb for each image)</InputLabel>
               <Stack direction="column" spacing={2} alignItems="flex-start">
                 <Button
                   component="label"
