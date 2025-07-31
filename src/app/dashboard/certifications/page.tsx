@@ -97,8 +97,8 @@ function CertificationForm({
     setError("");
     try {
       const url = initialData
-        ? `https://protfolio-product-backend.vercel.app/api/certification/${initialData._id}`
-        : "https://protfolio-product-backend.vercel.app/api/certification";
+        ? `http://localhost:3000/api/certification/${initialData._id}`
+        : "http://localhost:3000/api/certification";
       const method = initialData ? "PUT" : "POST";
       const body = { ...formData, ownerEmail: formData.ownerEmail };
       const response = await fetch(url, {
@@ -447,7 +447,7 @@ export default function CertificationsPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        "https://protfolio-product-backend.vercel.app/api/certification"
+        "http://localhost:3000/api/certification"
       );
       if (!res.ok) throw new Error("Failed to fetch certifications");
       const data = await res.json();
@@ -465,7 +465,7 @@ export default function CertificationsPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        `https://protfolio-product-backend.vercel.app/api/certification/${certificationToDelete._id}`,
+        `http://localhost:3000/api/certification/${certificationToDelete._id}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },

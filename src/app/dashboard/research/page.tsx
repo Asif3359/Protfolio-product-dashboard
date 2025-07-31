@@ -1,18 +1,42 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import {
-  Container, Box, Typography, Button, Dialog, DialogTitle, DialogContent,
-  CircularProgress, Alert, AlertTitle, Paper, TextField, Grid,
-  Card, CardContent, CardActions, MenuItem, IconButton
+  Container,
+  Box,
+  Typography,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  CircularProgress,
+  Alert,
+  AlertTitle,
+  Paper,
+  TextField,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  MenuItem,
+  IconButton,
 } from "@mui/material";
-import { Add as AddIcon, Delete as DeleteIcon, Cancel as CancelIcon, Save as SaveIcon, Edit as EditIcon } from "@mui/icons-material";
+import {
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  Cancel as CancelIcon,
+  Save as SaveIcon,
+  Edit as EditIcon,
+  CloudUpload as CloudUploadIcon,
+} from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
+import ImageModal from "@/app/components/ImageModal";
 
 type Research = {
   _id?: string;
   type: "Publication" | "Current Research";
+  image: string;
   title: string;
   description: string;
   authors: string[];
@@ -24,14 +48,20 @@ type Research = {
   ownerEmail?: string;
 };
 
-function ResearchForm({ initialData, onSuccess, onCancel, token }: {
-  initialData: Research | null,
-  onSuccess: () => void,
-  onCancel: () => void,
-  token: string
+function ResearchForm({
+  initialData,
+  onSuccess,
+  onCancel,
+  token,
+}: {
+  initialData: Research | null;
+  onSuccess: () => void;
+  onCancel: () => void;
+  token: string;
 }) {
   const [formData, setFormData] = useState<Partial<Research>>({
     type: "Publication",
+    image: "",
     title: "",
     description: "",
     authors: [""],
@@ -40,8 +70,10 @@ function ResearchForm({ initialData, onSuccess, onCancel, token }: {
     doi: "",
     link: "",
     status: "In Progress",
-    ownerEmail: localStorage.getItem("ownerEmail") || ""
+    ownerEmail: localStorage.getItem("ownerEmail") || "",
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const theme = useTheme();
@@ -49,11 +81,34 @@ function ResearchForm({ initialData, onSuccess, onCancel, token }: {
 
   useEffect(() => {
     if (initialData) {
+      // Handle authors - they might come as a string or array
+      let authors = [""];
+      if (initialData.authors) {
+        if (Array.isArray(initialData.authors)) {
+          authors = initialData.authors.length > 0 ? initialData.authors : [""];
+        } else if (typeof initialData.authors === "string") {
+          try {
+            const parsedAuthors = JSON.parse(initialData.authors);
+            authors =
+              Array.isArray(parsedAuthors) && parsedAuthors.length > 0
+                ? parsedAuthors
+                : [""];
+          } catch {
+            authors = [initialData.authors];
+          }
+        }
+      }
+
       setFormData({
         ...initialData,
-        publicationDate: initialData.publicationDate ? new Date(initialData.publicationDate) : null,
-        authors: initialData.authors && initialData.authors.length > 0 ? initialData.authors : [""],
+        publicationDate: initialData.publicationDate
+          ? new Date(initialData.publicationDate)
+          : null,
+        authors: authors,
       });
+      if (initialData.image) {
+        setImagePreview(initialData.image);
+      }
     } else {
       // Get ownerEmail from localStorage
       const ownerEmail = localStorage.getItem("ownerEmail");
@@ -66,6 +121,18 @@ function ResearchForm({ initialData, onSuccess, onCancel, token }: {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleArrayChange = (idx: number, value: string) => {
@@ -96,24 +163,71 @@ function ResearchForm({ initialData, onSuccess, onCancel, token }: {
     setLoading(true);
     setError("");
     try {
+      const formDataToSend = new FormData();
+
+      // Add all form fields
+      Object.keys(formData).forEach((key) => {
+        if (key === "authors") {
+          // Send authors as JSON string - backend will parse it
+          const authors = formData.authors || [];
+          formDataToSend.append("authors", JSON.stringify(authors));
+        } else if (key === "publicationDate" && formData.publicationDate) {
+          formDataToSend.append(
+            "publicationDate",
+            new Date(formData.publicationDate).toISOString()
+          );
+        } else if (key === "image") {
+          // Skip image field as it will be handled separately
+          return;
+        } else if (formData[key as keyof typeof formData] !== undefined) {
+          formDataToSend.append(
+            key,
+            String(formData[key as keyof typeof formData])
+          );
+        }
+      });
+
+      // Add image file if selected
+      if (selectedFile) {
+        formDataToSend.append("image", selectedFile);
+      }
+
       const url = initialData
-        ? `https://protfolio-product-backend.vercel.app/api/research/${initialData._id}`
-        : "https://protfolio-product-backend.vercel.app/api/research";
+        ? `http://localhost:3000/api/research/${initialData._id}`
+        : "http://localhost:3000/api/research";
       const method = initialData ? "PUT" : "POST";
-      const body = { ...formData, ownerEmail: formData.ownerEmail };
+
+      console.log("Submitting to:", url, "Method:", method);
+      console.log("Form data keys:", Array.from(formDataToSend.keys()));
+      console.log("Authors data:", formData.authors);
+      console.log("Authors JSON:", JSON.stringify(formData.authors));
+
       const response = await fetch(url, {
         method,
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(body),
+        body: formDataToSend,
       });
+
+      console.log("Response status:", response.status, response.statusText);
+
       if (!response.ok) {
-        throw new Error(initialData ? "Failed to update research" : "Failed to create research");
+        let errorMessage = initialData
+          ? "Failed to update research"
+          : "Failed to create research";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          // If response is not JSON, use status text
+          errorMessage = `${errorMessage}: ${response.status} ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
       onSuccess();
     } catch (err) {
+      console.error("Submit error:", err);
       setError(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
@@ -132,69 +246,241 @@ function ResearchForm({ initialData, onSuccess, onCancel, token }: {
         </Alert>
       )}
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={4} style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(1, 1fr)", gap: "16px" }}>
+        <Grid
+          container
+          spacing={4}
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "repeat(1, 1fr)",
+            gap: "16px",
+          }}
+        >
           <Grid container spacing={2}>
-            <TextField select fullWidth label="Type" name="type" value={formData.type} onChange={handleChange} required size="small">
-              <MenuItem value="Publication">Publication</MenuItem>
+            <TextField
+              select
+              fullWidth
+              label="Type"
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              required
+              size="small"
+            >
+              <MenuItem value="Publication">Completed</MenuItem>
               <MenuItem value="Current Research">Current Research</MenuItem>
             </TextField>
           </Grid>
+
+          {/* Image Upload Section */}
           <Grid container spacing={2}>
-            <TextField fullWidth label="Title" name="title" value={formData.title} onChange={handleChange} required size="small" />
+            <Box sx={{ width: "100%" }}>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                Research Image
+              </Typography>
+              <Button
+                variant="outlined"
+                component="label"
+                startIcon={<CloudUploadIcon />}
+                sx={{ mb: 2 }}
+                fullWidth
+              >
+                Upload Image
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+              </Button>
+              {imagePreview && (
+                <Box
+                  sx={{
+                    mt: 2,
+                    textAlign: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "200px",
+                      objectFit: "contain",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </Box>
+              )}
+            </Box>
+          </Grid>
+
+          <Grid container spacing={2}>
+            <TextField
+              fullWidth
+              label="Title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+              size="small"
+            />
           </Grid>
           <Grid container spacing={2}>
-            <TextField fullWidth label="Description" name="description" value={formData.description} onChange={handleChange} required multiline rows={10} size="small" />
+            <TextField
+              fullWidth
+              label="Description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              required
+              multiline
+              rows={10}
+              size="small"
+            />
           </Grid>
           <Grid container spacing={2}>
             <Box sx={{ width: "100%" }}>
-              <Typography variant="subtitle2" sx={{ mb: 1 }}>Authors</Typography>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                Authors
+              </Typography>
               {(formData.authors || [""]).map((author, idx) => (
-                <Box key={idx} sx={{ display: "flex", alignItems: "center", mb: 1, gap: 1 }}>
+                <Box
+                  key={idx}
+                  sx={{ display: "flex", alignItems: "center", mb: 1, gap: 1 }}
+                >
                   <TextField
                     value={author}
-                    onChange={e => handleArrayChange(idx, e.target.value)}
+                    onChange={(e) => handleArrayChange(idx, e.target.value)}
                     placeholder="Author name"
                     fullWidth
                     size="small"
                   />
-                  <IconButton onClick={() => removeAuthor(idx)} disabled={(formData.authors || []).length === 1} color="error" size="small">
+                  <IconButton
+                    onClick={() => removeAuthor(idx)}
+                    disabled={(formData.authors || []).length === 1}
+                    color="error"
+                    size="small"
+                  >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
                 </Box>
               ))}
-              <Button startIcon={<AddIcon />} onClick={addAuthor} variant="outlined" size="small" sx={{ mt: 1 }}>
+              <Button
+                startIcon={<AddIcon />}
+                onClick={addAuthor}
+                variant="outlined"
+                size="small"
+                sx={{ mt: 1 }}
+              >
                 Add Author
               </Button>
             </Box>
           </Grid>
           <Grid container spacing={2}>
-            <TextField fullWidth label="Publication Date" name="publicationDate" type="date" value={formData.publicationDate ? new Date(formData.publicationDate).toISOString().slice(0, 10) : ""} onChange={handleChange} size="small" InputLabelProps={{ shrink: true }} />
+            <TextField
+              fullWidth
+              label="Publication Date"
+              name="publicationDate"
+              type="date"
+              value={
+                formData.publicationDate
+                  ? new Date(formData.publicationDate)
+                      .toISOString()
+                      .slice(0, 10)
+                  : ""
+              }
+              onChange={handleChange}
+              size="small"
+              InputLabelProps={{ shrink: true }}
+            />
           </Grid>
           <Grid container spacing={2}>
-            <TextField fullWidth label="Journal" name="journal" value={formData.journal} onChange={handleChange} size="small" />
+            <TextField
+              fullWidth
+              label="Journal"
+              name="journal"
+              value={formData.journal}
+              onChange={handleChange}
+              size="small"
+            />
           </Grid>
           <Grid container spacing={2}>
-            <TextField fullWidth label="DOI" name="doi" value={formData.doi} onChange={handleChange} size="small" />
+            <TextField
+              fullWidth
+              label="DOI"
+              name="doi"
+              value={formData.doi}
+              onChange={handleChange}
+              size="small"
+            />
           </Grid>
           <Grid container spacing={2}>
-            <TextField fullWidth label="Link" name="link" value={formData.link} onChange={handleChange} size="small" />
+            <TextField
+              fullWidth
+              label="Link"
+              name="link"
+              value={formData.link}
+              onChange={handleChange}
+              size="small"
+            />
           </Grid>
           <Grid container spacing={2}>
-            <TextField select fullWidth label="Status" name="status" value={formData.status} onChange={handleChange} size="small">
+            <TextField
+              select
+              fullWidth
+              label="Status"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              size="small"
+            >
               <MenuItem value="In Progress">In Progress</MenuItem>
               <MenuItem value="Completed">Completed</MenuItem>
               <MenuItem value="Published">Published</MenuItem>
             </TextField>
           </Grid>
           <Grid container spacing={2}>
-            <TextField name="ownerEmail" label="Owner Email" value={formData.ownerEmail} onChange={handleChange} fullWidth size="small" disabled />
+            <TextField
+              name="ownerEmail"
+              label="Owner Email"
+              value={formData.ownerEmail}
+              onChange={handleChange}
+              fullWidth
+              size="small"
+              disabled
+            />
           </Grid>
         </Grid>
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4, gap: 2, flexDirection: isMobile ? "column" : "row" }}>
-          <Button onClick={onCancel} variant="outlined" color="secondary" startIcon={<CancelIcon />} disabled={loading} sx={{ px: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            mt: 4,
+            gap: 2,
+            flexDirection: isMobile ? "column" : "row",
+          }}
+        >
+          <Button
+            onClick={onCancel}
+            variant="outlined"
+            color="secondary"
+            startIcon={<CancelIcon />}
+            disabled={loading}
+            sx={{ px: 3 }}
+          >
             Cancel
           </Button>
-          <Button type="submit" variant="contained" color="primary" startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />} disabled={loading} sx={{ px: 3 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />}
+            disabled={loading}
+            sx={{ px: 3 }}
+          >
             {initialData ? "Update" : "Create"} Research
           </Button>
         </Box>
@@ -203,58 +489,180 @@ function ResearchForm({ initialData, onSuccess, onCancel, token }: {
   );
 }
 
-function ResearchCard({ research, onEdit, onDelete }: {
-  research: Research,
-  onEdit: (r: Research) => void,
-  onDelete: (r: Research) => void
+function ResearchCard({
+  research,
+  onEdit,
+  onDelete,
+}: {
+  research: Research;
+  onEdit: (r: Research) => void;
+  onDelete: (r: Research) => void;
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [imageModalOpen, setImageModalOpen] = useState(false);
   return (
-    <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
-      <CardContent>
-        <Typography variant="h6" component="div" sx={{ fontWeight: "bold", mb: 1, fontSize: isMobile ? "1.2rem" : "1.5rem" }}>
-          {research.title}
-        </Typography>
-        <Typography color="primary" gutterBottom sx={{ fontWeight: "medium", mb: 2, fontSize: isMobile ? "1rem" : "1.2rem" }}>
-          {research.type}
-        </Typography>
-        <Typography variant="body2" sx={{ mb: 2, color: "text.secondary", fontSize: isMobile ? "0.9rem" : "1rem" }}>
-          {research.publicationDate && new Date(research.publicationDate).toLocaleDateString("en-US", { year: "numeric", month: "short" })} • {research.status}
-        </Typography>
-        <Typography variant="body2" sx={{ mb: 2, fontSize: isMobile ? "0.9rem" : "1rem" }}>
-          Authors: {(research.authors || []).join(", ")}
-        </Typography>
-        {research.description && (
-          <Typography variant="body2" paragraph sx={{ mb: 2, fontSize: isMobile ? "0.9rem" : "1rem" , whiteSpace: "pre-line" , wordBreak: "break-word" }}>
-            {research.description}
+    <>
+      <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
+        <CardContent>
+          {research.image && (
+            <Box
+              sx={{
+                mb: 2,
+                textAlign: "center",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <img
+                onClick={() => {
+                  setImageModalOpen(true);
+                }}
+                src={research.image}
+                alt={research.title}
+                title="Click to view full image"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "200px",
+                  objectFit: "contain",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.1)";
+                  e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+            </Box>
+          )}
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{
+              fontWeight: "bold",
+              mb: 1,
+              fontSize: isMobile ? "1.2rem" : "1.5rem",
+            }}
+          >
+            {research.title}
           </Typography>
-        )}
-        {research.journal && (
-          <Typography variant="body2" sx={{ mb: 1, fontSize: isMobile ? "0.9rem" : "1rem" }}>
-            Journal: {research.journal}
+          <Typography
+            color="primary"
+            gutterBottom
+            sx={{
+              fontWeight: "medium",
+              mb: 2,
+              fontSize: isMobile ? "1rem" : "1.2rem",
+            }}
+          >
+            {research.type}
           </Typography>
-        )}
-        {research.doi && (
-          <Typography variant="body2" sx={{ mb: 1, fontSize: isMobile ? "0.9rem" : "1rem" }}>
-            DOI: {research.doi}
+          <Typography
+            variant="body2"
+            sx={{
+              mb: 2,
+              color: "text.secondary",
+              fontSize: isMobile ? "0.9rem" : "1rem",
+            }}
+          >
+            {research.publicationDate &&
+              new Date(research.publicationDate).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+              })}{" "}
+            • {research.status}
           </Typography>
-        )}
-        {research.link && (
-          <Typography variant="body2" sx={{ mb: 1, fontSize: isMobile ? "0.9rem" : "1rem" }}>
-            Link: <a href={research.link} target="_blank" style={{ wordWrap: "break-word", wordBreak: "break-all", overflowWrap: "break-word" }} rel="noopener noreferrer">{research.link}</a>
+          <Typography
+            variant="body2"
+            sx={{ mb: 2, fontSize: isMobile ? "0.9rem" : "1rem" }}
+          >
+            Authors: {(research.authors || []).join(", ")}
           </Typography>
-        )}
-      </CardContent>
-      <CardActions sx={{ justifyContent: "flex-end", p: 2 }}>
-        <Button size="small" startIcon={<EditIcon />} onClick={() => onEdit(research)} sx={{ color: "primary.main" }}>
-          Edit
-        </Button>
-        <Button onClick={() => onDelete(research)} size="small" color="error" startIcon={<DeleteIcon />}>
-          Delete
-        </Button>
-      </CardActions>
-    </Card>
+          {research.description && (
+            <Typography
+              variant="body2"
+              paragraph
+              sx={{
+                mb: 2,
+                fontSize: isMobile ? "0.9rem" : "1rem",
+                whiteSpace: "pre-line",
+                wordBreak: "break-word",
+              }}
+            >
+              {research.description}
+            </Typography>
+          )}
+          {research.journal && (
+            <Typography
+              variant="body2"
+              sx={{ mb: 1, fontSize: isMobile ? "0.9rem" : "1rem" }}
+            >
+              Journal: {research.journal}
+            </Typography>
+          )}
+          {research.doi && (
+            <Typography
+              variant="body2"
+              sx={{ mb: 1, fontSize: isMobile ? "0.9rem" : "1rem" }}
+            >
+              DOI: {research.doi}
+            </Typography>
+          )}
+          {research.link && (
+            <Typography
+              variant="body2"
+              sx={{ mb: 1, fontSize: isMobile ? "0.9rem" : "1rem" }}
+            >
+              Link:{" "}
+              <a
+                href={research.link}
+                target="_blank"
+                style={{
+                  wordWrap: "break-word",
+                  wordBreak: "break-all",
+                  overflowWrap: "break-word",
+                }}
+                rel="noopener noreferrer"
+              >
+                {research.link}
+              </a>
+            </Typography>
+          )}
+        </CardContent>
+        <CardActions sx={{ justifyContent: "flex-end", p: 2 }}>
+          <Button
+            size="small"
+            startIcon={<EditIcon />}
+            onClick={() => onEdit(research)}
+            sx={{ color: "primary.main" }}
+          >
+            Edit
+          </Button>
+          <Button
+            onClick={() => onDelete(research)}
+            size="small"
+            color="error"
+            startIcon={<DeleteIcon />}
+          >
+            Delete
+          </Button>
+        </CardActions>
+      </Card>
+
+      {/* Image Modal */}
+      <ImageModal
+        open={imageModalOpen}
+        onClose={() => setImageModalOpen(false)}
+        imageUrl={research.image}
+        imageAlt={research.title}
+      />
+    </>
   );
 }
 
@@ -266,16 +674,27 @@ export default function ResearchPage() {
   const [error, setError] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
-  const [researchToDelete, setResearchToDelete] = useState<Research | null>(null);
+  const [researchToDelete, setResearchToDelete] = useState<Research | null>(
+    null
+  );
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const fetchResearches = async () => {
     setLoading(true);
     try {
-      const res = await fetch("https://protfolio-product-backend.vercel.app/api/research");
-      if (!res.ok) throw new Error("Failed to fetch research");
+      const res = await fetch("http://localhost:3000/api/research");
+      if (!res.ok) {
+        throw new Error(
+          `Failed to fetch research: ${res.status} ${res.statusText}`
+        );
+      }
       const data = await res.json();
+      console.log("Fetched research data:", data);
+      if (data.length > 0) {
+        console.log("First research authors:", data[0].authors);
+        console.log("Authors type:", typeof data[0].authors);
+      }
       setResearches(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -286,13 +705,16 @@ export default function ResearchPage() {
 
   const handleDelete = async () => {
     if (!researchToDelete) return;
-    
+
     setLoading(true);
     try {
-      const res = await fetch(`https://protfolio-product-backend.vercel.app/api/research/${researchToDelete._id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await fetch(
+        `http://localhost:3000/api/research/${researchToDelete._id}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (!res.ok) throw new Error("Failed to delete research");
       await fetchResearches();
       setDeleteDialog(false);
@@ -309,15 +731,41 @@ export default function ResearchPage() {
     setDeleteDialog(true);
   };
 
-  useEffect(() => { fetchResearches(); }, []);
+  useEffect(() => {
+    fetchResearches();
+  }, []);
 
   return (
     <Container maxWidth="md" sx={{ py: 0 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4, flexDirection: isMobile ? "column" : "row" }}>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: "bold", color: "primary.main", textAlign: isMobile ? "center" : "left" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 4,
+          flexDirection: isMobile ? "column" : "row",
+        }}
+      >
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{
+            fontWeight: "bold",
+            color: "primary.main",
+            textAlign: isMobile ? "center" : "left",
+          }}
+        >
           Research
         </Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setSelected(null); setOpenDialog(true); }} sx={{ borderRadius: 2 }}>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => {
+            setSelected(null);
+            setOpenDialog(true);
+          }}
+          sx={{ borderRadius: 2 }}
+        >
           Add New Research
         </Button>
       </Box>
@@ -327,14 +775,30 @@ export default function ResearchPage() {
           {error}
         </Alert>
       )}
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="md" PaperProps={{ sx: { borderRadius: 2 } }}>
-        <DialogTitle sx={{ fontWeight: "bold", borderBottom: "1px solid", borderColor: "divider", py: 2 }}>
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        fullWidth
+        maxWidth="md"
+        PaperProps={{ sx: { borderRadius: 2 } }}
+      >
+        <DialogTitle
+          sx={{
+            fontWeight: "bold",
+            borderBottom: "1px solid",
+            borderColor: "divider",
+            py: 2,
+          }}
+        >
           {selected ? "Edit Research" : "Add New Research"}
         </DialogTitle>
         <DialogContent sx={{ py: 0 }}>
           <ResearchForm
             initialData={selected}
-            onSuccess={() => { fetchResearches(); setOpenDialog(false); }}
+            onSuccess={() => {
+              fetchResearches();
+              setOpenDialog(false);
+            }}
             onCancel={() => setOpenDialog(false)}
             token={token || ""}
           />
@@ -349,18 +813,34 @@ export default function ResearchPage() {
         fullWidth
         PaperProps={{ sx: { borderRadius: 2 } }}
       >
-        <DialogTitle sx={{ fontWeight: "bold", borderBottom: "1px solid", borderColor: "divider", py: 2 }}>
+        <DialogTitle
+          sx={{
+            fontWeight: "bold",
+            borderBottom: "1px solid",
+            borderColor: "divider",
+            py: 2,
+          }}
+        >
           Confirm Delete
         </DialogTitle>
         <DialogContent sx={{ py: 3 }}>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            Are you sure you want to delete the research &apos;{researchToDelete?.title}&apos;?
+            Are you sure you want to delete the research &apos;
+            {researchToDelete?.title}&apos;?
           </Typography>
           <Typography variant="body2" color="text.secondary">
             This action cannot be undone.
           </Typography>
         </DialogContent>
-        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, p: 3, pt: 0 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: 2,
+            p: 3,
+            pt: 0,
+          }}
+        >
           <Button
             onClick={() => setDeleteDialog(false)}
             variant="outlined"
@@ -373,7 +853,9 @@ export default function ResearchPage() {
             onClick={handleDelete}
             variant="contained"
             color="error"
-            startIcon={loading ? <CircularProgress size={20} /> : <DeleteIcon />}
+            startIcon={
+              loading ? <CircularProgress size={20} /> : <DeleteIcon />
+            }
             disabled={loading}
           >
             Delete
@@ -385,12 +867,25 @@ export default function ResearchPage() {
           <CircularProgress />
         </Box>
       ) : researches.length === 0 ? (
-        <Paper elevation={0} sx={{ p: 0, textAlign: "center", borderRadius: 2 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>No research found</Typography>
+        <Paper
+          elevation={0}
+          sx={{ p: 0, textAlign: "center", borderRadius: 2 }}
+        >
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            No research found
+          </Typography>
           <Typography variant="body1" color="text.secondary">
             Add your first research to get started!
           </Typography>
-          <Button variant="outlined" startIcon={<AddIcon />} onClick={() => { setSelected(null); setOpenDialog(true); }} sx={{ mt: 3 }}>
+          <Button
+            variant="outlined"
+            startIcon={<AddIcon />}
+            onClick={() => {
+              setSelected(null);
+              setOpenDialog(true);
+            }}
+            sx={{ mt: 3 }}
+          >
             Add Research
           </Button>
         </Paper>
@@ -400,7 +895,10 @@ export default function ResearchPage() {
             <ResearchCard
               key={research._id}
               research={research}
-              onEdit={(research) => { setSelected(research); setOpenDialog(true); }}
+              onEdit={(research) => {
+                setSelected(research);
+                setOpenDialog(true);
+              }}
               onDelete={handleDeleteClick}
             />
           ))}

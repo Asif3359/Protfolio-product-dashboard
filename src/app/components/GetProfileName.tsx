@@ -13,7 +13,7 @@ function GetProfileName() {
     useEffect(() => {
       const fetchProfile = async () => {
         try {
-        const res = await axios.get("https://protfolio-product-backend.vercel.app/api/profile");
+        const res = await axios.get("http://localhost:3000/api/profile");
         setProfile(res.data);
 
         } catch{

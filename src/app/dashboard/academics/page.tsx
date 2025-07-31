@@ -116,8 +116,8 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
 
     try {
       const url = initialData 
-        ? `https://protfolio-product-backend.vercel.app/api/academic/${initialData._id}` 
-        : 'https://protfolio-product-backend.vercel.app/api/academic';
+        ? `http://localhost:3000/api/academic/${initialData._id}` 
+        : 'http://localhost:3000/api/academic';
       const method = initialData ? 'PUT' : 'POST';
       const form = new FormData();
       form.append('degree', formData.degree || '');
@@ -405,7 +405,7 @@ function AcademicCard({ academic, onEdit, onDelete }: {
         </Typography>
         <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
           {formatDate(academic.startDate)} - {academic.endDate ? formatDate(academic.endDate) : 'Present'}
-          {academic.gpa && ` • GPA: ${academic.gpa}`}
+          {academic.gpa && ` • GPA: ${academic.gpa.toFixed(2)}`}
         </Typography>
         {academic.description && (
           <Typography variant="body2" paragraph sx={{ mb: 2, whiteSpace: "pre-line" , wordBreak: "break-word" }}>
@@ -461,7 +461,7 @@ export default function AcademicsPage() {
   const fetchAcademics = async () => {
     setLoading(true);
     try {
-      const res = await fetch('https://protfolio-product-backend.vercel.app/api/academic');
+      const res = await fetch('http://localhost:3000/api/academic');
       if (!res.ok) throw new Error('Failed to fetch academics');
       const data = await res.json();
       setAcademics(data);
@@ -477,7 +477,7 @@ export default function AcademicsPage() {
     
     setLoading(true);
     try {
-      const res = await fetch(`https://protfolio-product-backend.vercel.app/api/academic/${academicToDelete._id}`, {
+      const res = await fetch(`http://localhost:3000/api/academic/${academicToDelete._id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
