@@ -31,6 +31,9 @@ export default async function AwardPage({ params }: AwardPageProps) {
         bgcolor: 'background.paper',
       }}
     >
+      <Box sx={{ width: '100%', height: '400px', overflow: 'hidden', mb: 2 }}>
+        <img src={awardData.image} alt={awardData.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      </Box>
       <Typography variant="h4" fontWeight={700} sx={{ color: 'primary.main', mb: 2 }}>
         {awardData.title}
       </Typography>

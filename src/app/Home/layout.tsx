@@ -98,7 +98,7 @@ const portfolioTheme = createTheme({
 const navigationItems = [
   { name: 'Home', path: '/', icon: <HomeIcon /> },
   { name: 'Profile', path: '/Home/profile', icon: <PersonIcon /> },
-  { name: 'Education', path: '/Home/academic', icon: <SchoolIcon /> },
+  { name: 'Academics', path: '/Home/academic', icon: <SchoolIcon /> },
   { name: 'Research', path: '/Home/research', icon: <ResearchIcon /> },
   { name: 'Projects', path: '/Home/project', icon: <CodeIcon /> },
   { name: 'Experience', path: '/Home/experience', icon: <WorkIcon /> },

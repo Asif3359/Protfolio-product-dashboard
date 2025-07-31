@@ -175,7 +175,7 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                           wordBreak: "break-word",
                         }}
                       >
-                        {education.degree}
+                        <span>{education.degree}</span> in <span>{education.field}</span>
                       </Typography>
                       <Typography
                         variant="subtitle1"
@@ -188,7 +188,7 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                       >
                         {education.institution}
                       </Typography>
-                      <Typography
+                      {/* <Typography
                         variant="body2"
                         sx={{
                           color: theme.palette.text.secondary,
@@ -196,8 +196,8 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                           wordBreak: "break-word",
                         }}
                       >
-                        {education.field}
-                      </Typography>
+                        
+                      </Typography> */}
                     </Box>
                   </Box>
 

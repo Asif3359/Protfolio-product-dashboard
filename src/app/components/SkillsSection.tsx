@@ -12,7 +12,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  LinearProgress,
   Chip,
   Avatar,
 } from "@mui/material";
@@ -23,7 +22,7 @@ import { useRouter } from "next/navigation";
 interface Skill {
   _id: string;
   name: string;
-  proficiency: number;
+  type: string; // <-- added
   description?: string;
   category?: string;
   logo?: string;
@@ -67,13 +66,12 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
     ...skillTechnical,
   ];
 
-  // Function to get proficiency color
-  const getProficiencyColor = (proficiency: number) => {
-    if (proficiency >= 80) return "#4CAF50"; // Green
-    if (proficiency >= 60) return "#2196F3"; // Blue
-    if (proficiency >= 40) return "#FFC107"; // Amber
-    return "#F44336"; // Red
-  };
+  const skillTypes = ["Technical", "Soft", "Language", "Other"];
+  const groupedSkills = skillTechnical.reduce((acc, skill) => {
+    if (!acc[skill.type]) acc[skill.type] = [];
+    acc[skill.type].push(skill);
+    return acc;
+  }, {} as Record<string, Skill[]>);
 
   return (
     <Box
@@ -225,15 +223,6 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
                         cursor: "pointer",
                         position: "relative",
                         overflow: "hidden",
-                        "&::before": {
-                          content: '""',
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          height: "4px",
-                          background: getProficiencyColor(skill.proficiency),
-                        },
                       }}
                       onClick={() => {
                         setSelectedSkill(skill);
@@ -267,45 +256,33 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
                               {skill.name}
                             </Typography>
                           </Box>
-                          <Chip
-                            label={`${skill.proficiency}%`}
-                            size="small"
-                            sx={{
-                              fontWeight: 700,
-                              fontSize: "0.8rem",
-                              backgroundColor: `${getProficiencyColor(skill.proficiency)}20`,
-                              color: getProficiencyColor(skill.proficiency),
-                            }}
-                          />
                         </Box>
-                        
-                        <LinearProgress
-                          variant="determinate"
-                          value={skill.proficiency}
-                          sx={{
-                            height: 8,
-                            borderRadius: 4,
-                            mb: 2,
-                            backgroundColor: `${theme.palette.divider}30`,
-                            "& .MuiLinearProgress-bar": {
-                              borderRadius: 4,
-                              backgroundColor: getProficiencyColor(skill.proficiency),
-                            },
-                          }}
-                        />
-                        
-                        {skill.category && (
-                          <Chip
-                            label={skill.category}
-                            size="small"
-                            sx={{
-                              backgroundColor: `${theme.palette.primary.main}15`,
-                              color: theme.palette.primary.main,
-                              fontSize: "0.7rem",
-                              height: "24px",
-                            }}
-                          />
-                        )}
+                        <Box sx={{ display: "flex", gap: 1, mb: 1 }}>
+                          {skill.type && (
+                            <Chip
+                              label={skill.type}
+                              size="small"
+                              sx={{
+                                backgroundColor: `${theme.palette.secondary.main}15`,
+                                color: theme.palette.secondary.main,
+                                fontSize: "0.7rem",
+                                height: "24px",
+                              }}
+                            />
+                          )}
+                          {skill.category && (
+                            <Chip
+                              label={skill.category}
+                              size="small"
+                              sx={{
+                                backgroundColor: `${theme.palette.primary.main}15`,
+                                color: theme.palette.primary.main,
+                                fontSize: "0.7rem",
+                                height: "24px",
+                              }}
+                            />
+                          )}
+                        </Box>
                       </Box>
                     </Paper>
                   </motion.div>
@@ -316,134 +293,123 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
 
           {/* Grid Layout for Skills Page */}
           {isItPage && (
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "1fr",
-                  sm: "repeat(2, 1fr)",
-                  md: "repeat(3, 1fr)",
-                  lg: "repeat(4, 1fr)",
-                },
-                gap: { xs: 2, sm: 3, md: 4 },
-                width: "100%",
-              }}
-            >
-              {skillTechnical.map((skill, index) => (
-                <motion.div
-                  key={`${skill._id}-${index}`}
-                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{
-                    duration: 0.5,
-                    delay: index * 0.05,
-                  }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  whileHover={{ scale: 1.02 }}
-                >
-                  <Paper
-                    elevation={4}
-                    sx={{
-                      p: { xs: 2.5, md: 3 },
-                      borderRadius: "16px",
-                      height: "100%",
-                      background: `linear-gradient(135deg, ${theme.palette.background.paper}, ${theme.palette.background.default})`,
-                      transition: "all 0.3s ease",
-                      border: `1px solid ${theme.palette.divider}`,
-                      boxShadow: `0 8px 24px -4px ${theme.palette.primary.main}20`,
-                      "&:hover": {
-                        transform: "translateY(-5px)",
-                        boxShadow: `0 12px 28px -2px ${theme.palette.primary.main}30`,
-                      },
-                      cursor: "pointer",
-                      position: "relative",
-                      overflow: "hidden",
-                      "&::before": {
-                        content: '""',
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: "4px",
-                        background: getProficiencyColor(skill.proficiency),
-                      },
-                    }}
-                    onClick={() => {
-                      setSelectedSkill(skill);
-                      setOpenModal(true);
-                    }}
-                  >
-                    <Box>
-                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                          {skill.logo && (
-                            <Avatar
-                              src={skill.logo}
-                              alt={skill.name}
-                              sx={{ 
-                                height: 40, 
-                                width: 40, 
-                                borderRadius: "8px",
-                                background: "#fff",
-                                boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
-                              }}
-                            />
-                          )}
-                          <Typography
-                            variant="h6"
+            <>
+              {skillTypes.map(type => (
+                groupedSkills[type]?.length > 0 && (
+                  <Box key={type} sx={{ mb: 5 }}>
+                    <Typography variant="h3" sx={{ fontWeight: 600, mb: 2, color: theme.palette.text.primary, fontSize: { xs: "1.5rem", md: "2rem" } }}>
+                      {type} Skills
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "grid",
+                        gridTemplateColumns: {
+                          xs: "1fr",
+                          sm: "repeat(2, 1fr)",
+                          md: "repeat(3, 1fr)",
+                          lg: "repeat(3, 1fr)",
+                        },
+                        gap: { xs: 2, sm: 3, md: 4 },
+                      }}
+                    >
+                      {groupedSkills[type].map((skill, index) => (
+                        <motion.div
+                          key={`${skill._id}-${index}`}
+                          initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                          transition={{
+                            duration: 0.5,
+                            delay: index * 0.05,
+                          }}
+                          viewport={{ once: true, margin: "-50px" }}
+                          whileHover={{ scale: 1.02 }}
+                        >
+                          <Paper
+                            elevation={4}
                             sx={{
-                              fontWeight: 700,
-                              color: theme.palette.text.primary,
-                              fontSize: { xs: "1.1rem", md: "1.2rem" },
+                              p: { xs: 2.5, md: 3 },
+                              borderRadius: "16px",
+                              height: "100%",
+                              background: `linear-gradient(135deg, ${theme.palette.background.paper}, ${theme.palette.background.default})`,
+                              transition: "all 0.3s ease",
+                              border: `1px solid ${theme.palette.divider}`,
+                              boxShadow: `0 8px 24px -4px ${theme.palette.primary.main}20`,
+                              "&:hover": {
+                                transform: "translateY(-5px)",
+                                boxShadow: `0 12px 28px -2px ${theme.palette.primary.main}30`,
+                              },
+                              cursor: "pointer",
+                              position: "relative",
+                              overflow: "hidden",
+                            }}
+                            onClick={() => {
+                              setSelectedSkill(skill);
+                              setOpenModal(true);
                             }}
                           >
-                            {skill.name}
-                          </Typography>
-                        </Box>
-                        <Chip
-                          label={`${skill.proficiency}%`}
-                          size="small"
-                          sx={{
-                            fontWeight: 700,
-                            fontSize: "0.8rem",
-                            backgroundColor: `${getProficiencyColor(skill.proficiency)}20`,
-                            color: getProficiencyColor(skill.proficiency),
-                          }}
-                        />
-                      </Box>
-                      
-                      <LinearProgress
-                        variant="determinate"
-                        value={skill.proficiency}
-                        sx={{
-                          height: 8,
-                          borderRadius: 4,
-                          mb: 2,
-                          backgroundColor: `${theme.palette.divider}30`,
-                          "& .MuiLinearProgress-bar": {
-                            borderRadius: 4,
-                            backgroundColor: getProficiencyColor(skill.proficiency),
-                          },
-                        }}
-                      />
-                      
-                      {skill.category && (
-                        <Chip
-                          label={skill.category}
-                          size="small"
-                          sx={{
-                            backgroundColor: `${theme.palette.primary.main}15`,
-                            color: theme.palette.primary.main,
-                            fontSize: "0.7rem",
-                            height: "24px",
-                          }}
-                        />
-                      )}
+                            <Box>
+                              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "start", gap: 2, flexDirection: "column", mb: 2 }}>
+                                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                                  {skill.logo && (
+                                    <Avatar
+                                      src={skill.logo}
+                                      alt={skill.name}
+                                      sx={{
+                                        height: 40,
+                                        width: 40,
+                                        borderRadius: "8px",
+                                        background: "#fff",
+                                        boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                                      }}
+                                    />
+                                  )}
+                                  <Typography
+                                    variant="h6"
+                                    sx={{
+                                      fontWeight: 700,
+                                      color: theme.palette.text.primary,
+                                      fontSize: { xs: "1.1rem", md: "1.2rem" },
+                                    }}
+                                  >
+                                    {skill.name}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                              <Box sx={{ display: "flex", gap: 1, mb: 1 }}>
+                                {skill.type && (
+                                  <Chip
+                                    label={skill.type}
+                                    size="small"
+                                    sx={{
+                                      backgroundColor: `${theme.palette.secondary.main}15`,
+                                      color: theme.palette.secondary.main,
+                                      fontSize: "0.7rem",
+                                      height: "24px",
+                                    }}
+                                  />
+                                )}
+                                {skill.category && (
+                                  <Chip
+                                    label={skill.category}
+                                    size="small"
+                                    sx={{
+                                      backgroundColor: `${theme.palette.primary.main}15`,
+                                      color: theme.palette.primary.main,
+                                      fontSize: "0.7rem",
+                                      height: "24px",
+                                    }}
+                                  />
+                                )}
+                              </Box>
+                            </Box>
+                          </Paper>
+                        </motion.div>
+                      ))}
                     </Box>
-                  </Paper>
-                </motion.div>
+                  </Box>
+                )
               ))}
-            </Box>
+            </>
           )}
 
           {/* Show More Button */}
@@ -522,53 +488,33 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
           </DialogTitle>
           <DialogContent dividers sx={{ py: 3 }}>
             <Box sx={{ mb: 3 }}>
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                  Proficiency
-                </Typography>
-                <Typography 
-                  variant="subtitle1" 
-                  sx={{ 
-                    fontWeight: 700,
-                    color: getProficiencyColor(selectedSkill?.proficiency || 0),
-                  }}
-                >
-                  {selectedSkill?.proficiency}%
-                </Typography>
+              <Box sx={{ display: "flex", gap: 2, mb: 1 }}>
+                {selectedSkill?.type && (
+                  <Chip
+                    label={selectedSkill.type}
+                    sx={{
+                      backgroundColor: `${theme.palette.secondary.main}15`,
+                      color: theme.palette.secondary.main,
+                      fontSize: "0.8rem",
+                      height: "28px",
+                      px: 1,
+                    }}
+                  />
+                )}
+                {selectedSkill?.category && (
+                  <Chip
+                    label={selectedSkill.category}
+                    sx={{
+                      backgroundColor: `${theme.palette.primary.main}15`,
+                      color: theme.palette.primary.main,
+                      fontSize: "0.8rem",
+                      height: "28px",
+                      px: 1,
+                    }}
+                  />
+                )}
               </Box>
-              <LinearProgress
-                variant="determinate"
-                value={selectedSkill?.proficiency || 0}
-                sx={{
-                  height: 10,
-                  borderRadius: 5,
-                  backgroundColor: `${theme.palette.divider}30`,
-                  "& .MuiLinearProgress-bar": {
-                    borderRadius: 5,
-                    background: `linear-gradient(90deg, ${getProficiencyColor(selectedSkill?.proficiency || 0)}, ${getProficiencyColor((selectedSkill?.proficiency || 0) + 10)})`,
-                  },
-                }}
-              />
             </Box>
-
-            {selectedSkill?.category && (
-              <Box sx={{ mb: 3 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-                  Category
-                </Typography>
-                <Chip
-                  label={selectedSkill.category}
-                  sx={{
-                    backgroundColor: `${theme.palette.primary.main}15`,
-                    color: theme.palette.primary.main,
-                    fontSize: "0.8rem",
-                    height: "28px",
-                    px: 1,
-                  }}
-                />
-              </Box>
-            )}
-
             {selectedSkill?.yearsOfExperience && (
               <Box sx={{ mb: 3 }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
@@ -592,7 +538,6 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
                 </Box>
               </Box>
             )}
-
             {selectedSkill?.description && (
               <Box>
                 <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>

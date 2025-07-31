@@ -263,6 +263,7 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
           <Grid container spacing={2}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
+                format="dd/MM/yyyy"
                 label="Start Date"
                 value={formData.startDate ? new Date(formData.startDate) : null}
                 onChange={handleDateChange('startDate')}
@@ -279,6 +280,7 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
           <Grid container spacing={2}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
+                format="dd/MM/yyyy"
                 label="End Date (or expected)"
                 value={formData.endDate ? new Date(formData.endDate) : null}
                 onChange={handleDateChange('endDate')}
