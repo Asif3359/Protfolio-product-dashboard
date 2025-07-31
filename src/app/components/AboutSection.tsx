@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import {
   Email,
-  Phone,
+  // Phone,
   LinkedIn,
   Twitter,
   ExpandMore,
@@ -199,7 +199,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                     }}
                   />
                 )}
-                {contact?.mobile && (
+                {/* {contact?.mobile && (
                   <Chip
                     icon={<Phone fontSize="small" />}
                     label={contact.mobile}
@@ -216,7 +216,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                       },
                     }}
                   />
-                )}
+                )} */}
                 {contact?.cvLink && (
                   <Tooltip title="CV" arrow>
                     <Chip

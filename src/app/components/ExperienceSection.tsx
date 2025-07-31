@@ -22,6 +22,8 @@ import {
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+// import ImageDisplay from "./ImageDisplay";
+import Image from "next/image";
 
 interface Job {
   _id: string;
@@ -36,6 +38,7 @@ interface Job {
   technologies?: string[];
   achievements?: string[];
   ownerEmail?: string;
+  images?: string[];
 }
 interface isPage {
   isItPage: boolean;
@@ -70,7 +73,9 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
   const showAll = false; // always show only first 2 for now
   const visibleExperiences = showAll
     ? experienceJobs
-    : isItPage ? experienceJobs : experienceJobs.slice(0, 2);
+    : isItPage
+    ? experienceJobs
+    : experienceJobs.slice(0, 2);
   const hasMore = experienceJobs.length > 2;
 
   return (
@@ -119,9 +124,11 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
             </Typography>
           )}
 
-          {
-            isItPage ? <></> : <Divider sx={{ mb: 6, borderColor: theme.palette.divider }} />
-          }
+          {isItPage ? (
+            <></>
+          ) : (
+            <Divider sx={{ mb: 6, borderColor: theme.palette.divider }} />
+          )}
 
           <Grid
             container
@@ -167,6 +174,29 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                       },
                     }}
                   >
+                    {job.images && job.images.length > 0 && (
+                               <Box
+                               sx={{
+                                 position: "relative",
+                                 width: "100%",
+                                 height: { xs: 180, sm: 200, md: 220 },
+                                 mb: 3,
+                                 borderRadius: 2,
+                                 overflow: "hidden",
+                                 bgcolor: theme.palette.action.hover,
+                                 cursor: "pointer",
+                               }}
+                               onClick={() => router.push(`/Home/experience/${job._id}`)}
+                             >
+                               <Image
+                                 src={job.images[0]}
+                                 alt={job.title}
+                                 fill
+                                 style={{ objectFit: "cover" }}
+                                 sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
+                               />
+                             </Box>
+                    )}
                     {/* Header: Icon, Title, Company, Status */}
                     <Box
                       sx={{
@@ -194,7 +224,12 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                             lineHeight: 1.2,
                             color: theme.palette.text.primary,
                             fontSize: { xs: "1.2rem", md: "1.3rem" },
+                            cursor: "pointer",
+                            "&:hover": {
+                              color: theme.palette.primary.main,
+                            },
                           }}
+                          onClick={() => router.push(`/Home/experience/${job._id}`)}
                         >
                           {job.title}
                         </Typography>
@@ -237,11 +272,11 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                               {job.isCurrent
                                 ? "Present"
                                 : job.endDate
-                                  ? new Date(job.endDate).toLocaleDateString(
+                                ? new Date(job.endDate).toLocaleDateString(
                                     "en-US",
                                     { year: "numeric", month: "short" }
                                   )
-                                  : "Present"}
+                                : "Present"}
                             </Typography>
                           </Box>
                           <Box
@@ -280,7 +315,6 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                         : truncate(job.description, 160)}
                     </Typography>
 
-
                     {/* Responsibilities */}
                     {job.responsibilities &&
                       job.responsibilities.length > 0 && (
@@ -299,38 +333,40 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                             component="ul"
                             sx={{ m: 0, p: 0, pl: 2, listStyleType: "none" }}
                           >
-                            {job.responsibilities.slice(0, 2).map((responsibility, i) => (
-                              <Box
-                                component="li"
-                                key={i}
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "flex-start",
-                                  mb: 1,
-                                  "&:before": {
-                                    content: '"•"',
-                                    color: theme.palette.primary.main,
-                                    mr: 1,
-                                    fontSize: "1.2rem",
-                                    lineHeight: 1,
-                                  },
-                                }}
-                              >
-                                <Typography
-                                  variant="body2"
+                            {job.responsibilities
+                              .slice(0, 2)
+                              .map((responsibility, i) => (
+                                <Box
+                                  component="li"
+                                  key={i}
                                   sx={{
-                                    color: theme.palette.text.secondary,
-                                    lineHeight: 1.6,
-                                    // width: "100%",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: "nowrap",
+                                    display: "flex",
+                                    alignItems: "flex-start",
+                                    mb: 1,
+                                    "&:before": {
+                                      content: '"•"',
+                                      color: theme.palette.primary.main,
+                                      mr: 1,
+                                      fontSize: "1.2rem",
+                                      lineHeight: 1,
+                                    },
                                   }}
                                 >
-                                  {responsibility}
-                                </Typography>
-                              </Box>
-                            ))}
+                                  <Typography
+                                    variant="body2"
+                                    sx={{
+                                      color: theme.palette.text.secondary,
+                                      lineHeight: 1.6,
+                                      // width: "100%",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      whiteSpace: "nowrap",
+                                    }}
+                                  >
+                                    {responsibility}
+                                  </Typography>
+                                </Box>
+                              ))}
                           </Box>
                         </Box>
                       )}
@@ -352,38 +388,40 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                           component="ul"
                           sx={{ m: 0, p: 0, pl: 2, listStyleType: "none" }}
                         >
-                          {job.achievements.slice(0, 2).map((achievement, i) => (
-                            <Box
-                              component="li"
-                              key={i}
-                              sx={{
-                                display: "flex",
-                                alignItems: "flex-start",
-                                mb: 1,
-                                "&:before": {
-                                  content: '"•"',
-                                  color: theme.palette.primary.main,
-                                  mr: 1,
-                                  fontSize: "1.2rem",
-                                  lineHeight: 1,
-                                },
-                              }}
-                            >
-                              <Typography
-                                variant="body2"
+                          {job.achievements
+                            .slice(0, 2)
+                            .map((achievement, i) => (
+                              <Box
+                                component="li"
+                                key={i}
                                 sx={{
-                                  color: theme.palette.text.secondary,
-                                  lineHeight: 1.6,
-                                  width: "100%",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
+                                  display: "flex",
+                                  alignItems: "flex-start",
+                                  mb: 1,
+                                  "&:before": {
+                                    content: '"•"',
+                                    color: theme.palette.primary.main,
+                                    mr: 1,
+                                    fontSize: "1.2rem",
+                                    lineHeight: 1,
+                                  },
                                 }}
                               >
-                                {achievement}
-                              </Typography>
-                            </Box>
-                          ))}
+                                <Typography
+                                  variant="body2"
+                                  sx={{
+                                    color: theme.palette.text.secondary,
+                                    lineHeight: 1.6,
+                                    width: "100%",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                  }}
+                                >
+                                  {achievement}
+                                </Typography>
+                              </Box>
+                            ))}
                         </Box>
                       </Box>
                     )}

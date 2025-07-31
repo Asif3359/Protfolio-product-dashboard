@@ -10,19 +10,20 @@ import Box from "@mui/material/Box";
 interface ProjectImageSliderProps {
   images: string[];
   title: string;
+  isMultiple: boolean;
 }
 
-const ProjectImageSlider: React.FC<ProjectImageSliderProps> = ({ images, title }) => {
+const ProjectImageSlider: React.FC<ProjectImageSliderProps> = ({ images, title, isMultiple }) => {
 
 
   return (
     <Box sx={{ mb: 3 }}>
       <Slider
         dots={images.length > 7 ? false : true}
-        infinite={images.length > 1 ? true : false}
+        infinite={true}
         speed={500}
-        slidesToShow={1}
-        slidesToScroll={1}
+        slidesToShow={isMultiple ? images.length > 1 ? 2 : 1 : 1}
+        slidesToScroll={isMultiple ? images.length > 1 ? 2 : 1 : 1}
         arrows={true}
       >
         {images.map((img, idx) => (
@@ -33,10 +34,14 @@ const ProjectImageSlider: React.FC<ProjectImageSliderProps> = ({ images, title }
             alt={`${title} image ${idx + 1}`}
             sx={{
               width: '100%',
-              height: { xs: 200, sm: 350 },
+              height: { xs: 200, sm: 350, md: 400 },
               objectFit: 'cover',
-              borderRadius: 2,
               background: '#f5f5f5',
+              cursor: 'pointer',
+              "&:hover": {
+                transform: 'scale(1.05)',
+                transition: 'transform 0.5s ease-in-out',
+              },
             }}
           />
         ))}

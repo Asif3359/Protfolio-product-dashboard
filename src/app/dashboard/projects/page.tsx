@@ -39,9 +39,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { format } from "date-fns";
+import ImageDisplay from "@/app/components/ImageDisplay";
 
-// const API_URL = "http://localhost:3000/api/project";
-const API_URL = "http://localhost:3000/api/project";  
+// const API_URL = "https://protfolio-product-backend.vercel.app/api/project";
+const API_URL = "https://protfolio-product-backend.vercel.app/api/project";  
 interface Project {
   _id?: string;
   title: string;
@@ -499,11 +500,12 @@ function ProjectCard({ project, onEdit, onDelete }: { project: Project; onEdit: 
         {project.images && project.images.length > 0 && (
           <Box sx={{ mt: 2, display: "grid", gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(3, 1fr)', gap: '16px' }}>
             {project.images.map((img, idx) => (
-              <img
+              <ImageDisplay
                 key={idx}
                 src={img}
                 alt={`${project.title} ${idx + 1}`}
-                style={{ width: "100%", maxHeight: 100, objectFit: "cover", borderRadius: 8 }}
+                height="110px"
+                maxHeight="100px"
               />
             ))}
           </Box>

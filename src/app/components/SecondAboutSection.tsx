@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import {
   Email,
-  Phone,
+  // Phone,
   LinkedIn,
   Twitter,
   YouTube,
@@ -63,11 +63,12 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
         sx={{
           py: { xs: 6, md: 10 },
           background: theme.palette.primary.dark,
-          position: "relative",
+          // position: "relative",
           overflow: "hidden",
-          top: isMobile?0:-100,
+          top: isMobile?0:-50,
           boxShadow:isMobile?theme.shadows[1]:theme.shadows[1],
-          borderRadius:isMobile?0:5
+          marginTop:isMobile?0:4,
+          marginBottom:isMobile?0:4
         }}
       >
         <Container maxWidth="xl" sx={{ px: { xs: 3, sm: 4 } }}>
@@ -200,7 +201,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                     }}
                   />
                 )}
-                {contact?.mobile && (
+                {/* { contact?.mobile && (
                   <Chip
                     icon={<Phone fontSize="small" />}
                     label={contact.mobile}
@@ -217,7 +218,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                       },
                     }}
                   />
-                )}
+                )} */}
                 {contact?.cvLink && (
                   <Chip
                     component="a"

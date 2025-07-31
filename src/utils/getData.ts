@@ -1,6 +1,6 @@
 export async function getData(dataType: string) {
   try {
-    const baseUrl = 'http://localhost:3000/api';
+    const baseUrl = 'https://protfolio-product-backend.vercel.app/api';
     const response = await fetch(`${baseUrl}/${dataType}`, { 
       cache: "force-cache",
       next: { revalidate: 60 } // Revalidate every minute for faster updates
@@ -19,7 +19,7 @@ export async function getData(dataType: string) {
 
 export async function getDataById(dataType: string, id: string) {
   try {
-    const baseUrl = 'http://localhost:3000/api';
+    const baseUrl = 'https://protfolio-product-backend.vercel.app/api';
     const response = await fetch(`${baseUrl}/${dataType}/${id}`, { 
       cache: "force-cache",
       next: { revalidate: 60 } // Revalidate every minute for faster updates

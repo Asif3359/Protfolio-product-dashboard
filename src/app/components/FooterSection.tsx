@@ -5,7 +5,7 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import EmailIcon from "@mui/icons-material/Email";
-import PhoneIcon from "@mui/icons-material/Phone";
+// import PhoneIcon from "@mui/icons-material/Phone";
 import { getData } from "../../utils/getData";
 import PersonIcon from "@mui/icons-material/Person";
 
@@ -77,7 +77,7 @@ function FooterSection() {
                 <EmailIcon fontSize="small" /> {profile.contact.email}
               </Typography>
             )}
-            {profile?.contact?.mobile && (
+            {/* {profile?.contact?.mobile && (
               <Typography
                 variant="body2"
                 color="text.secondary"
@@ -85,7 +85,7 @@ function FooterSection() {
               >
                 <PhoneIcon fontSize="small" /> {profile.contact.mobile}
               </Typography>
-            )}
+            )} */}
           </Stack>
 
           {/* Social Media */}

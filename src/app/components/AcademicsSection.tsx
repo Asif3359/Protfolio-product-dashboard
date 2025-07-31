@@ -226,7 +226,7 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                     {education.gpa && (
                       <Chip
                         icon={<Grade fontSize="small" />}
-                        label={`GPA: ${education.gpa}`}
+                        label={`GPA: ${ education.gpa && education.gpa.toFixed(2)} `}
                         size="small"
                         color="primary"
                         sx={{
@@ -235,6 +235,19 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                           fontSize: { xs: "0.75rem", sm: "0.8rem" },
                         }}
                       />
+                    )}
+                    {!education.gpa && (
+                      <Chip
+                        icon={<Grade fontSize="small" />}
+                        label={`GPA: Not Available`}
+                        size="small"
+                        color="primary"
+                        sx={{
+                          bgcolor: theme.palette.primary.light,
+                          color: theme.palette.primary.contrastText,
+                          fontSize: { xs: "0.75rem", sm: "0.8rem" },
+                        }}
+                    />
                     )}
                   </Box>
 

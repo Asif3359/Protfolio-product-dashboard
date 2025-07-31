@@ -18,6 +18,7 @@ import {
   CardContent,
   CardActions,
   Link,
+  IconButton,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -25,6 +26,7 @@ import {
   Cancel as CancelIcon,
   Save as SaveIcon,
   Edit as EditIcon,
+  CloudUpload as CloudUploadIcon,
 } from "@mui/icons-material";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@mui/material/styles";
@@ -32,11 +34,13 @@ import { useMediaQuery } from "@mui/material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-
+import ImageModal from "@/app/components/ImageModal";
+  
 type Certification = {
   _id?: string;
   title: string;
   issuer: string;
+  image?: string;
   date: string | Date;
   expiryDate?: string | Date | null;
   credentialId?: string;
@@ -59,6 +63,7 @@ function CertificationForm({
   const [formData, setFormData] = useState<Partial<Certification>>({
     title: "",
     issuer: "",
+    image: "",
     date: new Date(),
     expiryDate: null,
     credentialId: "",
@@ -66,6 +71,8 @@ function CertificationForm({
     description: "",
     ownerEmail: localStorage.getItem("ownerEmail") || "",
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const theme = useTheme();
@@ -80,6 +87,9 @@ function CertificationForm({
           ? new Date(initialData.expiryDate)
           : null,
       });
+      if (initialData.image) {
+        setPreviewUrl(initialData.image);
+      }
     } else {
       // Get ownerEmail from localStorage
       const ownerEmail = localStorage.getItem("ownerEmail");
@@ -94,24 +104,58 @@ function CertificationForm({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  };
+
+  const clearImage = () => {
+    setSelectedFile(null);
+    setPreviewUrl("");
+    setFormData((prev) => ({ ...prev, image: "" }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
+      const formDataToSend = new FormData();
+      
+      // Add all form fields
+      Object.keys(formData).forEach(key => {
+        const value = formData[key as keyof typeof formData];
+        if (value !== null && value !== undefined) {
+          if (key === 'date' || key === 'expiryDate') {
+            formDataToSend.append(key, value instanceof Date ? value.toISOString() : String(value));
+          } else {
+            formDataToSend.append(key, String(value));
+          }
+        }
+      });
+
+      // Add file if selected
+      if (selectedFile) {
+        formDataToSend.append('image', selectedFile);
+      }
+
       const url = initialData
-        ? `http://localhost:3000/api/certification/${initialData._id}`
-        : "http://localhost:3000/api/certification";
+        ? `https://protfolio-product-backend.vercel.app/api/certification/${initialData._id}`
+        : "https://protfolio-product-backend.vercel.app/api/certification";
       const method = initialData ? "PUT" : "POST";
-      const body = { ...formData, ownerEmail: formData.ownerEmail };
+      
       const response = await fetch(url, {
         method,
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(body),
+        body: formDataToSend,
       });
+      
       if (!response.ok) {
         throw new Error(
           initialData
@@ -175,21 +219,49 @@ function CertificationForm({
             />
           </Grid>
           <Grid container spacing={2}>
-            {/* <TextField
-              fullWidth
-              label="Date"
-              name="date"
-              type="date"
-              value={
-                formData.date
-                  ? new Date(formData.date).toISOString().slice(0, 10)
-                  : ""
-              }
-              onChange={handleChange}
-              required
-              size="small"
-              InputLabelProps={{ shrink: true }}
-            /> */}
+            <Box sx={{ width: '100%' }}>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'medium' }}>
+                Certification Image
+              </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', alignItems: 'center', gap: 2, mb: 2 }}>
+                <Button
+                  variant="outlined"
+                  component="label"
+                  startIcon={<CloudUploadIcon />}
+                  sx={{ minWidth: '200px', width: '100%' }}
+                >
+                  {selectedFile ? selectedFile.name : 'Upload Image'}
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                </Button>
+                {previewUrl && (
+                  <IconButton onClick={clearImage} color="error" size="small">
+                    <DeleteIcon />
+                  </IconButton>
+                )}
+              </Box>
+              {previewUrl && (
+                <Box sx={{ mt: 2, textAlign: 'center', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '200px',
+                      objectFit: 'contain',
+                      borderRadius: '8px',
+                      border: '1px solid #ddd',
+                    }}
+                  />
+                </Box>
+              )}
+            </Box>
+          </Grid>
+          <Grid container spacing={2}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 format="dd/MM/yyyy"
@@ -210,20 +282,6 @@ function CertificationForm({
             </LocalizationProvider>
           </Grid>
           <Grid container spacing={2}>
-            {/* <TextField
-              fullWidth
-              label="Expiry Date"
-              name="expiryDate"
-              type="date"
-              value={
-                formData.expiryDate
-                  ? new Date(formData.expiryDate).toISOString().slice(0, 10)
-                  : ""
-              }
-              onChange={handleChange}
-              size="small"
-              InputLabelProps={{ shrink: true }}
-            /> */}
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 format="dd/MM/yyyy"
@@ -233,7 +291,6 @@ function CertificationForm({
                 slotProps={{
                   textField: {
                     fullWidth: true,
-                    // required: true,
                     size: 'small',
                     InputLabelProps: {
                       shrink: true,
@@ -332,7 +389,7 @@ function CertificationCard({
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
+  const [imageModalOpen, setImageModalOpen] = useState(false);
   return (
     <Card
       sx={{
@@ -344,6 +401,32 @@ function CertificationCard({
     >
       <CardContent>
         <Box>
+          <Box sx={{ mb: 2, textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", height: "300px", width: "100%", objectFit: "cover", backgroundColor: "grey.100" }}>
+            {certification.image && (
+              <img
+                onClick={() => setImageModalOpen(true)}
+                src={certification.image}
+                alt={certification.title}
+                title="Click to view full image"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "250px",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.1)";
+                  e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+            )}
+          </Box>
           <Typography
             variant={isMobile ? "subtitle1" : "h6"}
             component="div"
@@ -470,6 +553,12 @@ function CertificationCard({
           Delete
         </Button>
       </CardActions>
+      <ImageModal
+        open={imageModalOpen}
+        onClose={() => setImageModalOpen(false)}
+        imageUrl={certification.image || ""}
+        imageAlt={certification.title}
+      />
     </Card>
   );
 }
@@ -490,7 +579,7 @@ export default function CertificationsPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        "http://localhost:3000/api/certification"
+        "https://protfolio-product-backend.vercel.app/api/certification"
       );
       if (!res.ok) throw new Error("Failed to fetch certifications");
       const data = await res.json();
@@ -508,7 +597,7 @@ export default function CertificationsPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:3000/api/certification/${certificationToDelete._id}`,
+        `https://protfolio-product-backend.vercel.app/api/certification/${certificationToDelete._id}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },

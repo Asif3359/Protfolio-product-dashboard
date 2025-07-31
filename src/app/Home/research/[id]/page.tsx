@@ -1,6 +1,7 @@
 import { getDataById } from "@/utils/getData";
 import { Typography, Box, Chip, Stack, Divider, Paper, Link } from "@mui/material";
 import { CalendarToday, People, Description, Link as LinkIcon } from '@mui/icons-material';
+import ImageDisplay from "@/app/components/ImageDisplay";
 
 interface ResearchPageProps {
   params: Promise<{ id: string }>;
@@ -32,6 +33,12 @@ export default async function ResearchPage({ params }: ResearchPageProps) {
         bgcolor: "background.paper"
       }}
     >
+      <ImageDisplay
+        src={research.image}
+        alt={research.title}
+        height="350px"
+        maxHeight="300px"
+      />
       <Typography 
         variant="h3" 
         fontWeight={600} 

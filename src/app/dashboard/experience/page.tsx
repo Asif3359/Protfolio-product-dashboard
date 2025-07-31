@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, ChangeEvent } from 'react';
 import {
   Box,
   Button,
@@ -26,6 +26,9 @@ import {
   DialogContent,
   useTheme,
   useMediaQuery,
+  Stack,
+  InputLabel,
+  FormControl,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -33,13 +36,16 @@ import {
   Edit as EditIcon,
   Save as SaveIcon,
   Cancel as CancelIcon,
+  CloudUpload,
 } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { styled } from '@mui/material/styles';
+import ImageDisplay from '@/app/components/ImageDisplay';
 
-const API_URL = 'http://localhost:3000/api/experience';
+const API_URL = 'https://protfolio-product-backend.vercel.app/api/experience';
 
 interface Experience {
   _id?: string;
@@ -50,6 +56,7 @@ interface Experience {
   endDate: string;
   isCurrent: boolean;
   description: string;
+  images?: string[];
   responsibilities: string[];
   achievements: string[];
   technologies: string[];
@@ -58,18 +65,36 @@ interface Experience {
 
 type ExperienceArrayField = 'responsibilities' | 'achievements' | 'technologies';
 
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  whiteSpace: "nowrap",
+  width: 1,
+});
+
 function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialData: Experience | null, onSuccess: () => void, onCancel: () => void, token: string }) {
   const [form, setForm] = useState<Experience>(
     initialData || {
       title: '', company: '', location: '', startDate: '', endDate: '',
-      isCurrent: false, description: '', responsibilities: [''],
+      isCurrent: false, description: '', images: [''], responsibilities: [''],
       achievements: [''], technologies: [''], ownerEmail: localStorage.getItem("ownerEmail") || ''
     }
   );
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  useEffect(() => {
+    if (initialData && initialData.images) {
+      setImagePreviews(initialData.images);
+    }
+  }, [initialData]);
 
   React.useEffect(() => {
     if (!initialData) {
@@ -115,20 +140,51 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
     });
   };
 
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const files = Array.from(e.target.files);
+    setImageFiles((prev) => [...prev, ...files]);
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviews((prev) => [...prev, reader.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleRemoveImage = (idx: number) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== idx));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== idx));
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     try {
+      const formData = new FormData();
+      formData.append("title", form.title);
+      formData.append("company", form.company);
+      formData.append("location", form.location);
+      formData.append("startDate", form.startDate);
+      if (form.endDate) formData.append("endDate", form.endDate);
+      formData.append("isCurrent", form.isCurrent.toString());
+      formData.append("description", form.description);
+      form.responsibilities.forEach((resp, i) => formData.append(`responsibilities[${i}]`, resp));
+      form.achievements.forEach((ach, i) => formData.append(`achievements[${i}]`, ach));
+      form.technologies.forEach((tech, i) => formData.append(`technologies[${i}]`, tech));
+      formData.append("ownerEmail", form.ownerEmail);
+      imageFiles.forEach((file) => formData.append("images", file));
+      
       const method = form._id ? "put" : "post";
       const url = form._id ? `${API_URL}/${form._id}` : API_URL;
       const res = await fetch(url, {
         method: method.toUpperCase(),
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(form),
+        body: formData,
       });
       if (!res.ok) {
         throw new Error('Error saving experience');
@@ -137,9 +193,11 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
       if (!form._id) {
         setForm({
           title: '', company: '', location: '', startDate: '', endDate: '',
-          isCurrent: false, description: '', responsibilities: [''],
+          isCurrent: false, description: '', images: [''], responsibilities: [''],
           achievements: [''], technologies: [''], ownerEmail: form.ownerEmail
         });
+        setImageFiles([]);
+        setImagePreviews([]);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -201,7 +259,7 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
           {error}
         </Alert>
       )}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
         <Grid container spacing={4} style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(1, 1fr)', gap: '16px' }}>
           <Grid container spacing={2}>
             <TextField
@@ -255,17 +313,6 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
             </LocalizationProvider>
           </Grid>
           <Grid container spacing={2}>
-            {/* <TextField
-              name="endDate"
-              label="End Date"
-              type="date"
-              value={form.endDate?.slice(0,10) || ''}
-              onChange={handleChange}
-              fullWidth
-              size="small"
-              disabled={form.isCurrent}
-              InputLabelProps={{ shrink: true }}
-            /> */}
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 format="dd/MM/yyyy"
@@ -275,7 +322,6 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
                 slotProps={{
                   textField: {
                     fullWidth: true,
-                    // required: true,
                     disabled: form.isCurrent,
                     size: 'small',
                   }
@@ -313,6 +359,71 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
               style={{ flex: 1, flexGrow: 1 }}
             />
           </Grid>
+
+          <Grid container spacing={2}>
+            <FormControl fullWidth margin="normal">
+              <InputLabel shrink sx={{ mb: 1 }}>Experience Images (max size 1MB for each image)</InputLabel>
+              <Stack direction="column" spacing={2} alignItems="flex-start">
+                <Button
+                  component="label"
+                  variant="outlined"
+                  color="secondary"
+                  startIcon={<CloudUpload />}
+                  sx={{ textTransform: "none", width: "100%" }}
+                >
+                  Upload Images
+                  <VisuallyHiddenInput
+                    type="file"
+                    name="images"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageChange}
+                  />
+                </Button>
+                <Grid container spacing={2} sx={{ display: "grid", gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(3, 1fr)', gap: '16px' }}>
+                  {imagePreviews.map((preview, idx) => (
+                    <Grid key={idx} component="div">
+                      <Box
+                        sx={{
+                          width: "100%",
+                          position: "relative",
+                          borderRadius: 2,
+                          overflow: "hidden",
+                          boxShadow: 1,
+                          bgcolor: "background.paper",
+                          minHeight: 80,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <img
+                          src={preview}
+                          alt={`Experience preview ${idx + 1}`}
+                          style={{
+                            width: "100%",
+                            height: "300px",
+                            objectFit: "cover",
+                            display: "block",
+                            maxHeight: 200,
+                          }}
+                        />
+                        <IconButton
+                          size="small"
+                          color="error"
+                          sx={{ position: "absolute", top: 2, right: 2, background: "#fff" }}
+                          onClick={() => handleRemoveImage(idx)}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Box>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Stack>
+            </FormControl>
+          </Grid>
+
           <Grid container spacing={2}>
             <TextField
               name="ownerEmail"
@@ -368,6 +479,8 @@ interface ExperienceCardProps {
 }
 
 function ExperienceCard({ experience, onEdit, onDelete }: ExperienceCardProps) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
       <CardContent>
@@ -425,6 +538,20 @@ function ExperienceCard({ experience, onEdit, onDelete }: ExperienceCardProps) {
             ))}
           </Box>
         )}
+        
+        {experience.images && experience.images.length > 0 && (
+          <Box sx={{ mt: 2, display: "grid", gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(3, 1fr)', gap: '16px' }}>
+            {experience.images.map((img, idx) => (
+              <ImageDisplay
+                key={idx}
+                src={img}
+                alt={`${experience.title} ${idx + 1}`}
+                height="110px"
+                maxHeight="100px"
+              />
+            ))}
+          </Box>
+        )}
       </CardContent>
       <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>
         <Button
@@ -463,7 +590,7 @@ export default function ExperiencePage() {
   const fetchExperiences = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3000/api/experience');
+      const res = await fetch('https://protfolio-product-backend.vercel.app/api/experience');
       if (!res.ok) throw new Error('Failed to fetch experiences');
       const data: Experience[] = await res.json();
       setExperiences(data);

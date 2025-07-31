@@ -47,7 +47,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
       {/* Image */}
       {projectData.images && projectData.images.length > 0 && (
-        <ProjectImageSlider images={projectData.images} title={projectData.title} />
+        <ProjectImageSlider images={projectData.images} title={projectData.title} isMultiple={false} />
       )}
 
       {/* Description */}

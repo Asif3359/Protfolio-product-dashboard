@@ -31,7 +31,7 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
-import ImageModal from "@/app/components/ImageModal";
+import ImageDisplay from "@/app/components/ImageDisplay";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -196,8 +196,8 @@ function ResearchForm({
       }
 
       const url = initialData
-        ? `http://localhost:3000/api/research/${initialData._id}`
-        : "http://localhost:3000/api/research";
+        ? `https://protfolio-product-backend.vercel.app/api/research/${initialData._id}`
+        : "https://protfolio-product-backend.vercel.app/api/research";
       const method = initialData ? "PUT" : "POST";
 
       console.log("Submitting to:", url, "Method:", method);
@@ -505,46 +505,17 @@ function ResearchCard({
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [imageModalOpen, setImageModalOpen] = useState(false);
   return (
     <>
       <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
         <CardContent>
           {research.image && (
-            <Box
-              sx={{
-                mb: 2,
-                textAlign: "center",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <img
-                onClick={() => {
-                  setImageModalOpen(true);
-                }}
-                src={research.image}
-                alt={research.title}
-                title="Click to view full image"
-                style={{
-                  maxWidth: "100%",
-                  maxHeight: "200px",
-                  objectFit: "contain",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "scale(1.1)";
-                  e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "scale(1)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
-              />
-            </Box>
+            <ImageDisplay
+              src={research.image}
+              alt={research.title}
+              height="300px"
+              maxHeight="250px"
+            />
           )}
           <Typography
             variant="h6"
@@ -660,13 +631,7 @@ function ResearchCard({
         </CardActions>
       </Card>
 
-      {/* Image Modal */}
-      <ImageModal
-        open={imageModalOpen}
-        onClose={() => setImageModalOpen(false)}
-        imageUrl={research.image}
-        imageAlt={research.title}
-      />
+
     </>
   );
 }
@@ -688,7 +653,7 @@ export default function ResearchPage() {
   const fetchResearches = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:3000/api/research");
+      const res = await fetch("https://protfolio-product-backend.vercel.app/api/research");
       if (!res.ok) {
         throw new Error(
           `Failed to fetch research: ${res.status} ${res.statusText}`
@@ -714,7 +679,7 @@ export default function ResearchPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:3000/api/research/${researchToDelete._id}`,
+        `https://protfolio-product-backend.vercel.app/api/research/${researchToDelete._id}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },

@@ -1,6 +1,7 @@
 import { getDataById } from '@/utils/getData';
 import { Typography, Box, Chip, Stack, Divider, Paper, Link } from '@mui/material';
 import { CalendarToday, EmojiEvents } from '@mui/icons-material';
+import ImageDisplay from '@/app/components/ImageDisplay';
 
 interface AwardPageProps {
   params: Promise<{ id: string }>;
@@ -31,9 +32,12 @@ export default async function AwardPage({ params }: AwardPageProps) {
         bgcolor: 'background.paper',
       }}
     >
-      <Box sx={{ width: '100%', height: '400px', overflow: 'hidden', mb: 2 }}>
-        <img src={awardData.image} alt={awardData.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-      </Box>
+      <ImageDisplay
+        src={awardData.image}
+        alt={awardData.title}
+        height="350px"
+        maxHeight="300px"
+      />
       <Typography variant="h4" fontWeight={700} sx={{ color: 'primary.main', mb: 2 }}>
         {awardData.title}
       </Typography>

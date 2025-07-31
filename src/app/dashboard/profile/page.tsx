@@ -164,7 +164,7 @@ export default function ProfilePage() {
   // useEffect(() => {
   //   const fetchOwnerEmail = async () => {
   //     try {
-  //       const res = await axios.get("http://localhost:3000/api/admin/profile", {
+  //       const res = await axios.get("https://protfolio-product-backend.vercel.app/api/admin/profile", {
   //         headers: { Authorization: `Bearer ${token}` }
   //       });
   //       setForm((prev) => ({
@@ -183,7 +183,7 @@ export default function ProfilePage() {
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:3000/api/profile");
+        const res = await axios.get("https://protfolio-product-backend.vercel.app/api/profile");
         setProfile(res.data);
         if (res.data) {
           setForm({
@@ -404,7 +404,7 @@ export default function ProfilePage() {
       console.log("Submitting profile:", form);
       const res = await axios({
         method,
-        url: "http://localhost:3000/api/profile",
+        url: "https://protfolio-product-backend.vercel.app/api/profile",
         data: formData,
         headers: {
           Authorization: `Bearer ${token}`,

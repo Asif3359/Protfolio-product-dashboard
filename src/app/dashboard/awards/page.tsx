@@ -12,6 +12,7 @@ import { useMediaQuery } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import ImageModal from "@/app/components/ImageModal";
 
 type Award = {
   _id?: string;
@@ -86,8 +87,8 @@ function AwardForm({ initialData, onSuccess, onCancel, token }: {
     setError("");
     try {
       const url = initialData
-        ? `http://localhost:3000/api/award/${initialData._id}`
-        : "http://localhost:3000/api/award";
+        ? `https://protfolio-product-backend.vercel.app/api/award/${initialData._id}`
+        : "https://protfolio-product-backend.vercel.app/api/award";
       const method = initialData ? "PUT" : "POST";
       const body: FormData | string = new FormData();
       let headers: Record<string, string> = {
@@ -234,17 +235,49 @@ function AwardCard({ award, onEdit, onDelete }: {
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [imageModalOpen, setImageModalOpen] = useState(false);
   return (
     <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 2, width: "100%" }}>
       <CardContent>
         {award.image && (
-          <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-            <img
-              src={award.image}
-              alt={award.title}
-              style={{ maxHeight: 250, width: "100%", maxWidth: "100%", borderRadius: 8, objectFit: "cover" }}
-            />
-          </Box>
+          <Box
+          sx={{
+            mb: 2,
+            textAlign: "center",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "300px",
+            width: "100%",
+            objectFit: "cover",
+            backgroundColor: "grey.100",
+          }}
+        >
+          <img
+            onClick={() => {
+              setImageModalOpen(true);
+            }}
+            src={award.image}
+            alt={award.title}
+            title="Click to view full image"
+            style={{
+              maxWidth: "100%",
+              maxHeight: "250px",
+              objectFit: "cover",
+              borderRadius: "8px",
+              cursor: "pointer",
+              transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "scale(1.1)";
+              e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+              e.currentTarget.style.boxShadow = "none";
+            }}
+          />
+        </Box>
         )}
         <Typography variant={isMobile ? "h6" : "h5"} component="div" sx={{ fontWeight: "bold", mb: 1, fontSize: isMobile ? "1.2rem" : "1.5rem" }}>
           {award.title}
@@ -274,6 +307,12 @@ function AwardCard({ award, onEdit, onDelete }: {
           Delete
         </Button>
       </CardActions>
+      <ImageModal
+        open={imageModalOpen}
+        onClose={() => setImageModalOpen(false)}
+        imageUrl={award.image || ""}
+        imageAlt={award.title}
+      />
     </Card>
   );
 }
@@ -293,7 +332,7 @@ export default function AwardsPage() {
   const fetchAwards = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:3000/api/award");
+      const res = await fetch("https://protfolio-product-backend.vercel.app/api/award");
       if (!res.ok) throw new Error("Failed to fetch awards");
       const data = await res.json();
       setAwards(data);
@@ -309,7 +348,7 @@ export default function AwardsPage() {
 
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:3000/api/award/${awardToDelete._id}`, {
+      const res = await fetch(`https://protfolio-product-backend.vercel.app/api/award/${awardToDelete._id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });

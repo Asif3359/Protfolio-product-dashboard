@@ -1,6 +1,7 @@
 import { getDataById } from '@/utils/getData';
 import { Typography, Box, Chip, Stack, Divider, Paper, Avatar } from '@mui/material';
 import { Work, CalendarToday, LocationOn } from '@mui/icons-material';
+import ProjectImageSlider from '@/app/components/ProjectImageSlider';
 
 interface ExperiencePageProps {
   params: Promise<{ id: string }>;
@@ -64,6 +65,11 @@ export default async function ExperiencePage({ params }: ExperiencePageProps) {
       </Stack>
 
       <Divider sx={{ my: 2 }} />
+
+            {/* Image */}
+      {experienceData.images && experienceData.images.length > 0 && (
+        <ProjectImageSlider images={experienceData.images} title={experienceData.title} isMultiple={true} />
+      )}
 
       <Box sx={{ mb: 3 }}>
         <Typography

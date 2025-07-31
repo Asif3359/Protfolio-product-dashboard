@@ -147,19 +147,22 @@ const CertificationSection: React.FC<CertificationSectionProps> = ({
                         sx={{
                           position: 'relative',
                           width: '100%',
-                          height: { xs: 100, sm: 120, md: 140 },
+                          height: { xs: 300, sm: 300, md: 300 },
                           mb: 3,
                           borderRadius: 2,
                           overflow: 'hidden',
                           bgcolor: theme.palette.action.hover,
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => {
+                          router.push(`/Home/certification/${cert._id}`);
                         }}
                       >
                         <Image
                           src={cert.image}
                           alt={cert.title}
                           fill
-                          style={{ objectFit: 'contain' }}
-                          sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
+                          style={{ objectFit: 'cover' }}
                         />
                       </Box>
                     )}
@@ -176,12 +179,19 @@ const CertificationSection: React.FC<CertificationSectionProps> = ({
                       </Avatar>
                       <Box sx={{ flex: 1 }}>
                         <Typography
+                          onClick={() => {
+                            router.push(`/Home/certification/${cert._id}`);
+                          }}
+                          style={{ cursor: 'pointer' }}
                           variant="h5"
                           sx={{
                             fontWeight: 700,
                             lineHeight: 1.2,
                             color: theme.palette.text.primary,
                             fontSize: { xs: '1.2rem', md: '1.3rem' },
+                            "&:hover": {
+                              color: theme.palette.primary.main,
+                            },
                           }}
                         >
                           {cert.title}
