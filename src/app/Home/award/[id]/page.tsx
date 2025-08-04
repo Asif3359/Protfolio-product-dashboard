@@ -35,8 +35,8 @@ export default async function AwardPage({ params }: AwardPageProps) {
       <ImageDisplay
         src={awardData.image}
         alt={awardData.title}
-        height="350px"
-        maxHeight="300px"
+        // height="350px"
+        // maxHeight="300px"
       />
       <Typography variant="h4" fontWeight={700} sx={{ color: 'primary.main', mb: 2 }}>
         {awardData.title}

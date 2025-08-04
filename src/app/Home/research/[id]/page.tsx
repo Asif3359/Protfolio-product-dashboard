@@ -36,8 +36,8 @@ export default async function ResearchPage({ params }: ResearchPageProps) {
       <ImageDisplay
         src={research.image}
         alt={research.title}
-        height="350px"
-        maxHeight="300px"
+        // height="350px"
+        // maxHeight="300px"
       />
       <Typography 
         variant="h3" 

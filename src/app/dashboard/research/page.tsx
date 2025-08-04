@@ -128,6 +128,7 @@ function ResearchForm({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    console.log("File selected:", file);
     if (file) {
       setSelectedFile(file);
       const reader = new FileReader();
@@ -135,6 +136,9 @@ function ResearchForm({
         setImagePreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
+    } else {
+      setSelectedFile(null);
+      setImagePreview("");
     }
   };
 
@@ -165,6 +169,14 @@ function ResearchForm({
     e.preventDefault();
     setLoading(true);
     setError("");
+    
+    // Validate that an image is selected (for new research)
+    if (!initialData && !selectedFile) {
+      setError("Please select an image for the research");
+      setLoading(false);
+      return;
+    }
+    
     try {
       const formDataToSend = new FormData();
 
@@ -193,6 +205,15 @@ function ResearchForm({
       // Add image file if selected
       if (selectedFile) {
         formDataToSend.append("image", selectedFile);
+        console.log("Image file added to form data:", selectedFile.name, selectedFile.size);
+      } else if (!initialData) {
+        // For new research, we need an image
+        console.log("No image file selected for new research");
+        setError("Please select an image for the research");
+        setLoading(false);
+        return;
+      } else {
+        console.log("No new image selected for edit, keeping existing image");
       }
 
       const url = initialData
@@ -202,6 +223,7 @@ function ResearchForm({
 
       console.log("Submitting to:", url, "Method:", method);
       console.log("Form data keys:", Array.from(formDataToSend.keys()));
+      console.log("Selected file:", selectedFile);
       console.log("Authors data:", formData.authors);
       console.log("Authors JSON:", JSON.stringify(formData.authors));
 
@@ -282,7 +304,7 @@ function ResearchForm({
           <Grid container spacing={2}>
             <Box sx={{ width: "100%" }}>
               <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                Research Image
+                Research Image *
               </Typography>
               <Button
                 variant="outlined"
@@ -290,6 +312,7 @@ function ResearchForm({
                 startIcon={<CloudUploadIcon />}
                 sx={{ mb: 2 }}
                 fullWidth
+                color={!selectedFile && !initialData?.image ? "error" : "primary"}
               >
                 Upload Image
                 <input
@@ -297,6 +320,7 @@ function ResearchForm({
                   hidden
                   accept="image/*"
                   onChange={handleFileChange}
+                  required
                 />
               </Button>
               {imagePreview && (
@@ -513,8 +537,8 @@ function ResearchCard({
             <ImageDisplay
               src={research.image}
               alt={research.title}
-              height="300px"
-              maxHeight="250px"
+              // height="300px"
+              // maxHeight="250px"
             />
           )}
           <Typography

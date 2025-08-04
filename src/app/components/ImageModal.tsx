@@ -40,7 +40,9 @@ export default function ImageModal({ open, onClose, imageUrl, imageAlt }: ImageM
             style={{
               maxWidth: "100%",
               maxHeight: "80vh",
-              objectFit: "contain",
+              objectFit: "cover",
+              width: "100%",
+              height: "100%",
               borderRadius: "8px",
             }}
           />

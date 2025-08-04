@@ -13,6 +13,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import ImageModal from "@/app/components/ImageModal";
+import ImageDisplay from "@/app/components/ImageDisplay";
 
 type Award = {
   _id?: string;
@@ -253,7 +254,7 @@ function AwardCard({ award, onEdit, onDelete }: {
             backgroundColor: "grey.100",
           }}
         >
-          <img
+          {/* <img
             onClick={() => {
               setImageModalOpen(true);
             }}
@@ -276,6 +277,13 @@ function AwardCard({ award, onEdit, onDelete }: {
               e.currentTarget.style.transform = "scale(1)";
               e.currentTarget.style.boxShadow = "none";
             }}
+          /> */}
+          <ImageDisplay
+            src={award.image}
+            alt={award.title}
+            title="Click to view full image"
+            // height="300px"
+            // maxHeight="250px"
           />
         </Box>
         )}

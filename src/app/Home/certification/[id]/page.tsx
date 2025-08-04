@@ -47,8 +47,8 @@ export default async function CertificationPage({
       <ImageDisplay
         src={certificationData.image}
         alt={certificationData.title}
-        height="350px"
-        maxHeight="300px"
+        // height="350px"
+        // maxHeight="300px"
       />
       <Typography
         variant="h4"

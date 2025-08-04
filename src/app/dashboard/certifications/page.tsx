@@ -35,6 +35,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ImageModal from "@/app/components/ImageModal";
+import ImageDisplay from "@/app/components/ImageDisplay";
   
 type Certification = {
   _id?: string;
@@ -403,27 +404,33 @@ function CertificationCard({
         <Box>
           <Box sx={{ mb: 2, textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", height: "300px", width: "100%", objectFit: "cover", backgroundColor: "grey.100" }}>
             {certification.image && (
-              <img
-                onClick={() => setImageModalOpen(true)}
+              // <img
+              //   onClick={() => setImageModalOpen(true)}
+              //   src={certification.image}
+              //   alt={certification.title}
+              //   title="Click to view full image"
+              //   style={{
+              //     maxWidth: "100%",
+              //     maxHeight: "250px",
+              //     objectFit: "cover",
+              //     borderRadius: "8px",
+              //     cursor: "pointer",
+              //     transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+              //   }}
+              //   onMouseEnter={(e) => {
+              //     e.currentTarget.style.transform = "scale(1.1)";
+              //     e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
+              //   }}
+              //   onMouseLeave={(e) => {
+              //     e.currentTarget.style.transform = "scale(1)";
+              //     e.currentTarget.style.boxShadow = "none";
+              //   }}
+              // />
+              <ImageDisplay
                 src={certification.image}
                 alt={certification.title}
-                title="Click to view full image"
-                style={{
-                  maxWidth: "100%",
-                  maxHeight: "250px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "scale(1.1)";
-                  e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "scale(1)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
+                // height="300px"
+                // maxHeight="250px"
               />
             )}
           </Box>

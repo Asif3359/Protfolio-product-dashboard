@@ -21,7 +21,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({
   alt,
   title = "Click to view full image",
   height = "300px",
-  maxHeight = "250px",
+  maxHeight = "100%",
   width = "100%",
   objectFit = "cover",
   borderRadius = "8px",
@@ -50,6 +50,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({
           alt={alt}
           title={title}
           style={{
+            width: "100%",
             maxWidth: "100%",
             maxHeight,
             objectFit,
@@ -59,8 +60,8 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({
           }}
           onMouseEnter={(e) => {
             if (showModal) {
-              e.currentTarget.style.transform = "scale(1.1)";
-              e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
+              e.currentTarget.style.transform = "scale(1)";
+              e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.3)";
             }
           }}
           onMouseLeave={(e) => {
