@@ -14,7 +14,7 @@ import {
   YouTube,
   Facebook,
   Email,
-  Phone,
+  // Phone,
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import Typewriter from "typewriter-effect";
@@ -296,7 +296,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
                       <Email color="primary" />
                     </IconButton>
                   )}
-                  {contact?.mobile && (
+                  {/* {contact?.mobile && (
                     <IconButton
                       href={`tel:${contact.mobile}`}
                       sx={{
@@ -308,7 +308,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
                     >
                       <Phone color="primary" />
                     </IconButton>
-                  )}
+                  )} */}
                 </Box>
               </motion.div>
             </Box>

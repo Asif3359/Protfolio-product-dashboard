@@ -30,6 +30,7 @@ interface Education {
   description: string;
   achievements?: string[];
   gpa?: number;
+  outOf?: number;
   logo?: string;
 }
 
@@ -226,7 +227,7 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                     {education.gpa && (
                       <Chip
                         icon={<Grade fontSize="small" />}
-                        label={`GPA: ${ education.gpa && education.gpa.toFixed(2)} `}
+                        label={`GPA: ${ education.gpa && education.gpa.toFixed(2)} ${education.outOf ? ` out of ${education.outOf.toFixed(2)}` : ''}`}
                         size="small"
                         color="primary"
                         sx={{
@@ -236,7 +237,7 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                         }}
                       />
                     )}
-                    {!education.gpa && (
+                    {/* {!education.gpa && (
                       <Chip
                         icon={<Grade fontSize="small" />}
                         label={`GPA: Not Available`}
@@ -248,7 +249,7 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                           fontSize: { xs: "0.75rem", sm: "0.8rem" },
                         }}
                     />
-                    )}
+                    )} */}
                   </Box>
 
                   <Typography

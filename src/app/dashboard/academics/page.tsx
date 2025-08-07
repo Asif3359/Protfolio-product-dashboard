@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { 
   Container, Box, Typography, Button, Dialog, DialogTitle, DialogContent, 
   CircularProgress, Alert, AlertTitle, Paper, TextField, Grid, 
-  Chip, InputAdornment, Card, CardContent, CardActions 
+  Chip, Card, CardContent, CardActions 
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon, Cancel as CancelIcon, Save as SaveIcon, Edit as EditIcon } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
@@ -22,6 +22,7 @@ type Academic = {
   description?: string;
   achievements?: string[];
   gpa?: number;
+  outOf?: number;
   ownerEmail?: string;
   logo?: string; // Added logo field
 };
@@ -42,6 +43,7 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
     description: '',
     achievements: [],
     gpa: undefined,
+    outOf: undefined,
     ownerEmail: localStorage.getItem("ownerEmail") || '',
     logo: undefined,
   });
@@ -63,6 +65,7 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
         description: initialData.description || '',
         achievements: initialData.achievements || [],
         gpa: initialData.gpa,
+        outOf: initialData.outOf,
         ownerEmail: initialData.ownerEmail || '',
         logo: initialData.logo,
       });
@@ -127,6 +130,7 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
       if (formData.endDate) form.append('endDate', new Date(formData.endDate).toISOString());
       if (formData.description) form.append('description', formData.description);
       if (formData.gpa !== undefined) form.append('gpa', String(formData.gpa));
+      if (formData.outOf !== undefined) form.append('outOf', String(formData.outOf));
       if (formData.ownerEmail) form.append('ownerEmail', formData.ownerEmail);
       if (formData.achievements && formData.achievements.length > 0) {
         formData.achievements.forEach((ach, idx) => form.append(`achievements[${idx}]`, ach));
@@ -246,19 +250,29 @@ function AcademicForm({ initialData, onSuccess, onCancel, token }: {
             />
           </Grid>
           <Grid container spacing={2}>
-            <TextField
-              fullWidth
-              label="GPA"
-              name="gpa"
-              type="number"
-              inputProps={{ step: "0.01", min: "0", max: "5.00" }}
-              value={formData.gpa || ''}
-              onChange={handleChange}
-              InputProps={{
-                endAdornment: <InputAdornment position="end">/5.00</InputAdornment>,
-              }}
-              size="small"
-            />
+            <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
+              <TextField
+                fullWidth
+                label="GPA"
+                name="gpa"
+                type="number"
+                inputProps={{ step: "0.01", min: "0" }}
+                value={formData.gpa || ''}
+                onChange={handleChange}
+                size="small"
+              />
+              <TextField
+                fullWidth
+                label="Out Of"
+                name="outOf"
+                type="number"
+                inputProps={{ step: "0.01", min: "0" }}
+                value={formData.outOf || ''}
+                onChange={handleChange}
+                size="small"
+                placeholder="e.g., 4.0"
+              />
+            </Box>
           </Grid>
           <Grid container spacing={2}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -408,7 +422,13 @@ function AcademicCard({ academic, onEdit, onDelete }: {
         <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
           {formatDate(academic.startDate)} - {academic.endDate ? formatDate(academic.endDate) : 'Present'}
           <br />
-          • GPA:{academic.gpa && `  ${academic.gpa.toFixed(2)}`}
+         {
+          academic.gpa && (
+             <span style={{ fontSize: "12px" , color: "text.secondary" }}> 
+               GPA: {academic.gpa.toFixed(2)}{academic.outOf ? ` out of ${academic.outOf.toFixed(2)}` : ''}
+             </span>
+          )
+         }
         </Typography>
         {academic.description && (
           <Typography variant="body2" paragraph sx={{ mb: 2, whiteSpace: "pre-line" , wordBreak: "break-word" }}>
