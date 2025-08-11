@@ -200,7 +200,7 @@ function AwardForm({ initialData, onSuccess, onCancel, token }: {
                   component="span"
                   sx={{ borderRadius: 2, fontWeight: 600, width: "100%", textAlign: "center" }}
                 >
-                  {imagePreview ? "Change Image" : "Upload Image"}
+                  {imagePreview ? "Change Image 1200 x 800" : "Upload Image 1200 x 800"}
                 </Button>
               </label>
               {imagePreview && (

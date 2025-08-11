@@ -45,6 +45,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { styled } from '@mui/material/styles';
 import ImageDisplay from '@/app/components/ImageDisplay';
 
+// const API_URL = 'https://protfolio-product-backend.vercel.app/api/experience';
 const API_URL = 'https://protfolio-product-backend.vercel.app/api/experience';
 
 interface Experience {
@@ -79,7 +80,7 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
   const [form, setForm] = useState<Experience>(
     initialData || {
       title: '', company: '', location: '', startDate: '', endDate: '',
-      isCurrent: false, description: '', images: [''], responsibilities: [''],
+      isCurrent: false, description: '', images: [], responsibilities: [''],
       achievements: [''], technologies: [''], ownerEmail: localStorage.getItem("ownerEmail") || ''
     }
   );
@@ -91,8 +92,22 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    if (initialData && initialData.images) {
-      setImagePreviews(initialData.images);
+    if (initialData) {
+      // Update form with initial data when editing
+      setForm(initialData);
+      if (initialData.images) {
+        setImagePreviews(initialData.images);
+      }
+      setImageFiles([]); // Reset new image files when editing
+    } else {
+      // Reset form for new experience
+      setForm({
+        title: '', company: '', location: '', startDate: '', endDate: '',
+        isCurrent: false, description: '', images: [], responsibilities: [''],
+        achievements: [''], technologies: [''], ownerEmail: localStorage.getItem("ownerEmail") || ''
+      });
+      setImagePreviews([]);
+      setImageFiles([]);
     }
   }, [initialData]);
 
@@ -154,7 +169,16 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
   };
 
   const handleRemoveImage = (idx: number) => {
-    setImageFiles((prev) => prev.filter((_, i) => i !== idx));
+    // Check if this is a new image (from imageFiles) or existing image (from imagePreviews)
+    const existingImageCount = initialData?.images?.length || 0;
+    
+    if (idx >= existingImageCount) {
+      // This is a new image, remove from imageFiles
+      const newImageIndex = idx - existingImageCount;
+      setImageFiles((prev) => prev.filter((_, i) => i !== newImageIndex));
+    }
+    
+    // Remove from imagePreviews (both new and existing images)
     setImagePreviews((prev) => prev.filter((_, i) => i !== idx));
   };
 
@@ -175,7 +199,42 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
       form.achievements.forEach((ach, i) => formData.append(`achievements[${i}]`, ach));
       form.technologies.forEach((tech, i) => formData.append(`technologies[${i}]`, tech));
       formData.append("ownerEmail", form.ownerEmail);
-      imageFiles.forEach((file) => formData.append("images", file));
+      
+      // Handle images for both create and update
+      if (form._id) {
+        // For updates: send only existing images (not new previews) and new files
+        const existingImageCount = initialData?.images?.length || 0;
+        
+        console.log('=== FRONTEND DEBUG ===');
+        console.log('existingImageCount:', existingImageCount);
+        console.log('imagePreviews:', imagePreviews);
+        console.log('imageFiles:', imageFiles);
+        
+        // Send only the existing images that are still in imagePreviews (not new previews)
+        // We need to filter out new image previews (base64 data URLs) from currentImages
+        const existingImagesOnly = imagePreviews.slice(0, existingImageCount);
+        
+        existingImagesOnly.forEach((imageUrl, index) => {
+          console.log(`Appending currentImages[${index}]:`, imageUrl);
+          formData.append(`currentImages[${index}]`, imageUrl);
+        });
+        
+        // Send any new images
+        if (imageFiles.length > 0) {
+          imageFiles.forEach((file, index) => {
+            console.log(`Appending images[${index}]:`, file.name);
+            formData.append("images", file);
+          });
+        }
+        
+        console.log('FormData entries:');
+        for (const [key, value] of formData.entries()) {
+          console.log(key, ':', value);
+        }
+      } else {
+        // For create: only send new images
+        imageFiles.forEach((file) => formData.append("images", file));
+      }
       
       const method = form._id ? "put" : "post";
       const url = form._id ? `${API_URL}/${form._id}` : API_URL;
@@ -193,7 +252,7 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
       if (!form._id) {
         setForm({
           title: '', company: '', location: '', startDate: '', endDate: '',
-          isCurrent: false, description: '', images: [''], responsibilities: [''],
+          isCurrent: false, description: '', images: [], responsibilities: [''],
           achievements: [''], technologies: [''], ownerEmail: form.ownerEmail
         });
         setImageFiles([]);
@@ -362,7 +421,7 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
 
           <Grid container spacing={2}>
             <FormControl fullWidth margin="normal">
-              <InputLabel shrink sx={{ mb: 1 }}>Experience Images (max size 1MB for each image)</InputLabel>
+              <InputLabel shrink sx={{ mb: 1 }}>Experience Images (max size 1MB for each image) 1200 x 800 </InputLabel>
               <Stack direction="column" spacing={2} alignItems="flex-start">
                 <Button
                   component="label"
@@ -381,44 +440,66 @@ function ExperienceForm({ initialData, onSuccess, onCancel, token }: { initialDa
                   />
                 </Button>
                 <Grid container spacing={2} sx={{ display: "grid", gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(3, 1fr)', gap: '16px' }}>
-                  {imagePreviews.map((preview, idx) => (
-                    <Grid key={idx} component="div">
-                      <Box
-                        sx={{
-                          width: "100%",
-                          position: "relative",
-                          borderRadius: 2,
-                          overflow: "hidden",
-                          boxShadow: 1,
-                          bgcolor: "background.paper",
-                          minHeight: 80,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <img
-                          src={preview}
-                          alt={`Experience preview ${idx + 1}`}
-                          style={{
+                  {imagePreviews.map((preview, idx) => {
+                    const existingImageCount = initialData?.images?.length || 0;
+                    const isExistingImage = idx < existingImageCount;
+                    
+                    return (
+                      <Grid key={idx} component="div">
+                        <Box
+                          sx={{
                             width: "100%",
-                            height: "300px",
-                            objectFit: "cover",
-                            display: "block",
-                            maxHeight: 200,
+                            position: "relative",
+                            borderRadius: 2,
+                            overflow: "hidden",
+                            boxShadow: 1,
+                            bgcolor: "background.paper",
+                            minHeight: 80,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
                           }}
-                        />
-                        <IconButton
-                          size="small"
-                          color="error"
-                          sx={{ position: "absolute", top: 2, right: 2, background: "#fff" }}
-                          onClick={() => handleRemoveImage(idx)}
                         >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Box>
-                    </Grid>
-                  ))}
+                          <img
+                            src={preview}
+                            alt={`Experience preview ${idx + 1}`}
+                            style={{
+                              width: "100%",
+                              height: "300px",
+                              objectFit: "cover",
+                              display: "block",
+                              maxHeight: 200,
+                            }}
+                          />
+                          <IconButton
+                            size="small"
+                            color="error"
+                            sx={{ position: "absolute", top: 2, right: 2, background: "#fff" }}
+                            onClick={() => handleRemoveImage(idx)}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                          {isExistingImage && (
+                            <Box
+                              sx={{
+                                position: "absolute",
+                                top: 2,
+                                left: 2,
+                                background: "rgba(0,0,0,0.7)",
+                                color: "white",
+                                px: 1,
+                                py: 0.5,
+                                borderRadius: 1,
+                                fontSize: "0.75rem",
+                              }}
+                            >
+                              Existing
+                            </Box>
+                          )}
+                        </Box>
+                      </Grid>
+                    );
+                  })}
                 </Grid>
               </Stack>
             </FormControl>

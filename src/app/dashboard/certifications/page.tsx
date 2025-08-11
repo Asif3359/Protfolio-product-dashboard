@@ -222,7 +222,7 @@ function CertificationForm({
           <Grid container spacing={2}>
             <Box sx={{ width: '100%' }}>
               <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'medium' }}>
-                Certification Image
+                Certification Image 1200 x 800
               </Typography>
               <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', alignItems: 'center', gap: 2, mb: 2 }}>
                 <Button

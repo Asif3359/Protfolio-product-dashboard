@@ -271,14 +271,14 @@ const CertificationSection: React.FC<CertificationSectionProps> = ({
                     )}
 
                     {/* Credential ID */}
-                    {cert.credentialId && (
+                    {/* {cert.credentialId && (
                       <Box sx={{ mb: 2 }}>
                         <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
                           Credential ID:
                         </Typography>
                         <Chip label={cert.credentialId} size="small" variant="outlined" />
                       </Box>
-                    )}
+                    )} */}
 
                     {/* Credential URL */}
                     {cert.credentialUrl && (

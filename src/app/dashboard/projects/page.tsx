@@ -41,8 +41,8 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { format } from "date-fns";
 import ImageDisplay from "@/app/components/ImageDisplay";
 
-// const API_URL = "https://protfolio-product-backend.vercel.app/api/project";
-const API_URL = "https://protfolio-product-backend.vercel.app/api/project";  
+const API_URL = "https://protfolio-product-backend.vercel.app/api/project";
+// const API_URL = "https://protfolio-product-backend.vercel.app/api/project";  
 interface Project {
   _id?: string;
   title: string;
@@ -94,18 +94,30 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    if (initialData && initialData.images) {
-      setImagePreviews(initialData.images);
-    }
-  }, [initialData]);
-
-  useEffect(() => {
-    if (!initialData) {
-      // Get ownerEmail from localStorage
-      const ownerEmail = localStorage.getItem("ownerEmail");
-      if (ownerEmail) {
-        setForm((prev) => ({ ...prev, ownerEmail }));
+    if (initialData) {
+      // Update form with initial data when editing
+      setForm(initialData);
+      if (initialData.images) {
+        setImagePreviews(initialData.images);
       }
+      setImageFiles([]); // Reset new image files when editing
+    } else {
+      // Reset form for new project
+      setForm({
+        title: "",
+        description: "",
+        technologies: [""],
+        images: [""],
+        startDate: "",
+        endDate: "",
+        link: "",
+        githubLink: "",
+        features: [""],
+        status: "In Progress",
+        ownerEmail: localStorage.getItem("ownerEmail") || "",
+      });
+      setImagePreviews([]);
+      setImageFiles([]);
     }
   }, [initialData]);
 
@@ -148,7 +160,16 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
   };
 
   const handleRemoveImage = (idx: number) => {
-    setImageFiles((prev) => prev.filter((_, i) => i !== idx));
+    // Check if this is a new image (from imageFiles) or existing image (from imagePreviews)
+    const existingImageCount = initialData?.images?.length || 0;
+    
+    if (idx >= existingImageCount) {
+      // This is a new image, remove from imageFiles
+      const newImageIndex = idx - existingImageCount;
+      setImageFiles((prev) => prev.filter((_, i) => i !== newImageIndex));
+    }
+    
+    // Remove from imagePreviews (both new and existing images)
     setImagePreviews((prev) => prev.filter((_, i) => i !== idx));
   };
 
@@ -164,11 +185,31 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
       form.features.forEach((feat, i) => formData.append(`features[${i}]`, feat));
       formData.append("startDate", form.startDate);
       if (form.endDate) formData.append("endDate", form.endDate);
-      if (form.link) formData.append("link", form.link);
-      if (form.githubLink) formData.append("githubLink", form.githubLink);
+      // Handle links - send empty string if cleared, or trimmed value if provided
+      formData.append("link", form.link ? form.link.trim() : "");
+      formData.append("githubLink", form.githubLink ? form.githubLink.trim() : "");
       formData.append("status", form.status);
       formData.append("ownerEmail", form.ownerEmail);
-      imageFiles.forEach((file) => formData.append("images", file));
+      
+      // Handle images for both create and update
+      if (form._id) {
+        // For updates: send only existing images (not new previews) and new files
+        const existingImageCount = initialData?.images?.length || 0;
+        
+        // Send only the existing images that are still in imagePreviews
+        for (let i = 0; i < Math.min(existingImageCount, imagePreviews.length); i++) {
+          formData.append("currentImages", imagePreviews[i]);
+        }
+        
+        // Send any new images
+        if (imageFiles.length > 0) {
+          imageFiles.forEach((file) => formData.append("images", file));
+        }
+      } else {
+        // For create: only send new images
+        imageFiles.forEach((file) => formData.append("images", file));
+      }
+      
       const method = form._id ? "put" : "post";
       const url = form._id ? `${API_URL}/${form._id}` : API_URL;
       const res = await fetch(url, {
@@ -360,7 +401,7 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
           </Grid>
           <Grid container spacing={2}>
             <FormControl fullWidth margin="normal">
-              <InputLabel shrink sx={{ mb: 1 }}>Project Images (max size 1MB for each image)</InputLabel>
+              <InputLabel shrink sx={{ mb: 1 }}>Project Images (max size 1MB for each image) 1200 x 800 </InputLabel>
               <Stack direction="column" spacing={2} alignItems="flex-start">
                 <Button
                   component="label"
@@ -378,46 +419,68 @@ function ProjectForm({ initialData, onSuccess, onCancel, token }: { initialData:
                     onChange={handleImageChange}
                   />
                 </Button>
-                <Grid container spacing={2} sx={{ display: "grid", gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(3, 1fr)', gap: '16px' }}>
-                  {imagePreviews.map((preview, idx) => (
-                    <Grid  key={idx} component="div">
-                      <Box
-                        sx={{
-                          width: "100%",
-                          position: "relative",
-                          borderRadius: 2,
-                          overflow: "hidden",
-                          boxShadow: 1,
-                          bgcolor: "background.paper",
-                          minHeight: 80, // Optional: ensures some height for empty images
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <img
-                          src={preview}
-                          alt={`Project preview ${idx + 1}`}
-                          style={{
-                            width: "100%",
-                            height: "300px",
-                            objectFit: "cover",
-                            display: "block",
-                            maxHeight: 200, // Optional: limit max height
-                          }}
-                        />
-                        <IconButton
-                          size="small"
-                          color="error"
-                          sx={{ position: "absolute", top: 2, right: 2, background: "#fff" }}
-                          onClick={() => handleRemoveImage(idx)}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Box>
-                    </Grid>
-                  ))}
-                </Grid>
+                                 <Grid container spacing={2} sx={{ display: "grid", gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(3, 1fr)', gap: '16px' }}>
+                   {imagePreviews.map((preview, idx) => {
+                     const existingImageCount = initialData?.images?.length || 0;
+                     const isExistingImage = idx < existingImageCount;
+                     
+                     return (
+                       <Grid key={idx} component="div">
+                         <Box
+                           sx={{
+                             width: "100%",
+                             position: "relative",
+                             borderRadius: 2,
+                             overflow: "hidden",
+                             boxShadow: 1,
+                             bgcolor: "background.paper",
+                             minHeight: 80,
+                             display: "flex",
+                             alignItems: "center",
+                             justifyContent: "center",
+                           }}
+                         >
+                           <img
+                             src={preview}
+                             alt={`Project preview ${idx + 1}`}
+                             style={{
+                               width: "100%",
+                               height: "300px",
+                               objectFit: "cover",
+                               display: "block",
+                               maxHeight: 200,
+                             }}
+                           />
+                           <IconButton
+                             size="small"
+                             color="error"
+                             sx={{ position: "absolute", top: 2, right: 2, background: "#fff" }}
+                             onClick={() => handleRemoveImage(idx)}
+                           >
+                             <DeleteIcon fontSize="small" />
+                           </IconButton>
+                           {isExistingImage && (
+                             <Box
+                               sx={{
+                                 position: "absolute",
+                                 top: 2,
+                                 left: 2,
+                                 background: "rgba(0,0,0,0.7)",
+                                 color: "white",
+                                 px: 1,
+                                 py: 0.5,
+                                 borderRadius: 1,
+                                 fontSize: "0.75rem",
+                               }}
+                             >
+                               Existing
+                             </Box>
+                           )}
+                         </Box>
+                       </Grid>
+                     );
+                   })}
+                 </Grid>
               </Stack>
             </FormControl>
           </Grid>
@@ -482,17 +545,17 @@ function ProjectCard({ project, onEdit, onDelete }: { project: Project; onEdit: 
             <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>Technologies:</Typography>
             <Box component="ul" style={{ display: "flex", flexDirection: "column", flexWrap: "wrap", gap: 1, listStyle: "disc", marginLeft: isMobile ? 30 : 30 }}>
               {project.technologies.map((tech, idx) => (
-                <Typography component="li" key={idx} style={{ fontSize: 14,}}>{tech}</Typography >
+                <Typography component="li" key={idx} style={{ fontSize: 14, }}>{tech}</Typography >
               ))}
             </Box>
-          </Box>  
+          </Box>
         )}
         {project.features.length > 0 && (
           <Box sx={{ mt: 2 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight:700, mb: 1 }}>Features :</Typography>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>Features :</Typography>
             <Box component="ul" style={{ display: "flex", flexDirection: "column", flexWrap: "wrap", gap: 1, listStyle: "disc", marginLeft: isMobile ? 30 : 30 }}>
               {project.features.map((feat, idx) => (
-                <Typography component="li" key={idx} style={{ fontSize: 14,}}>{feat}</Typography >
+                <Typography component="li" key={idx} style={{ fontSize: 14, }}>{feat}</Typography >
               ))}
             </Box>
           </Box>
@@ -511,7 +574,7 @@ function ProjectCard({ project, onEdit, onDelete }: { project: Project; onEdit: 
           </Box>
         )}
         <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
-          {project.link && (
+          {project.link && project.link !== 'N/A' && project.link.trim() !== '' && (
             <Button
               href={project.link}
               target="_blank"
@@ -523,9 +586,9 @@ function ProjectCard({ project, onEdit, onDelete }: { project: Project; onEdit: 
               Live
             </Button>
           )}
-          {project.githubLink && (
+          {project.githubLink && project.githubLink !== 'N/A' && project.githubLink.trim() !== '' && (
             <Button
-              href={project.githubLink}
+              href={project.githubLink as string}
               target="_blank"
               rel="noopener noreferrer"
               startIcon={<GitHubIcon />}
@@ -584,7 +647,7 @@ export default function ProjectsPage() {
 
   const handleDelete = async () => {
     if (!projectToDelete) return;
-    
+
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/${projectToDelete._id}`, {
@@ -593,9 +656,9 @@ export default function ProjectsPage() {
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       if (!res.ok) throw new Error("Failed to delete project");
-      
+
       await fetchProjects();
       setDeleteDialog(false);
       setProjectToDelete(null);

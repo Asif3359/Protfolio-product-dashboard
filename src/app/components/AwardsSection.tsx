@@ -193,7 +193,7 @@ const AwardsSection: React.FC<AwardsSectionProps> = ({ title, list, isPage }) =>
                     </Button>
 
                     {/* Award Link */}
-                    {award.link && (
+                    {/* {award.link && (
                       <Box sx={{ mt: 'auto' }}>
                         <Chip
                           label="View Details"
@@ -206,7 +206,7 @@ const AwardsSection: React.FC<AwardsSectionProps> = ({ title, list, isPage }) =>
                           target="_blank"
                         />
                       </Box>
-                    )}
+                    )} */}
 
                     {/* Owner Email (optional) */}
                     {award.ownerEmail && (

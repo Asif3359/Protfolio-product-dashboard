@@ -66,8 +66,8 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const drawerContent = (
     <>
-      <Toolbar sx={{ bgcolor: theme.palette.background.default ,width: '100%' }}>
-        <GetProfileName></GetProfileName>
+      <Toolbar sx={{width: '100%' }}>
+        <GetProfileName color={'black'}></GetProfileName>
       </Toolbar>
       <Divider />
       <List sx={{ py: 0, height: '100%', display: 'flex', flexDirection: 'column' }}>

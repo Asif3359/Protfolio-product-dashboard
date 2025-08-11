@@ -6,7 +6,7 @@ interface ProfileData {
   name: string;
 }
 
-function GetProfileName() {
+function GetProfileName( {color}: {color: string} ) {
 
   const [profile, setProfile] = useState<ProfileData | null>(null);
 
@@ -32,11 +32,11 @@ function GetProfileName() {
         flexGrow: 1,
         fontWeight: "bold",
         width: '100%',
-        background: "linear-gradient(90deg,rgb(22, 112, 196) 0%,rgb(102, 25, 153) 100%)",
+        color: color,
         WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
+        WebkitTextFillColor: color,
         backgroundClip: "text",
-        textFillColor: "transparent",
+        textFillColor: color,
       }}
     >
       {profile?.name}

@@ -120,7 +120,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
   const drawer = (
     <Box sx={{ width: 250 }}>
       <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0' }}>
-        <GetProfileName></GetProfileName>
+        <GetProfileName color={'black'}></GetProfileName>
       </Box>
       <List>
         {navigationItems.map((item) => (
@@ -155,10 +155,14 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
       <CssBaseline />
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}>
         {/* Header */}
-        <AppBar position="sticky" elevation={0}>
+        <AppBar position="sticky" elevation={0} sx={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          backdropFilter: 'blur(10px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+        }}> 
           <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Box sx={{ p: 2, borderBottom: '1px solid #e0e0e0' }}>
-            <GetProfileName></GetProfileName>
+            <Box sx={{ p: 2, borderBottom: '1px solid rgba(255, 255, 255, 0.2)' }}>
+            <GetProfileName color={'white'}></GetProfileName>
            </Box>
             {/* Desktop Navigation */}
             {!isMobile && (
@@ -170,10 +174,11 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
                     href={item.path}
                     startIcon={item.icon}
                     sx={{
-                      color: pathname === item.path ? 'primary.main' : 'text.primary',
-                      backgroundColor: pathname === item.path ? 'primary.50' : 'transparent',
+                      color: pathname === item.path ? '#ffffff' : 'rgba(255, 255, 255, 0.8)',
+                      backgroundColor: pathname === item.path ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
                       '&:hover': {
-                        backgroundColor: 'primary.100',
+                        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                        color: '#ffffff',
                       },
                     }}
                   >
@@ -190,7 +195,7 @@ function HomeLayout({ children }: { children: React.ReactNode }) {
                 aria-label="open drawer"
                 edge="start"
                 onClick={handleDrawerToggle}
-                sx={{ color: 'primary.main' }}
+                sx={{ color: '#ffffff' }}
               >
                 <MenuIcon />
               </IconButton>

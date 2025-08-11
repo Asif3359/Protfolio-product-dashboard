@@ -304,7 +304,7 @@ function ResearchForm({
           <Grid container spacing={2}>
             <Box sx={{ width: "100%" }}>
               <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                Research Image *
+                Research Image * 1200 x 800
               </Typography>
               <Button
                 variant="outlined"
