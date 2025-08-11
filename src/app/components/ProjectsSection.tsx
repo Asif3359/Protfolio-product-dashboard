@@ -20,7 +20,6 @@ import {
   GitHub,
   Launch,
   ExpandMore,
-  ExpandLess,
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -54,7 +53,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   projectsDataList = [],
   isPage: isPage,
 }) => {
-  const [expandedProject] = useState<string | null>(null);
+  // const [expandedProject] = useState<string | null>(null);
   const [showAll] = useState(false);
   const theme = useTheme();
   const router = useRouter();
@@ -416,7 +415,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                       )}
                     </Box>
 
-                    <Button
+                    {/* <Button
                       onClick={() => router.push(`/Home/project/${project._id}`)}
                       size="small"
                       sx={{
@@ -439,7 +438,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                           Read more <ExpandMore sx={{ ml: 0.5 }} />
                         </>
                       )}
-                    </Button>
+                    </Button> */}
 
                     {/* Action Buttons */}
                     <Box
@@ -447,7 +446,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         display: "flex",
                         gap: 2,
                         mt: "auto",
-                        pt: 2,
+                        pt: 0,
                       }}
                     >
                       {project.githubLink && (

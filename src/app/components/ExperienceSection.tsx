@@ -18,7 +18,7 @@ import {
   CalendarToday,
   LocationOn,
   ExpandMore,
-  ExpandLess,
+  ArrowForward,
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -74,8 +74,8 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
   const visibleExperiences = showAll
     ? experienceJobs
     : isItPage
-    ? experienceJobs
-    : experienceJobs.slice(0, 2);
+      ? experienceJobs
+      : experienceJobs.slice(0, 2);
   const hasMore = experienceJobs.length > 2;
 
   return (
@@ -175,27 +175,27 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                     }}
                   >
                     {job.images && job.images.length > 0 && (
-                               <Box
-                               sx={{
-                                 position: "relative",
-                                 width: "100%",
-                                 height: { xs: 180, sm: 200, md: 220 },
-                                 mb: 3,
-                                 borderRadius: 2,
-                                 overflow: "hidden",
-                                 bgcolor: theme.palette.action.hover,
-                                 cursor: "pointer",
-                               }}
-                               onClick={() => router.push(`/Home/experience/${job._id}`)}
-                             >
-                               <Image
-                                 src={job.images[0]}
-                                 alt={job.title}
-                                 fill
-                                 style={{ objectFit: "cover" }}
-                                 sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-                               />
-                             </Box>
+                      <Box
+                        sx={{
+                          position: "relative",
+                          width: "100%",
+                          height: { xs: 180, sm: 200, md: 220 },
+                          mb: 3,
+                          borderRadius: 2,
+                          overflow: "hidden",
+                          bgcolor: theme.palette.action.hover,
+                          cursor: "pointer",
+                        }}
+                        onClick={() => router.push(`/Home/experience/${job._id}`)}
+                      >
+                        <Image
+                          src={job.images[0]}
+                          alt={job.title}
+                          fill
+                          style={{ objectFit: "cover" }}
+                          sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
+                        />
+                      </Box>
                     )}
                     {/* Header: Icon, Title, Company, Status */}
                     <Box
@@ -272,11 +272,11 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                               {job.isCurrent
                                 ? "Present"
                                 : job.endDate
-                                ? new Date(job.endDate).toLocaleDateString(
+                                  ? new Date(job.endDate).toLocaleDateString(
                                     "en-US",
                                     { year: "numeric", month: "short" }
                                   )
-                                : "Present"}
+                                  : "Present"}
                             </Typography>
                           </Box>
                           <Box
@@ -334,7 +334,7 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                             sx={{ m: 0, p: 0, pl: 2, listStyleType: "none" }}
                           >
                             {job.responsibilities
-                              .slice(0, 2)
+                              .slice(0, 1)
                               .map((responsibility, i) => (
                                 <Box
                                   component="li"
@@ -389,7 +389,7 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                           sx={{ m: 0, p: 0, pl: 2, listStyleType: "none" }}
                         >
                           {job.achievements
-                            .slice(0, 2)
+                            .slice(0, 1)
                             .map((achievement, i) => (
                               <Box
                                 component="li"
@@ -443,7 +443,7 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                           component="ul"
                           sx={{ m: 0, p: 0, pl: 2, listStyleType: "none" }}
                         >
-                          {job.technologies.slice(0, 2).map((tech, i) => (
+                          {job.technologies.slice(0, 1).map((tech, i) => (
                             <Box
                               component="li"
                               key={i}
@@ -475,48 +475,58 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                               </Typography>
                             </Box>
                           ))}
+                          {/* {job.ownerEmail && (
+                            <Typography
+                              variant="caption"
+                              color="textSecondary"
+                              sx={{ mt: 0 }}
+                            >
+                              Owner: {job.ownerEmail}
+                            </Typography>
+                          )} */}
                         </Box>
                       </Box>
                     )}
 
                     <Button
                       onClick={() =>
-                        // setExpandedJob(
-                        //   expandedJob === job._id ? null : job._id
-                        // )
                         router.push(`/Home/experience/${job._id}`)
                       }
                       size="small"
+                      variant="outlined"
+                      startIcon={<ArrowForward sx={{ fontSize: '0.9rem' }} />}
                       sx={{
-                        alignSelf: "flex-start",
-                        px: 1,
+                        alignSelf: "flex-end",
+                        px: 2,
+                        py: 0.75,
                         minWidth: 0,
                         color: theme.palette.primary.main,
-                        mb: 2,
-                        "&:hover": { background: "none" },
+                        borderColor: theme.palette.primary.main,
+                        backgroundColor: 'transparent',
+                        mb: 0,
+                        "&:hover": {
+                          backgroundColor: theme.palette.primary.main,
+                          color: theme.palette.primary.contrastText,
+                          borderColor: theme.palette.primary.main,
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                        },
+                        fontSize: "0.75rem",
+                        fontWeight: 600,
+                        textTransform: "none",
+                        borderRadius: "8px",
+                        transition: 'all 0.2s ease-in-out',
+                        '&:active': {
+                          transform: 'translateY(0)',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                        }
                       }}
                     >
-                      {expandedJob === job._id ? (
-                        <>
-                          Show less <ExpandLess sx={{ ml: 0.5 }} />
-                        </>
-                      ) : (
-                        <>
-                          Read more <ExpandMore sx={{ ml: 0.5 }} />
-                        </>
-                      )}
+                      View Details
                     </Button>
 
                     {/* Owner Email (optional) */}
-                    {job.ownerEmail && (
-                      <Typography
-                        variant="caption"
-                        color="textSecondary"
-                        sx={{ mt: 1 }}
-                      >
-                        Owner: {job.ownerEmail}
-                      </Typography>
-                    )}
+
                   </Paper>
                 </motion.div>
               </Grid>

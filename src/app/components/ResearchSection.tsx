@@ -10,15 +10,14 @@ import {
   Avatar,
   Button,
   useTheme,
-  Link,
 } from "@mui/material";
 import {
   Science,
   Article,
-  CalendarToday,
-  Language,
+      CalendarToday,
   ExpandMore,
-  ExpandLess,
+  // ExpandLess,
+  ArrowForward,
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -297,7 +296,7 @@ const ResearchSection: React.FC<ResearchSectionProps> = ({
                   >
                     {research.description.slice(0, 160)}...
                   </Typography>
-
+{/* 
                   {research.description.length > 180 && (
                     <Button
                       // onClick={() => setExpandedResearch(expandedResearch === research._id ? null : research._id)}
@@ -326,7 +325,7 @@ const ResearchSection: React.FC<ResearchSectionProps> = ({
                         </>
                       )}
                     </Button>
-                  )}
+                  )} */}
 
                   {/* Authors */}
                   {research.authors && research.authors.length > 0 && (
@@ -357,7 +356,7 @@ const ResearchSection: React.FC<ResearchSectionProps> = ({
                   )}
 
                   {/* Journal, DOI, Link */}
-                  {research.journal && (
+                  {/* {research.journal && (
                     <Typography
                       variant="subtitle2"
                       color="primary"
@@ -416,10 +415,10 @@ const ResearchSection: React.FC<ResearchSectionProps> = ({
                         </Typography>
                       </Link>
                     )}
-                  </Box>
+                  </Box> */}
 
                   {/* Owner Email (optional) */}
-                  {research.ownerEmail && (
+                  {/* {research.ownerEmail && (
                     <Typography
                       variant="caption"
                       color="textSecondary"
@@ -430,7 +429,45 @@ const ResearchSection: React.FC<ResearchSectionProps> = ({
                     >
                       Owner: {research.ownerEmail}
                     </Typography>
-                  )}
+                  )} */}
+                  
+                  <Button
+                      onClick={() =>
+                        router.push(`/Home/research/${research._id}`)
+                      }
+                      size="small"
+                      variant="outlined"
+                      startIcon={<ArrowForward sx={{ fontSize: '0.9rem' }} />}
+                      sx={{
+                        alignSelf: "flex-end",
+                        px: 2,
+                        py: 0.75,
+                        minWidth: 0,
+                        color: theme.palette.primary.main,
+                        borderColor: theme.palette.primary.main,
+                        backgroundColor: 'transparent',
+                        mb: 0,
+                        "&:hover": { 
+                          backgroundColor: theme.palette.primary.main,
+                          color: theme.palette.primary.contrastText,
+                          borderColor: theme.palette.primary.main,
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                        },
+                        fontSize: "0.75rem",
+                        fontWeight: 600,
+                        textTransform: "none",
+                        borderRadius: "8px",
+                        transition: 'all 0.2s ease-in-out',
+                        '&:active': {
+                          transform: 'translateY(0)',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                        }
+                      }}
+                    >
+                      View Details
+                    </Button>
+
                 </Paper>
               </motion.div>
             ))}

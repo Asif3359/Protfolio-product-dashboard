@@ -170,11 +170,16 @@ function ResearchForm({
     setLoading(true);
     setError("");
     
-    // Validate that an image is selected (for new research)
+    // Validate that an image is selected (only for new research)
     if (!initialData && !selectedFile) {
       setError("Please select an image for the research");
       setLoading(false);
       return;
+    }
+    
+    // For updates, if no new image is selected, we'll keep the existing one
+    if (initialData && !selectedFile) {
+      console.log("No new image selected for update, keeping existing image");
     }
     
     try {
@@ -312,7 +317,7 @@ function ResearchForm({
                 startIcon={<CloudUploadIcon />}
                 sx={{ mb: 2 }}
                 fullWidth
-                color={!selectedFile && !initialData?.image ? "error" : "primary"}
+                color={!selectedFile && !initialData ? "error" : "primary"}
               >
                 Upload Image
                 <input
@@ -320,7 +325,7 @@ function ResearchForm({
                   hidden
                   accept="image/*"
                   onChange={handleFileChange}
-                  required
+                  required={!initialData} // Only required for new research, not for updates
                 />
               </Button>
               {imagePreview && (

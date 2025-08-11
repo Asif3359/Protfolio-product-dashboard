@@ -16,6 +16,7 @@ import {
   CalendarToday,
   Grade,
   ExpandMore,
+  ArrowForward,
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -126,8 +127,8 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
               gridTemplateColumns: {
                 xs: "1fr",
                 sm: "repeat(1, 1fr)",
-                md: "repeat(1, 1fr)",
-                lg: "repeat(1, 1fr)",
+                md: "repeat(2, 1fr)",
+                lg: "repeat(2, 1fr)",
               },
               gap: { xs: 3, sm: 4, md: 4 },
               width: "100%",
@@ -163,7 +164,8 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                       component="img"
                       image={education.logo}
                       alt={education.institution}
-                      sx={{ width: 40, height: 40, objectFit: "contain", borderRadius: 2, marginRight: 2 }}
+                      sx={{ width: 40, height: 40, objectFit: "contain", borderRadius: 2, marginRight: 2, cursor: "pointer", "&:hover": { transform: "scale(1.05)" } }}
+                      onClick={() => router.push(`/Home/academic/${education._id}`)}
                     />
                     <Box sx={{ minWidth: 0, flex: 1 }}>
                       <Typography
@@ -174,9 +176,14 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                           color: theme.palette.text.primary,
                           fontSize: { xs: "1.2rem", md: "1.4rem" },
                           wordBreak: "break-word",
+                          cursor: "pointer",
+                          "&:hover": {
+                            color: theme.palette.primary.main,
+                          },
                         }}
+                        onClick={() => router.push(`/Home/academic/${education._id}`)}
                       >
-                        <span>{education.degree}</span> in <span>{education.field}</span>
+                        {education.institution}
                       </Typography>
                       <Typography
                         variant="subtitle1"
@@ -187,7 +194,7 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                           wordBreak: "break-word",
                         }}
                       >
-                        {education.institution}
+                        <span>{education.degree}</span> in <span>{education.field}</span>
                       </Typography>
                       {/* <Typography
                         variant="body2"
@@ -214,8 +221,8 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                     <Chip
                       icon={<CalendarToday fontSize="small" />}
                       label={`${formatDate(education.startDate)} - ${education.endDate
-                          ? formatDate(education.endDate)
-                          : "Present"
+                        ? formatDate(education.endDate)
+                        : "Present"
                         }`}
                       size="small"
                       sx={{
@@ -227,7 +234,7 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                     {education.gpa && (
                       <Chip
                         icon={<Grade fontSize="small" />}
-                        label={`${education.gpa === 4 ? "CGPA" : "GPA"} : ${ education.gpa && education.gpa.toFixed(2)} ${education.outOf ? ` out of ${education.outOf.toFixed(2)}` : ''}`}
+                        label={`${education.gpa === 4 ? "CGPA" : "GPA"} : ${education.gpa && education.gpa.toFixed(2)} ${education.outOf ? ` out of ${education.outOf.toFixed(2)}` : ''}`}
                         size="small"
                         color="primary"
                         sx={{
@@ -264,7 +271,7 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                       wordBreak: "break-word",
                     }}
                   >
-                    {education.description}
+                    {education.description.slice(0, 200)}...
                   </Typography>
 
                   {education.achievements?.length ? (
@@ -289,7 +296,7 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                           listStyleType: "none",
                         }}
                       >
-                        {education.achievements.map((achievement, i) => (
+                        {education.achievements.slice(0, 1).map((achievement, i) => (
                           <Box
                             component="li"
                             key={i}
@@ -323,6 +330,44 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                       </Box>
                     </Box>
                   ) : null}
+                  <Button
+                    onClick={() =>
+                      router.push(`/Home/academic/${education._id}`)
+                    }
+                    size="small"
+                    variant="outlined"
+                    startIcon={<ArrowForward sx={{ fontSize: '0.9rem' }} />}
+                    sx={{
+                      alignSelf: "flex-end",
+                      mt: 1,
+                      px: 2,
+                      py: 0.75,
+                      minWidth: 0,
+                      color: theme.palette.primary.main,
+                      borderColor: theme.palette.primary.main,
+                      backgroundColor: 'transparent',
+                      mb: 0,
+                      "&:hover": {
+                        backgroundColor: theme.palette.primary.main,
+                        color: theme.palette.primary.contrastText,
+                        borderColor: theme.palette.primary.main,
+                        transform: 'translateY(-1px)',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                      },
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      textTransform: "none",
+                      borderRadius: "8px",
+                      transition: 'all 0.2s ease-in-out',
+                      '&:active': {
+                        transform: 'translateY(0)',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                      }
+                    }}
+                  >
+                    View Details
+                  </Button>
+
                 </Paper>
               </motion.div>
             ))}

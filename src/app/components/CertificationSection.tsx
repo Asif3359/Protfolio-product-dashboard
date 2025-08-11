@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react';
 import { Box, Typography, Paper, Divider, Chip, Button, Grid, useTheme, Container, Avatar, useMediaQuery } from '@mui/material';
-import { Verified, CalendarToday, Language, ExpandMore, ExpandLess } from '@mui/icons-material';
+import { Verified, CalendarToday, ExpandMore, ArrowForward } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -241,34 +241,6 @@ const CertificationSection: React.FC<CertificationSectionProps> = ({
                     </Typography>
 
                     {/* Read More Button */}
-                    {cert.description && cert.description.length > 120 && (
-                      <Button
-                        onClick={() => {
-                          router.push(`/Home/certification/${cert._id}`);
-                        }}
-                        size="small"
-                        sx={{
-                          alignSelf: 'flex-start',
-                          px: 1,
-                          minWidth: 0,
-                          color: theme.palette.primary.main,
-                          '&:hover': {
-                            background: 'none',
-                          },
-                          mb: 2,
-                        }}
-                      >
-                        {expandedCert === cert._id ? (
-                          <>
-                            Show less <ExpandLess sx={{ ml: 0.5 }} />
-                          </>
-                        ) : (
-                          <>
-                            Read more <ExpandMore sx={{ ml: 0.5 }} />
-                          </>
-                        )}
-                      </Button>
-                    )}
 
                     {/* Credential ID */}
                     {/* {cert.credentialId && (
@@ -281,7 +253,7 @@ const CertificationSection: React.FC<CertificationSectionProps> = ({
                     )} */}
 
                     {/* Credential URL */}
-                    {cert.credentialUrl && (
+                    {/* {cert.credentialUrl && (
                       <Button
                         variant="contained"
                         size="small"
@@ -293,7 +265,45 @@ const CertificationSection: React.FC<CertificationSectionProps> = ({
                       >
                         View Credential
                       </Button>
-                    )}
+                    )} */}
+                    <Button
+                      onClick={() =>
+                        router.push(`/Home/certification/${cert._id}`)
+                      }
+                      size="small"
+                      variant="outlined"
+                      startIcon={<ArrowForward sx={{ fontSize: '0.9rem' }} />}
+                      sx={{
+                        alignSelf: "flex-end",
+                        px: 2,
+                        py: 0.75,
+                        minWidth: 0,
+                        color: theme.palette.primary.main,
+                        borderColor: theme.palette.primary.main,
+                        backgroundColor: 'transparent',
+                        mb: 0,
+                        "&:hover": {
+                          backgroundColor: theme.palette.primary.main,
+                          color: theme.palette.primary.contrastText,
+                          borderColor: theme.palette.primary.main,
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                        },
+                        fontSize: "0.75rem",
+                        fontWeight: 600,
+                        textTransform: "none",
+                        borderRadius: "8px",
+                        transition: 'all 0.2s ease-in-out',
+                        '&:active': {
+                          transform: 'translateY(0)',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                        }
+                      }}
+                    >
+                      View Details
+                    </Button>
+
+
                   </Paper>
                 </motion.div>
               </Grid>
