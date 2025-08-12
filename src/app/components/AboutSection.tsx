@@ -54,8 +54,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
     return null;
   }
 
-  const { name, aboutMe, profilePicture, contact, socialMedia } =
-    profileData;
+  const { name, aboutMe, profilePicture, contact, socialMedia } = profileData;
   const profilePic = profilePicture;
 
   return (
@@ -319,32 +318,7 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                     <Facebook fontSize="small" />
                   </IconButton>
                 )}
-                {socialMedia?.twitter && (
-                  <IconButton
-                    component="a"
-                    href={socialMedia.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ cursor: "pointer" }}
-                    sx={{
-                      bgcolor: "rgba(255,255,255,0.08)",
-                      color: theme.palette.primary.contrastText,
-                      "&:hover": {
-                        bgcolor: theme.palette.primary.light,
-                        color: theme.palette.primary.dark,
-                      },
-                      transition: theme.transitions.create([
-                        "background-color",
-                        "color",
-                      ]),
-                      "& .MuiChip-icon": {
-                        color: theme.palette.primary.contrastText,
-                      },
-                    }}
-                  >
-                    <Twitter fontSize="small" />
-                  </IconButton>
-                )}
+
                 {socialMedia?.youtube && (
                   <IconButton
                     component="a"
@@ -369,6 +343,32 @@ const AboutSection: React.FC<{ profileData: ProfileData }> = ({
                     }}
                   >
                     <YouTube fontSize="small" />
+                  </IconButton>
+                )}
+                {socialMedia?.twitter && (
+                  <IconButton
+                    component="a"
+                    href={socialMedia.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ cursor: "pointer" }}
+                    sx={{
+                      bgcolor: "rgba(255,255,255,0.08)",
+                      color: theme.palette.primary.contrastText,
+                      "&:hover": {
+                        bgcolor: theme.palette.primary.light,
+                        color: theme.palette.primary.dark,
+                      },
+                      transition: theme.transitions.create([
+                        "background-color",
+                        "color",
+                      ]),
+                      "& .MuiChip-icon": {
+                        color: theme.palette.primary.contrastText,
+                      },
+                    }}
+                  >
+                    <Twitter fontSize="small" />
                   </IconButton>
                 )}
               </Box>

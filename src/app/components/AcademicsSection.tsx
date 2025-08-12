@@ -231,7 +231,7 @@ const AcademicsSection: React.FC<AcademicsSectionProps> = ({
                         fontSize: { xs: "0.75rem", sm: "0.8rem" },
                       }}
                     />
-                    {education.gpa && (
+                    {education.gpa !== 0 && (
                       <Chip
                         icon={<Grade fontSize="small" />}
                         label={`${education.gpa === 4 ? "CGPA" : "GPA"} : ${education.gpa && education.gpa.toFixed(2)} ${education.outOf ? ` out of ${education.outOf.toFixed(2)}` : ''}`}

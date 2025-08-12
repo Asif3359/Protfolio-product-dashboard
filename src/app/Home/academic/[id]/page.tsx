@@ -113,7 +113,7 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
                                     icon={<CalendarToday fontSize="small" />}
                                     sx={{ fontWeight: 500 }}
                                 />
-                                {(academic.gpa && academic.outOf) && (
+                                {( academic.gpa !== 0 ) && (
                                     <Chip
                                         label={` ${academic.outOf === 4 ? "CGPA" : "GPA"}: ${academic.gpa.toFixed(2)} out of ${academic.outOf.toFixed(2)}`}
                                         color="secondary"

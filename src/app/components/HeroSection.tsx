@@ -94,7 +94,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
 
   return (
     <>
-      <style jsx global>{bestWordsStyle}</style>
+      <style jsx global>
+        {bestWordsStyle}
+      </style>
       <Box
         sx={{
           position: "relative",
@@ -156,15 +158,26 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
                     textShadow: "1px 1px 2px rgba(0,0,0,0.1)",
                   }}
                 >
-                  <span className="typewriter-hero-title" style={{ fontWeight: 500, fontSize: isMobile ? "1.5rem" : "1.5rem" }}>
+                  <span
+                    className="typewriter-hero-title"
+                    style={{
+                      fontWeight: 500,
+                      fontSize: isMobile ? "1.5rem" : "1.5rem",
+                    }}
+                  >
                     {heroTitle}
                   </span>
                   <br />
-                  <span className="typewriter-hero-name"  style={{ fontWeight: 700, fontSize: isMobile ? "2.5rem" : "2.5rem" }}>
+                  <span
+                    className="typewriter-hero-name"
+                    style={{
+                      fontWeight: 700,
+                      fontSize: isMobile ? "2.5rem" : "2.5rem",
+                    }}
+                  >
                     {name}
                   </span>
                 </Typography>
-
 
                 <Typography
                   variant={isMobile ? "h3" : "h2"}
@@ -227,6 +240,19 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
                     },
                   }}
                 >
+                  {contact?.email && (
+                    <IconButton
+                      href={`mailto:${contact.email}`}
+                      sx={{
+                        backgroundColor: "rgba(0, 0, 0, 0.1)",
+                        "&:hover": {
+                          backgroundColor: "rgba(0, 0, 0, 0.2)",
+                        },
+                      }}
+                    >
+                      <Email color="primary" />
+                    </IconButton>
+                  )}
                   {socialMedia?.linkedin && (
                     <IconButton
                       href={socialMedia.linkedin}
@@ -239,20 +265,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
                       }}
                     >
                       <LinkedIn color="primary" />
-                    </IconButton>
-                  )}
-                  {socialMedia?.twitter && (
-                    <IconButton
-                      href={socialMedia.twitter}
-                      target="_blank"
-                      sx={{
-                        backgroundColor: "rgba(29, 161, 242, 0.1)",
-                        "&:hover": {
-                          backgroundColor: "rgba(29, 161, 242, 0.2)",
-                        },
-                      }}
-                    >
-                      <Twitter color="primary" />
                     </IconButton>
                   )}
                   {socialMedia?.facebook && (
@@ -283,19 +295,21 @@ const HeroSection: React.FC<HeroSectionProps> = ({ profileData }) => {
                       <YouTube color="primary" />
                     </IconButton>
                   )}
-                  {contact?.email && (
+                  {socialMedia?.twitter && (
                     <IconButton
-                      href={`mailto:${contact.email}`}
+                      href={socialMedia.twitter}
+                      target="_blank"
                       sx={{
-                        backgroundColor: "rgba(0, 0, 0, 0.1)",
+                        backgroundColor: "rgba(29, 161, 242, 0.1)",
                         "&:hover": {
-                          backgroundColor: "rgba(0, 0, 0, 0.2)",
+                          backgroundColor: "rgba(29, 161, 242, 0.2)",
                         },
                       }}
                     >
-                      <Email color="primary" />
+                      <Twitter color="primary" />
                     </IconButton>
                   )}
+
                   {/* {contact?.mobile && (
                     <IconButton
                       href={`tel:${contact.mobile}`}
